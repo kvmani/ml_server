@@ -86,7 +86,7 @@ def feedback():
         
         return jsonify({
             'success': True,
-            'message': 'Thank you for your feedback!!'
+            'message': 'Thank you for your feedback!'
         })
         
     except Exception as e:
