@@ -198,23 +198,24 @@ nav {
 
 /* Loading State */
 .loading {
-    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 1.2rem;
+    color: #666;
+    background-color: rgba(255, 255, 255, 0.9);
 }
 
-.loading::after {
-    content: '';
-    position: absolute;
-    width: 30px;
-    height: 30px;
-    border: 3px solid #f3f3f3;
-    border-top: 3px solid var(--accent-color);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+/* Error State */
+.error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 1.2rem;
+    color: #dc3545;
+    background-color: rgba(255, 255, 255, 0.9);
 }
 
 /* Help Section */
@@ -386,39 +387,42 @@ footer {
 #comparison-slider {
     position: relative;
     width: 100%;
-    height: 100%;
+    height: 500px;
     overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    margin: 20px 0;
+    background: #f8f9fa;
 }
 
 .original-image, .processed-image {
     position: absolute;
     top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    background-color: #fff;
 }
 
 .original-image {
-    z-index: 2;
-    clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);
-}
-
-.processed-image {
+    right: 0;
     z-index: 1;
     clip-path: polygon(50% 0, 100% 0, 100% 100%, 50% 100%);
 }
 
-.original-image img, .processed-image img {
-    position: absolute;
-    top: 0;
+.processed-image {
     left: 0;
+    z-index: 2;
+    clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);
+}
+
+.original-image img, .processed-image img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
+    border-radius: 12px;
 }
 
 .original-image p, .processed-image p {
@@ -431,38 +435,87 @@ footer {
     position: absolute;
     top: 0;
     left: 50%;
-    width: 40px;
+    width: 4px;
     height: 100%;
-    transform: translateX(-50%);
-    z-index: 2;
+    background-color: #fff;
     cursor: ew-resize;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    z-index: 3;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 }
 
-.slider-line {
-    position: absolute;
-    width: 2px;
-    height: 100%;
-    background: var(--accent-color);
+.slider-handle:hover {
+    background-color: #007bff;
+    width: 6px;
 }
 
-.slider-button {
+.slider-handle::before {
+    content: '';
     position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     width: 40px;
     height: 40px;
-    background: var(--accent-color);
+    background-color: #fff;
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    border: 2px solid #007bff;
+    transition: all 0.3s ease;
 }
 
-.slider-button i {
-    font-size: 1.2rem;
+.slider-handle:hover::before {
+    transform: translate(-50%, -50%) scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.slider-handle:active::before {
+    transform: translate(-50%, -50%) scale(0.95);
+}
+
+.image-label {
+    position: absolute;
+    bottom: 70px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #333;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    text-align: center;
+    min-width: 150px;
+    z-index: 4;
+}
+
+.before-label {
+    left: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #333;
+}
+
+.after-label {
+    right: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #333;
+}
+
+/* Add a subtle gradient overlay */
+.original-image::after, .processed-image::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    background: linear-gradient(to right, rgba(0,0,0,0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.original-image:hover::after, .processed-image:hover::after {
+    opacity: 1;
 }
 
 /* Upload Button Styles */
@@ -507,4 +560,56 @@ footer {
 .after-label {
     right: 10px;
     left: auto;
+}
+
+#button-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+    padding: 0 20px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
+.download-btn {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.download-btn:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.download-btn:active {
+    transform: translateY(0);
+}
+
+/* Remove old button styles */
+.analysis-controls {
+    display: none;
+}
+
+.control-btn {
+    display: none;
+}
+
+/* Remove the old download button styles from the image container */
+.image-container .download-btn {
+    display: none;
 } 

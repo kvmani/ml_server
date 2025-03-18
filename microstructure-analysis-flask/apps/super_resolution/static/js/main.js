@@ -3,55 +3,63 @@ document.addEventListener('DOMContentLoaded', function() {
     const fileInput = document.getElementById('fileInput');
     const originalContainer = document.getElementById('originalImageContainer');
     const processedContainer = document.getElementById('processedImageContainer');
-    const enhanceBtn = document.getElementById('enhanceBtn');
-    const downloadBtn = document.getElementById('downloadBtn');
     const comparisonSlider = document.getElementById('comparison-slider');
     const sliderHandle = comparisonSlider.querySelector('.slider-handle');
+    const buttonContainer = document.getElementById('button-container');
 
     // Initialize slider position
     let isSliding = false;
     let sliderPosition = 50;
+    let startX = 0;
+    let startPosition = 0;
+    let processedImageBlob = null;
 
-    // Slider functionality
+    // Slider functionality with improved touch and mouse handling
     function updateSliderPosition(clientX) {
         const rect = comparisonSlider.getBoundingClientRect();
-        let position = ((clientX - rect.left) / rect.width) * 100;
-        position = Math.min(Math.max(position, 0), 100);
-        sliderPosition = position;
+        const deltaX = clientX - startX;
+        let newPosition = startPosition + (deltaX / rect.width * 100);
+        newPosition = Math.min(Math.max(newPosition, 0), 100);
+        sliderPosition = newPosition;
         
-        sliderHandle.style.left = `${position}%`;
-        originalContainer.style.clipPath = `polygon(0 0, ${position}% 0, ${position}% 100%, 0 100%)`;
+        sliderHandle.style.left = `${newPosition}%`;
+        processedContainer.style.clipPath = `polygon(0 0, ${newPosition}% 0, ${newPosition}% 100%, 0 100%)`;
+    }
+
+    function startSliding(e) {
+        isSliding = true;
+        startX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+        startPosition = sliderPosition;
+        sliderHandle.classList.add('active');
+    }
+
+    function stopSliding() {
+        isSliding = false;
+        sliderHandle.classList.remove('active');
     }
 
     // Mouse events for slider
-    sliderHandle.addEventListener('mousedown', () => {
-        isSliding = true;
-    });
-
+    sliderHandle.addEventListener('mousedown', startSliding);
     document.addEventListener('mousemove', (e) => {
         if (!isSliding) return;
+        e.preventDefault();
         updateSliderPosition(e.clientX);
     });
-
-    document.addEventListener('mouseup', () => {
-        isSliding = false;
-    });
+    document.addEventListener('mouseup', stopSliding);
 
     // Touch events for slider
-    sliderHandle.addEventListener('touchstart', (e) => {
-        isSliding = true;
-    });
-
+    sliderHandle.addEventListener('touchstart', startSliding);
     document.addEventListener('touchmove', (e) => {
         if (!isSliding) return;
+        e.preventDefault();
         updateSliderPosition(e.touches[0].clientX);
     });
+    document.addEventListener('touchend', stopSliding);
 
-    document.addEventListener('touchend', () => {
-        isSliding = false;
-    });
+    // Prevent default touch behavior
+    sliderHandle.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false });
 
-    // Drag and drop handling
+    // Drag and drop handling with improved visual feedback
     uploadBox.addEventListener('dragover', (e) => {
         e.preventDefault();
         uploadBox.classList.add('drag-over');
@@ -75,8 +83,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function handleFile(file) {
-        // Clear previous error messages
+        // Clear previous error messages and buttons
         clearFlashMessages();
+        if (buttonContainer) {
+            buttonContainer.innerHTML = '';
+        }
 
         // Validate file
         if (!file) {
@@ -92,9 +103,17 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show original image preview
         const reader = new FileReader();
         reader.onload = (e) => {
-            originalContainer.innerHTML = `<img src="${e.target.result}" alt="Original Image">`;
-            processedContainer.innerHTML = '<p>Processing...</p>';
-            enhanceBtn.disabled = false;
+            // Display original image on the right side
+            originalContainer.innerHTML = `
+                <img src="${e.target.result}" alt="Original Image" style="width: 100%; height: 100%; object-fit: cover;">
+                <div class="image-label after-label">Original Image (Right)</div>
+            `;
+            processedContainer.innerHTML = '<div class="loading">Processing image...</div>';
+            
+            // Reset slider position
+            sliderPosition = 50;
+            sliderHandle.style.left = '50%';
+            processedContainer.style.clipPath = 'polygon(0 0, 50% 0, 50% 100%, 0 100%)';
         };
         reader.readAsDataURL(file);
 
@@ -115,18 +134,51 @@ document.addEventListener('DOMContentLoaded', function() {
             return response.blob();
         })
         .then(blob => {
+            processedImageBlob = blob;
             const url = URL.createObjectURL(blob);
-            processedContainer.innerHTML = `<img src="${url}" alt="Enhanced Image">`;
-            downloadBtn.disabled = false;
+            
+            // Display processed image on the left side
+            processedContainer.innerHTML = `
+                <img src="${url}" alt="Enhanced Image" style="width: 100%; height: 100%; object-fit: cover;">
+                <div class="image-label before-label">Enhanced Image (Left)</div>
+            `;
+            
+            // Add download button below the image container
+            if (buttonContainer) {
+                buttonContainer.innerHTML = `
+                    <button class="download-btn" onclick="downloadImage()">Download Enhanced Image</button>
+                `;
+            }
             
             // Reset slider position
-            updateSliderPosition(comparisonSlider.getBoundingClientRect().left + (comparisonSlider.offsetWidth * 0.5));
+            sliderPosition = 50;
+            sliderHandle.style.left = '50%';
+            processedContainer.style.clipPath = 'polygon(0 0, 50% 0, 50% 100%, 0 100%)';
         })
         .catch(error => {
-            processedContainer.innerHTML = '<p>No image processed</p>';
+            processedContainer.innerHTML = '<div class="error">Error processing image</div>';
             showError(error.message);
         });
     }
+
+    // Add download function to window object for button click
+    window.downloadImage = function() {
+        if (!processedImageBlob) {
+            showError('No enhanced image available to download');
+            return;
+        }
+
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(processedImageBlob);
+        link.href = url;
+        link.download = 'enhanced_image.png';
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        URL.revokeObjectURL(url);
+    };
 
     function showError(message) {
         const flashMessages = document.querySelector('.flash-messages');
@@ -149,39 +201,4 @@ document.addEventListener('DOMContentLoaded', function() {
             flashMessages.innerHTML = '';
         }
     }
-
-    // Download button handling
-    downloadBtn.addEventListener('click', () => {
-        const processedImage = processedContainer.querySelector('img');
-        if (processedImage) {
-            const link = document.createElement('a');
-            link.href = processedImage.src;
-            link.download = 'enhanced_image.png';
-            link.click();
-        }
-    });
-
-    // Feedback form handling
-    const feedbackForm = document.getElementById('feedbackForm');
-    feedbackForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const formData = new FormData(feedbackForm);
-        
-        fetch('/super_resolution/feedback', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showError(data.message); // Using showError for success message too
-                feedbackForm.reset();
-            } else {
-                throw new Error(data.error);
-            }
-        })
-        .catch(error => {
-            showError(error.message);
-        });
-    });
-}); 
+});
