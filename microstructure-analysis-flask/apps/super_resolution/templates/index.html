@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microstructural Analysis Portal</title>
+    <link rel="stylesheet" href="{{ url_for('super_resolution.static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Add particles -->
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <header>
+        <nav>
+            <div class="logo">
+                <h1>Microstructural Analysis</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1>Advanced Microstructural Analysis</h1>
+            <p>Enhance and analyze microstructural images with state-of-the-art technology</p>
+        </section>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for message in messages %}
+                        <div class="flash-message">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <section class="upload-section">
+            <div class="upload-container">
+                <h2>Upload Your Image</h2>
+                <div class="upload-box" id="uploadBox">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Drag & Drop your image here or</p>
+                    <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Browse Files</button>
+                    <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                </div>
+            </div>
+        </section>
+
+        <section class="preview-section">
+            <div class="image-comparison">
+                <figure class="image-container">
+                    <div id="comparison-slider">
+                        <div class="original-image" id="originalImageContainer">
+                            <img id="originalImage" alt="Original Image">
+                        </div>
+                        <div class="processed-image" id="processedImageContainer">
+                            <img id="processedImage" alt="Processed Image">
+                        </div>
+                        <div class="image-labels">
+                            <span class="image-label before-label">Before</span>
+                            <span class="image-label after-label">After</span>
+                        </div>
+                        <div class="slider-handle">
+                            <div class="slider-line"></div>
+                            <div class="slider-button">
+                                <i class="fas fa-arrows-alt-h"></i>
+                            </div>
+                        </div>
+                    </div>
+                </figure>
+            </div>
+            <div class="analysis-controls">
+                <button class="control-btn" id="enhanceBtn" disabled>Enhance Image</button>
+                <button class="control-btn" id="downloadBtn" disabled>Download Enhanced Image</button>
+            </div>
+        </section>
+
+        <section class="help-section">
+            <h2>Help & FAQ</h2>
+            <div class="help-content">
+                <div class="faq">
+                    <h3>Frequently Asked Questions</h3>
+                    <div class="faq-item">
+                        <h4>What types of images can I process?</h4>
+                        <p>You can upload any common image format (JPG, PNG, BMP). For best results, use high-resolution microscopy images.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h4>How does the enhancement work?</h4>
+                        <p>Currently, the system performs basic image processing. In future updates, it will use advanced ML models for super-resolution.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="feedback-section">
+            <h2>Feedback</h2>
+            <form action="{{ url_for('super_resolution.feedback') }}" method="post" class="feedback-form">
+                <textarea name="feedback" rows="4" placeholder="Share your thoughts or report issues..."></textarea>
+                <button type="submit" class="control-btn">Submit Feedback</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>About</h4>
+                <p>Advanced microstructural analysis tool for research and development.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p>Email: contact@microstructure.org</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Microstructure Analysis. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('super_resolution.static', filename='js/main.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadBox = document.getElementById('uploadBox');
+            const fileInput = document.getElementById('fileInput');
+            const originalContainer = document.getElementById('originalImageContainer');
+            const processedContainer = document.getElementById('processedImageContainer');
+
+            // Drag and drop handling
+            uploadBox.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadBox.classList.add('drag-over');
+            });
+
+            uploadBox.addEventListener('dragleave', () => {
+                uploadBox.classList.remove('drag-over');
+            });
+
+            uploadBox.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadBox.classList.remove('drag-over');
+                const file = e.dataTransfer.files[0];
+                handleFile(file);
+            });
+
+            // File input handling
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                handleFile(file);
+            });
+
+            function handleFile(file) {
+                // Clear previous error messages
+                clearFlashMessages();
+
+                // Validate file
+                if (!file) {
+                    showError('Please select a file');
+                    return;
+                }
+
+                if (!file.type.startsWith('image/')) {
+                    showError('Please upload an image file');
+                    return;
+                }
+
+                // Show original image preview
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    originalContainer.innerHTML = `<img src="${e.target.result}" alt="Original Image">`;
+                    processedContainer.innerHTML = '<p>Processing...</p>';
+                };
+                reader.readAsDataURL(file);
+
+                // Upload and process image
+                const formData = new FormData();
+                formData.append('image', file);
+
+                fetch('/process', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.details || data.error || 'Error processing image');
+                        });
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    const url = URL.createObjectURL(blob);
+                    processedContainer.innerHTML = `<img src="${url}" alt="Processed Image">`;
+                })
+                .catch(error => {
+                    processedContainer.innerHTML = '<p>No image processed</p>';
+                    showError(error.message);
+                });
+            }
+
+            function showError(message) {
+                const flashMessages = document.querySelector('.flash-messages');
+                if (!flashMessages) return;
+
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'flash-message error';
+                errorDiv.textContent = message;
+                flashMessages.appendChild(errorDiv);
+
+                // Auto-remove after 5 seconds
+                setTimeout(() => {
+                    errorDiv.remove();
+                }, 5000);
+            }
+
+            function clearFlashMessages() {
+                const flashMessages = document.querySelector('.flash-messages');
+                if (flashMessages) {
+                    flashMessages.innerHTML = '';
+                }
+            }
+        });
+    </script>
+</body>
+</html> 
