@@ -6,7 +6,7 @@ import io
 import logging
 from werkzeug.utils import secure_filename
 import traceback
-import cv2
+#import cv2
 import numpy as np
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'bmp'}
