@@ -209,7 +209,55 @@ document.addEventListener('DOMContentLoaded', function() {
     const originalContainer = document.getElementById('originalImageContainer');
     const processedContainer = document.getElementById('processedImageContainer');
     const buttonContainer = document.getElementById('button-container');
+    const comparisonSlider = document.getElementById('comparison-slider');
+    const sliderHandle = document.createElement('div');
     let processedImageBlob = null;
+    let uploadedFile = null;
+
+    // Add slider handle functionality
+    sliderHandle.classList.add('slider-handle');
+    comparisonSlider.appendChild(sliderHandle);
+
+    let isSliding = false;
+    let startX = 0;
+    let startPosition = 50;
+
+    function updateSliderPosition(clientX) {
+        const rect = comparisonSlider.getBoundingClientRect();
+        const deltaX = clientX - startX;
+        let newPosition = startPosition + (deltaX / rect.width * 100);
+        newPosition = Math.min(Math.max(newPosition, 0), 100);
+
+        sliderHandle.style.left = `${newPosition}%`;
+        processedContainer.style.clipPath = `polygon(0 0, ${newPosition}% 0, ${newPosition}% 100%, 0 100%)`;
+        originalContainer.style.clipPath = `polygon(${newPosition}% 0, 100% 0, 100% 100%, ${newPosition}% 100%)`;
+
+        if (newPosition > 50 && !processedContainer.dataset.loaded) {
+            processImage();
+        }
+    }
+
+    function startSliding(e) {
+        isSliding = true;
+        startX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+        startPosition = parseFloat(sliderHandle.style.left) || 50;
+    }
+
+    function stopSliding() {
+        isSliding = false;
+    }
+
+    sliderHandle.addEventListener('mousedown', startSliding);
+    document.addEventListener('mousemove', (e) => {
+        if (isSliding) updateSliderPosition(e.clientX);
+    });
+    document.addEventListener('mouseup', stopSliding);
+
+    sliderHandle.addEventListener('touchstart', startSliding);
+    document.addEventListener('touchmove', (e) => {
+        if (isSliding) updateSliderPosition(e.touches[0].clientX);
+    });
+    document.addEventListener('touchend', stopSliding);
 
     uploadBox.addEventListener('dragover', (e) => {
         e.preventDefault();
@@ -236,21 +284,26 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!file) return;
         if (!file.type.startsWith('image/')) return;
 
+        uploadedFile = file;
         const reader = new FileReader();
         reader.onload = (e) => {
-            // Upload the image to the BEFORE section
             originalContainer.innerHTML = `
-                <div class="image-wrapper">
-                    <img src="${e.target.result}" alt="Original Image" class="image-before">
+                <div class="image-wrapper" style="max-width: 400px; max-height: 250px; margin: auto;">
+                    <img src="${e.target.result}" alt="Original Image" class="image-before" style="width: 100%; height: auto; object-fit: contain;">
                     <span class="image-label before-label">Before</span>
                 </div>
             `;
-            processedContainer.innerHTML = '<div class="loading">Processing image...</div>';
+            processedContainer.innerHTML = '<div class="loading">Slide to enhance...</div>';
+            processedContainer.dataset.loaded = "false";
         };
         reader.readAsDataURL(file);
+    }
+
+    function processImage() {
+        if (!uploadedFile) return;
 
         const formData = new FormData();
-        formData.append('image', file);
+        formData.append('image', uploadedFile);
 
         fetch('/super_resolution/process', {
             method: 'POST',
@@ -261,35 +314,16 @@ document.addEventListener('DOMContentLoaded', function() {
             processedImageBlob = blob;
             const url = URL.createObjectURL(blob);
             
-            // Apply flip transformation to the AFTER section
             processedContainer.innerHTML = `
-                <div class="image-wrapper">
-                    <img src="${url}" alt="Flipped Image" class="image-after" style="transform: scaleX(-1);">
+                <div class="image-wrapper" style="max-width: 400px; max-height: 250px; margin: auto;">
+                    <img src="${url}" alt="Enhanced Image" class="image-after" style="width: 100%; height: auto; object-fit: contain; transform: scaleX(-1);">
                     <span class="image-label after-label">After</span>
                 </div>
             `;
-
-            if (buttonContainer) {
-                buttonContainer.innerHTML = `
-                    <button class="enhance-btn" onclick="downloadImage()">Enhance Image</button>
-                    <button class="download-btn" onclick="downloadImage()">Download</button>
-                `;
-            }
+            processedContainer.dataset.loaded = "true";
         })
         .catch(error => {
             processedContainer.innerHTML = '<div class="error">Error processing image</div>';
         });
     }
-
-    window.downloadImage = function() {
-        if (!processedImageBlob) return;
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(processedImageBlob);
-        link.href = url;
-        link.download = 'flipped_image.png';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-    };
 });
