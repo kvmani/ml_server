@@ -95,3 +95,4 @@ def feedback():
             'success': False,
             'error': 'Error processing feedback'
         }), 500
+
