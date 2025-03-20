@@ -2,7 +2,11 @@
 
 A web-based platform for microstructural image analysis and enhancement, built with Flask and modern web technologies. This repository contains code for creating and running the ML-based microstructure web service.
 
-![Microstructural Analysis](resources/homepage.PNG)
+
+## Homepage Preview
+
+<img src="resources/homepage.PNG" alt="Microstructural Analysis" width="800">
+
 
 
 ## Features
