@@ -1,5 +1,12 @@
 import unittest
-from app import app
+import sys
+import os
+
+# Dynamically add the microstructure-analysis-flask directory to sys.path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../microstructure-analysis-flask')))
+
+# Now import app after modifying sys.path
+from app import app  
 
 class BasicTests(unittest.TestCase):
 
