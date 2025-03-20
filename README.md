@@ -5,14 +5,7 @@ A web-based platform for microstructural image analysis and enhancement, built w
 
 ## Homepage Preview
 
-<img src='resources/homepage.PNG' alt="Microstructural Analysis" width="800">
-
-<img src="resources/homepage.PNG" alt="Microstructural Analysis" width="800">
-
-<img src="./resources/homepage.PNG" alt="Microstructural Analysis" width="800">
-
-
-
+<img src='resources/homepage.PNG' alt="Microstructural Analysis Homepage" width="800">
 
 
 ## Features
