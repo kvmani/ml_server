@@ -107,10 +107,17 @@
 
         <section class="feedback-section">
             <h2>Feedback</h2>
-            <form action="{{ url_for('super_resolution.feedback') }}" method="post" class="feedback-form">
-                <textarea name="feedback" rows="4" placeholder="Share your thoughts or report issues..."></textarea>
-                <button type="submit" class="control-btn">Submit Feedback</button>
-            </form>
+            <div class="feedback-container">
+                <form class="feedback-form">
+                    <textarea 
+                        name="feedback" 
+                        rows="4" 
+                        placeholder="Share your thoughts or report issues..."
+                        required
+                    ></textarea>
+                    <button type="submit">Submit Feedback</button>
+                </form>
+            </div>
         </section>
     </main>
 

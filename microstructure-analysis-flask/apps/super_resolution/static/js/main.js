@@ -121,6 +121,63 @@ document.addEventListener('DOMContentLoaded', function() {
             processedContainer.innerHTML = '<div class="error">Error processing image</div>';
         });
     }
+
+    // Feedback form handling
+    const feedbackForm = document.querySelector('.feedback-form');
+    if (feedbackForm) {
+        feedbackForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const feedbackText = feedbackForm.querySelector('textarea[name="feedback"]').value.trim();
+            if (!feedbackText) {
+                showNotification('Please enter your feedback', 'error');
+                return;
+            }
+
+            const formData = new URLSearchParams();
+            formData.append('feedback', feedbackText);
+
+            fetch('/super_resolution/feedback', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: formData.toString()
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(data.message, 'success');
+                    feedbackForm.querySelector('textarea').value = ''; // Clear the textarea
+                } else {
+                    showNotification(data.error || 'Error submitting feedback', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Error submitting feedback', 'error');
+            });
+        });
+    }
+
+    // Notification function
+    function showNotification(message, type = 'success') {
+        // Remove any existing notifications
+        const existingNotifications = document.querySelectorAll('.notification');
+        existingNotifications.forEach(notification => notification.remove());
+
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        // Remove notification after 3 seconds
+        setTimeout(() => {
+            notification.classList.add('fade-out');
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
 });
 
 
