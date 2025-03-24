@@ -1,42 +1,33 @@
-# Microstructural Analysis Portal
+# Microstructural Analysis Web Application
 
-A web-based platform for microstructural image analysis and enhancement, built with Flask and modern web technologies. This repository contains code for creating and running the ML-based microstructure web service.
-
-
-## Homepage Preview
-
-<img src='resources/homepage.png' alt="Microstructural Analysis Homepage" width="800">
-
+A Flask-based web application for microstructural analysis, featuring super-resolution image enhancement and EBSD data cleanup tools.
 
 ## Features
 
-- Image upload via drag-and-drop or file selection
+### Super Resolution Tool
+- Enhance microstructural images with 4x resolution improvement
+- Advanced AI-powered detail enhancement
+- Noise reduction and quality preservation
 - Interactive image comparison slider
-- Real-time image enhancement
-- Download enhanced images
-- Feedback system for user input
-- Help and FAQ section
-- Responsive design for all devices
+- Support for multiple image formats (PNG, JPG, JPEG, GIF, BMP, TIFF, WebP)
 
-## Project Structure
+### EBSD Clean-Up Tool
+- Process and clean EBSD data files
+- Noise reduction in EBSD maps
+- Grain boundary detection and enhancement
+- Phase analysis and identification
+- Support for standard EBSD file formats (.ang, .ctf, .cpr, .osc, .h5, .hdf5)
+- Interactive before/after comparison slider
 
-```
-microstructure-analysis-flask/
-├── app.py                # Main Flask application
-├── config.yml           # Configuration file
-├── requirements.txt     # Python dependencies
-├── README.md           # Project documentation
-├── apps/               # Application modules
-│   └── super_resolution/
-│       ├── __init__.py  # Blueprint initialization
-│       ├── routes.py    # Route handlers
-│       ├── templates/   # HTML templates
-│       └── static/      # Static files (JS, CSS, images)
-├── models/             # ML models (future use)
-└── utilities/          # Shared utilities
-```
+### General Features
+- Modern, responsive user interface
+- Drag-and-drop file upload
+- Real-time image processing
+- In-memory processing (no file storage)
+- User feedback system
+- Cross-browser compatibility
 
-## Setup and Installation
+## Installation
 
 1. Clone the repository:
 ```bash
@@ -44,7 +35,7 @@ git clone https://github.com/yourusername/microstructure-analysis-flask.git
 cd microstructure-analysis-flask
 ```
 
-2. Create a virtual environment:
+2. Create and activate a virtual environment:
 ```bash
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
@@ -55,57 +46,67 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. Run the application:
+## Usage
+
+1. Start the Flask application:
 ```bash
 python app.py
 ```
 
-The application will be available at `http://localhost:5000`
-
-## Usage
-
-1. Upload an image using drag-and-drop or the file selection button
-2. The original image will appear on the right side
-3. The enhanced image will appear on the left side
-4. Use the slider to compare the original and enhanced images
-5. Click the "Download Enhanced Image" button to save the processed image
-
-## Development
-
-### Adding New Features
-
-1. Create a new module in the `apps` directory
-2. Create a Blueprint for the new module
-3. Register the Blueprint in `app.py`
-4. Add routes, templates, and static files as needed
-
-### Testing
-
-Run tests using pytest:
-```bash
-pytest
+2. Open your web browser and navigate to:
+```
+http://127.0.0.1:5000
 ```
 
-### Contributing
+3. Choose between Super Resolution or EBSD Clean-Up tools from the navigation menu.
+
+4. Upload your files using the drag-and-drop interface or file browser.
+
+5. View the results using the interactive comparison slider.
+
+6. Download the processed results using the download button.
+
+## Technical Details
+
+- Built with Flask 3.0.2
+- Uses Pillow for image processing
+- Implements in-memory processing to avoid file storage
+- Base64 encoding for image transfer
+- Responsive design with Bootstrap 5
+- Interactive UI components with vanilla JavaScript
+
+## File Format Support
+
+### Super Resolution
+- PNG (.png)
+- JPEG (.jpg, .jpeg)
+- GIF (.gif)
+- BMP (.bmp)
+- TIFF (.tiff)
+- WebP (.webp)
+
+### EBSD Clean-Up
+- ANG (.ang)
+- CTF (.ctf)
+- CPR (.cpr)
+- OSC (.osc)
+- HDF5 (.h5, .hdf5)
+
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
-
-## Future Enhancements
-
-- Integration of advanced ML models for super-resolution
-- Database integration for feedback storage
-- User authentication system
-- Additional image processing features
-- Advanced analysis tools
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
 
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Contact
+## Acknowledgments
 
-For any queries or suggestions, please contact:
-- Email: contact@microstructure.org
+- Flask web framework
+- Pillow image processing library
+- Bootstrap for the UI framework
+- All contributors and users of the application 

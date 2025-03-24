@@ -1,0 +1,83 @@
+# Application Configuration
+
+# Flask Settings
+flask:
+  debug: true
+  secret_key: "your-secret-key-here"  # Change this in production
+  host: "127.0.0.1"
+  port: 5000
+
+# File Upload Settings
+upload:
+  max_content_length: 16777216  # 16MB in bytes
+  allowed_image_extensions:
+    - ".png"
+    - ".jpg"
+    - ".jpeg"
+    - ".gif"
+    - ".bmp"
+    - ".tiff"
+    - ".webp"
+  allowed_ebsd_extensions:
+    - ".ang"
+    - ".ctf"
+    - ".cpr"
+    - ".osc"
+    - ".h5"
+    - ".hdf5"
+
+# Image Processing Settings
+image_processing:
+  super_resolution:
+    scale_factor: 4
+    quality: 95
+    format: "PNG"
+  ebsd_cleanup:
+    noise_reduction: true
+    grain_detection: true
+    phase_analysis: true
+    orientation_mapping: true
+
+# Security Settings
+security:
+  csrf_enabled: true
+  secure_headers:
+    - "X-Content-Type-Options: nosniff"
+    - "X-Frame-Options: SAMEORIGIN"
+    - "X-XSS-Protection: 1; mode=block"
+    - "Content-Security-Policy: default-src 'self'"
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "app.log"
+  max_size: 10485760  # 10MB
+  backup_count: 5
+
+# Cache Settings
+cache:
+  enabled: true
+  type: "simple"
+  default_timeout: 300  # 5 minutes
+
+# Performance Settings
+performance:
+  max_workers: 4
+  timeout: 30  # seconds
+  compression: true
+
+# Development Settings
+development:
+  auto_reload: true
+  debug_toolbar: true
+  testing: false
+
+# Production Settings
+production:
+  auto_reload: false
+  debug_toolbar: false
+  testing: false
+  server: "gunicorn"
+  workers: 4
+  timeout: 120 

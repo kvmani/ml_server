@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Microstructural Analysis Tools{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="text-center mb-4">Microstructural Analysis Tools</h1>
+    
+    <!-- Tools Grid -->
+    <div class="row justify-content-center">
+        <!-- Tool 1 -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <img src="{{ url_for('static', filename='images/Microstructure-Super Resolution.png') }}" class="card-img-top" alt="Super Resolution">
+                <div class="card-body">
+                    <h5 class="card-title">Super Resolution</h5>
+                    <p class="card-text">Enhance the resolution of your microstructural images using advanced AI algorithms.</p>
+                    <a href="{{ url_for('super_resolution') }}" class="btn btn-primary">Use Tool</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tool 2 -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <img src="{{ url_for('static', filename='images/EBSD Clean-Up.png') }}" class="card-img-top" alt="EBSD Clean-Up">
+                <div class="card-body">
+                    <h5 class="card-title">EBSD Clean-Up</h5>
+                    <p class="card-text">Clean and process your EBSD data for better analysis and visualization.</p>
+                    <a href="{{ url_for('ebsd_cleanup') }}" class="btn btn-primary">Use Tool</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tool 3 -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <img src="{{ url_for('static', filename='images/APP3 Coming Soon.......png') }}" class="card-img-top" alt="Tool 3">
+                <div class="card-body">
+                    <h5 class="card-title">Tool 3</h5>
+                    <p class="card-text">Coming soon - Stay tuned for more advanced microstructural analysis tools.</p>
+                    <button class="btn btn-secondary" disabled>Coming Soon</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tool 4 -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <img src="{{ url_for('static', filename='images/APP4 Coming Soon.......png') }}" class="card-img-top" alt="Tool 4">
+                <div class="card-body">
+                    <h5 class="card-title">Tool 4</h5>
+                    <p class="card-text">Coming soon - Stay tuned for more advanced microstructural analysis tools.</p>
+                    <button class="btn btn-secondary" disabled>Coming Soon</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Us Section -->
+    <div class="about-section mt-5">
+        <h2 class="text-center mb-4">About Us</h2>
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <p class="card-text">
+                            We are dedicated to advancing microstructural analysis through innovative tools and technologies. 
+                            Our platform provides researchers and scientists with powerful tools for analyzing and processing 
+                            microstructural data, making complex analysis more accessible and efficient.
+                        </p>
+                        <p class="card-text">
+                            Our suite of tools includes advanced features for:
+                        </p>
+                        <ul class="list-unstyled">
+                            <li>✓ High-resolution image enhancement</li>
+                            <li>✓ EBSD data processing and analysis</li>
+                            <li>✓ Advanced microstructural characterization</li>
+                            <li>✓ Data visualization and reporting</li>
+                        </ul>
+                        <p class="card-text">
+                            We continuously work on improving our tools and adding new features to meet the evolving needs 
+                            of the research community. Our commitment to excellence and innovation drives us to provide 
+                            the best possible solutions for microstructural analysis.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

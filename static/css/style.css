@@ -1,0 +1,282 @@
+/* Professional Research Theme */
+:root {
+    --primary-color: #003366;
+    --secondary-color: #0066cc;
+    --accent-color: #e6f3ff;
+    --text-color: #333333;
+    --light-gray: #f8f9fa;
+    --border-color: #dee2e6;
+}
+
+body {
+    background: linear-gradient(135deg, var(--light-gray) 0%, #ffffff 100%);
+    color: var(--text-color);
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+/* Container and Section Styling */
+.container {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    max-width: 1140px; /* More compact width */
+}
+
+/* Card Styles */
+.card {
+    background: white;
+    border: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border-radius: 16px; /* More curved corners */
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card-img-top {
+    width: 100%;
+    height: 260px; /* Slightly reduced height */
+    object-fit: contain;
+    background-color: #f8f9fa;
+    padding: 0.75rem; /* Reduced padding */
+    border-radius: 16px 16px 0 0; /* Curved top corners */
+}
+
+.card-body {
+    padding: 1.25rem; /* Reduced padding */
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card-title {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem; /* Slightly smaller title */
+}
+
+.card-text {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 0;
+}
+
+/* Home Page Grid */
+.row.justify-content-center {
+    margin: -0.5rem; /* Reduced margin */
+}
+
+.col-md-6 {
+    padding: 0.5rem; /* Reduced padding */
+}
+
+/* Header Styling */
+.navbar {
+    background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 0.75rem 0;
+}
+
+.navbar-brand {
+    font-weight: 600;
+    font-size: 1.4rem;
+    color: white !important;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+    border-radius: 8px; /* Curved nav links */
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: white !important;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Page Title */
+h1 {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    position: relative;
+    padding-bottom: 0.75rem;
+    font-size: 1.8rem; /* Slightly smaller heading */
+}
+
+h1:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px; /* Shorter line */
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    border-radius: 3px; /* Curved line */
+}
+
+/* Research Header */
+.research-header {
+    background-color: var(--light-gray);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.75rem 0;
+}
+
+.research-badge {
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px; /* More curved badge */
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Footer */
+.footer {
+    background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%) !important;
+    color: white;
+    padding: 1.25rem 0;
+    margin-top: 2rem;
+}
+
+.footer span {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-size: 0.9rem;
+}
+
+.research-links a {
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+    font-size: 0.9rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+}
+
+.research-links a:hover {
+    opacity: 0.8;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+    
+    .card-img-top {
+        height: 220px; /* Even smaller on mobile */
+    }
+    
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+    
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+}
+
+/* Form Styling */
+.form-control {
+    border: 1px solid var(--border-color);
+    padding: 0.75rem 1rem;
+    border-radius: 8px; /* Curved form inputs */
+    font-size: 0.95rem;
+}
+
+.form-control:focus {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.15);
+}
+
+.btn-primary {
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    border: none;
+    padding: 0.75rem 2rem;
+    font-weight: 500;
+    border-radius: 8px; /* Curved buttons */
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3);
+}
+
+/* FAQ Accordion */
+.accordion-button:not(.collapsed) {
+    background-color: var(--accent-color);
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+.accordion-button:focus {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.15);
+}
+
+/* Additional Research Theme Elements */
+.research-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(0, 51, 102, 0.9);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* About Section Styling */
+.about-section {
+    background-color: var(--light-gray);
+    padding: 2rem 0;
+    border-radius: 16px;
+    margin-top: 3rem;
+}
+
+.about-section .card {
+    border: none;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.about-section .card-body {
+    padding: 1.5rem;
+}
+
+.about-section h2 {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.about-section ul li {
+    margin-bottom: 0.5rem;
+    color: #666;
+}
+
+.about-section ul li:before {
+    content: "✓";
+    color: var(--secondary-color);
+    font-weight: bold;
+    margin-right: 0.5rem;
+} 

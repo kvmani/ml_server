@@ -1,73 +1,140 @@
-# 🚀 How to Run This Flask Application
+# How to Run the Application
 
-This guide provides **step-by-step** instructions on how to set up, install dependencies, and run this **Flask application** in:
-- ✅ **GitHub Codespaces** (Cloud-based)
+## Prerequisites
 
----
+Before running the application, ensure you have the following installed:
 
-## **1️⃣ Prerequisites**
-Before running this application, ensure you have:
-- **Python 3.8+** installed (Recommended: Python 3.10 or later)
-- **Git** installed
-- **A GitHub account** (for Codespaces)
+1. **Python 3.8 or higher**
+   - Download from [Python's official website](https://www.python.org/downloads/)
+   - Verify installation: `python --version`
 
-You can check if Python is installed by running:
-```bash
-python --version
-or
-python3 --version
+2. **pip (Python package installer)**
+   - Usually comes with Python
+   - Verify installation: `pip --version`
 
+## Installation Steps
 
-2️⃣ Clone the Repository
-📍 On GitHub Codespaces
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/yourusername/microstructure-analysis-flask.git
+   cd microstructure-analysis-flask
+   ```
 
-    Open your repository in GitHub.
-    Click on "Code" → "Codespaces" → "New Codespace".
+2. **Create Virtual Environment**
+   ```bash
+   # On Windows
+   python -m venv venv
+   venv\Scripts\activate
 
+   # On macOS/Linux
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
 
-3️⃣ Set Up Virtual Environment
-    1.Create a virtual environment:
-        python3 -m venv venv
+3. **Install Dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-    2.Activate the virtual environment:
-    📍 On GitHub Codespaces
-    Codespaces automatically sets up a virtual environment, but you can manually activate it:
-        source venv/bin/activate
+## Running the Application
 
+1. **Start the Flask Server**
+   ```bash
+   python app.py
+   ```
 
-4️⃣ Install Dependencies
-Once the virtual environment is activated, install required packages:
-        pip install -r requirements.txt
+2. **Access the Application**
+   - Open your web browser
+   - Navigate to: `http://127.0.0.1:5000`
 
-If requirements.txt is missing, install Flask manually:
-        pip install flask
+## Using the Application
 
+### Super Resolution Tool
 
-5️⃣ Set Environment Variables
+1. **Upload an Image**
+   - Click "Choose File" or drag and drop an image
+   - Supported formats: PNG, JPG, JPEG, GIF, BMP, TIFF, WebP
 
-This Flask application requires an environment variable SECRET_KEY.
-        export SECRET_KEY="your_secret_key"
-The SECRET_KEY in a Flask application is used for session management, signing cookies, and securing sensitive operations. It should be a random, strong string to enhance security. 
-Example for SECRET_KEY:
-    1. Use a Random Key (Recommended)
-    You can generate a secure key using Python:
-    Run this command in your Codespace terminal:
+2. **View Results**
+   - Use the slider to compare original and enhanced images
+   - Click "Download Enhanced Image" to save results
 
-    python3 -c "import secrets; print(secrets.token_hex(24))"
+### EBSD Clean-Up Tool
 
-    This will generate a random 48-character hexadecimal string, such as:
+1. **Upload EBSD Data**
+   - Click "Choose File" or drag and drop an EBSD file
+   - Supported formats: .ang, .ctf, .cpr, .osc, .h5, .hdf5
 
-    4b1f2c3d4e5a6b7c8d9e0f112233445566778899aabbccdd
+2. **Process Data**
+   - Select processing options
+   - Click "Process" to start analysis
 
-    Then, export it in your terminal:
+3. **View Results**
+   - Use the slider to compare original and processed maps
+   - Download results using the download button
 
-    export SECRET_KEY="4b1f2c3d4e5a6b7c8d9e0f112233445566778899aabbccdd"
+## Troubleshooting
 
+### Common Issues
 
-    export FLASK_APP=app
-    export FLASK_ENV=development
- 
- 6️⃣ Run the Flask Application
- 📍 On GitHub Codespaces
-  
-  1.flask run --host=0.0.0.0 --port=8000
+1. **Port Already in Use**
+   ```bash
+   # Find process using port 5000
+   # On Windows
+   netstat -ano | findstr :5000
+   
+   # On macOS/Linux
+   lsof -i :5000
+   ```
+
+2. **Missing Dependencies**
+   ```bash
+   # Reinstall requirements
+   pip install -r requirements.txt
+   ```
+
+3. **Browser Issues**
+   - Clear browser cache
+   - Try a different browser
+   - Check browser console for errors
+
+### Getting Help
+
+- Check the [Development Guide](DevelopmentGuide.md)
+- Review the [README](README.md)
+- Open an issue on GitHub
+
+## Development Mode
+
+For development purposes:
+
+1. **Enable Debug Mode**
+   - Set `DEBUG=True` in app.py
+   - Auto-reload on code changes
+   - Detailed error messages
+
+2. **Access Debug Tools**
+   - Debugger PIN in console
+   - Interactive debugger in browser
+   - Detailed error tracebacks
+
+## Production Deployment
+
+For production deployment:
+
+1. **Security Settings**
+   - Set `DEBUG=False`
+   - Use production-grade server
+   - Configure proper logging
+
+2. **Performance Optimization**
+   - Enable caching
+   - Configure proper headers
+   - Set up monitoring
+
+## Support
+
+For additional support:
+- Check the documentation
+- Open an issue on GitHub
+- Contact the development team 
