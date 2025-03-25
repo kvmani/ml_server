@@ -89,30 +89,26 @@ def process_image_in_memory(image_file):
         # Get original size
         width, height = img.size
         
-        # Calculate new size (4x upscaling)
-        new_width = width * 4
-        new_height = height * 4
+        # Create flipped version of the image (horizontal flip)
+        flipped_img = img.transpose(Image.FLIP_LEFT_RIGHT)
         
-        # Enhance image using high-quality upscaling
-        enhanced = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
-        
-        # Convert both original and enhanced images to base64
+        # Convert both original and flipped images to base64
         # Original image
         original_buffer = io.BytesIO()
         img.save(original_buffer, format='PNG')
         original_base64 = base64.b64encode(original_buffer.getvalue()).decode()
         
-        # Enhanced image
-        enhanced_buffer = io.BytesIO()
-        enhanced.save(enhanced_buffer, format='PNG')
-        enhanced_base64 = base64.b64encode(enhanced_buffer.getvalue()).decode()
+        # Flipped image
+        flipped_buffer = io.BytesIO()
+        flipped_img.save(flipped_buffer, format='PNG')
+        flipped_base64 = base64.b64encode(flipped_buffer.getvalue()).decode()
         
         return {
             'success': True,
             'original_image': f'data:image/png;base64,{original_base64}',
-            'enhanced_image': f'data:image/png;base64,{enhanced_base64}',
+            'enhanced_image': f'data:image/png;base64,{flipped_base64}',
             'original_size': f'{width}x{height}',
-            'enhanced_size': f'{new_width}x{new_height}'
+            'enhanced_size': f'{width}x{height}'  # Same size for flipped image
         }
     except Exception as e:
         app.logger.error(f"Error processing image: {str(e)}")
