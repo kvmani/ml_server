@@ -50,24 +50,27 @@ body {
 }
 
 .card-body {
-    padding: 1.25rem; /* Reduced padding */
+    padding: 1.25rem;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    align-items: center;
 }
 
 .card-title {
     color: var(--primary-color);
     font-weight: 600;
     margin-bottom: 0.5rem;
-    font-size: 1.1rem; /* Slightly smaller title */
+    font-size: 1.1rem;
+    text-align: center;
 }
 
 .card-text {
     font-size: 0.9rem;
     color: #666;
-    margin-bottom: 0;
+    margin-bottom: 1rem;
+    text-align: center;
 }
 
 /* Home Page Grid */
