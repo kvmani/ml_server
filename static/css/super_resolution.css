@@ -1,4 +1,4 @@
-/* Enhanced UI Styles for Super Resolution */
+/* ---------------- Hero Section ---------------- */
 .hero-section {
     position: relative;
     background: linear-gradient(135deg, #1a237e, #0d47a1);
@@ -30,6 +30,7 @@
     z-index: 1;
 }
 
+/* ---------------- Feature Badges ---------------- */
 .feature-badges {
     display: flex;
     justify-content: center;
@@ -50,6 +51,7 @@
     font-size: 1.2rem;
 }
 
+/* ---------------- Upload Section ---------------- */
 .upload-section {
     background: linear-gradient(135deg, #f5f7fa 0%, #e8edf5 100%);
 }
@@ -114,6 +116,7 @@
     transform: translateY(-1px);
 }
 
+/* ---------------- Button ---------------- */
 .btn-primary {
     background: linear-gradient(135deg, #1a237e, #0d47a1);
     border: none;
@@ -128,11 +131,12 @@
     box-shadow: 0 4px 15px rgba(26, 35, 126, 0.3);
 }
 
+/* ---------------- Preview Section ---------------- */
 .preview-section {
     background: linear-gradient(135deg, #f5f7fa 0%, #e8edf5 100%);
 }
 
-/* Side-by-side image display */
+/* ---------------- Side-by-side Image Preview ---------------- */
 .comparison-container {
     display: flex;
     width: 100%;
@@ -195,17 +199,62 @@
     object-fit: contain;
 }
 
-/* Hide slider elements */
-.slider-handle, .handle-line, .handle-circle, .handle-arrows {
-    display: none !important;
+/* ---------------- Spinner ---------------- */
+#loadingSpinner {
+    text-align: center;
+    margin-top: 20px;
 }
 
-/* Remove slider-related styles */
-.enhanced-image::before, .comparison-container::after {
-    display: none !important;
+/* ---------------- Download Button ---------------- */
+.download-button {
+    display: inline-block;
+    margin-top: 20px;
+    background-color: #1e3a8a;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
 }
 
-/* Loading State */
+.download-button:hover {
+    background-color: #3b5bdb;
+}
+
+/* ---------------- Image Container (Simple View) ---------------- */
+.image-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 20px;
+}
+
+.image-container .original,
+.image-container .flipped {
+    text-align: center;
+}
+
+.label-original {
+    display: inline-block;
+    background-color: #ff4d4f;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.label-flipped {
+    display: inline-block;
+    background-color: #52c41a;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* ---------------- Loading Overlay (if needed in future) ---------------- */
 .loading::after {
     content: '';
     position: absolute;
@@ -217,17 +266,17 @@
     z-index: 5;
 }
 
-/* Responsive Adjustments */
+/* ---------------- Responsive ---------------- */
 @media (max-width: 768px) {
     .comparison-container {
         flex-direction: column;
     }
-    
+
     .original-side {
         border-right: none;
         border-bottom: 1px solid #dee2e6;
     }
-    
+
     .image-wrapper img {
         max-height: 300px;
     }

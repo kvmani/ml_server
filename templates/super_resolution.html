@@ -66,45 +66,37 @@
             </div>
         </div>
 
-        <!-- Image Comparison Section -->
+        <!-- New Image Preview Section with Spinner -->
         <div class="preview-section bg-light py-5 d-none" id="previewContainer">
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-lg-10">
-                        <!-- Loading State -->
-                        <div id="loadingState" class="text-center mb-4 d-none">
-                            <div class="spinner-border text-primary mb-3" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                            <p class="text-muted">Enhancing image resolution...</p>
+
+                        <!-- Spinner -->
+                        <div id="loadingSpinner" style="display: none; text-align: center; margin: 20px;">
+                            <img src="/static/images/spinner.gif" alt="Loading..." width="50">
+                            <p>Processing image, please wait...</p>
                         </div>
 
-                        <div class="image-comparison-slider">
-                            <div class="comparison-container">
-                                <div class="image-side original-side">
-                                    <div class="image-label-container">
-                                        <span class="original-label">Original</span>
-                                    </div>
-                                    <div class="image-wrapper">
-                                        <img id="originalPreview" class="img-fluid" alt="Original Image">
-                                    </div>
-                                </div>
-                                <div class="image-side enhanced-side">
-                                    <div class="image-label-container">
-                                        <span class="enhanced-label">Flipped</span>
-                                    </div>
-                                    <div class="image-wrapper">
-                                        <img id="enhancedPreview" class="img-fluid" alt="Flipped Image">
-                                    </div>
-                                </div>
+                        <!-- Image Display -->
+                        <div class="image-container">
+                            <div class="original">
+                                <span class="label label-original">Original</span>
+                                <img id="originalImage" alt="Original Image" class="img-fluid" />
+                            </div>
+                            <div class="flipped">
+                                <span class="label label-flipped">Flipped</span>
+                                <img id="flippedImage" alt="Flipped Image" class="img-fluid" />
                             </div>
                         </div>
 
+                        <!-- Download Button -->
                         <div class="text-center mt-4">
-                            <button class="btn btn-primary btn-lg px-5 d-none" id="downloadBtn">
-                                <i class="bi bi-download me-2"></i>Download Flipped Image
-                            </button>
+                            <a id="downloadBtn" class="download-button" style="display:none;" download="flipped_image.png">
+                                ⬇️ Download Flipped Image
+                            </a>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -118,5 +110,4 @@
 
 <!-- Include Feedback Section -->
 {% include 'feedback_section.html' %}
-
-{% endblock %} 
+{% endblock %}
