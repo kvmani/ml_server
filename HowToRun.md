@@ -38,12 +38,24 @@ Before running the application, ensure you have the following installed:
 
 ## Running the Application
 
-1. **Start the Flask Server**
+1. **Start the ML Model Server**
    ```bash
-   python app.py
+   # Open a terminal and run
+   python fake_ml_model_server.py
+   
+   # The server will start on port 5002
+   # You should see: "Starting ML model server on port 5002..."
    ```
 
-2. **Access the Application**
+2. **Start the Flask Server**
+   ```bash
+   # Open another terminal and run
+   python app.py
+   
+   # The application will start on port 5000
+   ```
+
+3. **Access the Application**
    - Open your web browser
    - Navigate to: `http://127.0.0.1:5000`
 
@@ -51,13 +63,17 @@ Before running the application, ensure you have the following installed:
 
 ### Super Resolution Tool
 
-1. **Upload an Image**
+1. **Check ML Model Status**
+   - The application automatically checks if the ML model is running
+   - You'll see a warning if the model server is not available
+
+2. **Upload an Image**
    - Click "Choose File" or drag and drop an image
    - Supported formats: PNG, JPG, JPEG, GIF, BMP, TIFF, WebP
 
-2. **View Results**
-   - Use the slider to compare original and enhanced images
-   - Click "Download Enhanced Image" to save results
+3. **View Results**
+   - Original and processed images will be displayed side by side
+   - Use the download button to save the processed image
 
 ### EBSD Clean-Up Tool
 
@@ -70,27 +86,31 @@ Before running the application, ensure you have the following installed:
    - Click "Process" to start analysis
 
 3. **View Results**
-   - Use the slider to compare original and processed maps
-   - Download results using the download button
+   - Compare original and processed maps
+   - Download processed data using the download button
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Port Already in Use**
+1. **ML Model Server Not Running**
    ```bash
-   # Find process using port 5000
+   # Check if port 5002 is in use
+   # On Windows
+   netstat -ano | findstr :5002
+   
+   # On macOS/Linux
+   lsof -i :5002
+   ```
+
+2. **Flask Server Port Conflict**
+   ```bash
+   # Check if port 5000 is in use
    # On Windows
    netstat -ano | findstr :5000
    
    # On macOS/Linux
    lsof -i :5000
-   ```
-
-2. **Missing Dependencies**
-   ```bash
-   # Reinstall requirements
-   pip install -r requirements.txt
    ```
 
 3. **Browser Issues**
@@ -109,7 +129,7 @@ Before running the application, ensure you have the following installed:
 For development purposes:
 
 1. **Enable Debug Mode**
-   - Set `DEBUG=True` in app.py
+   - Debug mode is enabled by default in app.py
    - Auto-reload on code changes
    - Detailed error messages
 
@@ -123,14 +143,14 @@ For development purposes:
 For production deployment:
 
 1. **Security Settings**
-   - Set `DEBUG=False`
-   - Use production-grade server
+   - Set `DEBUG=False` in app.py
+   - Use production-grade server (e.g., Gunicorn)
    - Configure proper logging
 
-2. **Performance Optimization**
-   - Enable caching
-   - Configure proper headers
-   - Set up monitoring
+2. **Environment Variables**
+   - Configure ML model endpoint
+   - Set appropriate host and port
+   - Configure logging levels
 
 ## Support
 

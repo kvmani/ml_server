@@ -29,9 +29,10 @@ microstructure-analysis-flask/
 │   └── images/        # Static images
 ├── templates/         # HTML templates
 ├── app.py            # Main Flask application
-├── config.yml        # Configuration settings
-├── requirements.txt  # Python dependencies
-└── README.md        # Project documentation
+├── fake_ml_model_server.py  # Temporary ML model server
+├── requirements.txt   # Python dependencies
+├── feedback.json     # User feedback storage
+└── README.md         # Project documentation
 ```
 
 ## Development Workflow
@@ -50,9 +51,12 @@ microstructure-analysis-flask/
    pip install -r requirements.txt
    ```
 
-2. **Running Tests**
+2. **Running the Application**
    ```bash
-   # Run the Flask application in debug mode
+   # Start the ML model server (in a separate terminal)
+   python fake_ml_model_server.py
+
+   # Start the Flask application (in another terminal)
    python app.py
    ```
 
@@ -65,14 +69,20 @@ microstructure-analysis-flask/
 ## Code Organization
 
 ### Flask Application (app.py)
-- Route handlers at the top
-- Helper functions below
-- Configuration at the bottom
+- Route handlers for web interface
+- ML model communication
+- Error handling and validation
+- Feedback system
+
+### ML Model Server (fake_ml_model_server.py)
+- Image processing endpoints
+- Health check endpoint
+- Logging configuration
 
 ### Templates
 - Base template (base.html) for common elements
 - Tool-specific templates extend base.html
-- Keep JavaScript in separate files when possible
+- Keep JavaScript in separate files
 
 ### Static Files
 - CSS in static/css/
@@ -82,63 +92,48 @@ microstructure-analysis-flask/
 ## Best Practices
 
 1. **Error Handling**
-   - Use try-except blocks for file operations
-   - Return appropriate HTTP status codes
+   - Check ML model availability
+   - Validate file formats
    - Provide user-friendly error messages
 
 2. **Security**
    - Validate all user inputs
-   - Sanitize file names
-   - Use secure file handling practices
+   - Use in-memory processing
+   - Implement proper error handling
 
 3. **Performance**
-   - Optimize image processing
-   - Use in-memory processing when possible
-   - Implement caching where appropriate
+   - Process images in memory
+   - Efficient ML model communication
+   - Base64 encoding for image transfer
 
 4. **Testing**
-   - Test all new features
-   - Verify error handling
-   - Check cross-browser compatibility
+   - Test ML model connectivity
+   - Verify image processing
+   - Check error scenarios
 
 ## Deployment
 
 1. **Production Setup**
-   - Use production-grade server (e.g., Gunicorn)
-   - Set DEBUG=False
-   - Configure proper logging
-   - Set up proper security headers
+   - Configure ML model server
+   - Set up proper logging
+   - Configure security headers
 
 2. **Environment Variables**
-   - Use config.yml for configuration
-   - Keep sensitive data in environment variables
-   - Document all configuration options
+   - ML model endpoint configuration
+   - Debug settings
+   - Logging configuration
 
 ## Troubleshooting
 
 1. **Common Issues**
-   - File upload errors
+   - ML model connection errors
    - Image processing failures
-   - Browser compatibility issues
+   - File format validation
 
 2. **Debugging**
-   - Use Flask debug mode
-   - Check application logs
-   - Use browser developer tools
-
-## Contributing Guidelines
-
-1. **Code Review Process**
-   - Self-review before submission
-   - Follow code style guidelines
-   - Include tests for new features
-   - Update documentation
-
-2. **Pull Request Process**
-   - Clear description of changes
-   - Reference related issues
-   - Include screenshots for UI changes
-   - Update relevant documentation
+   - Check ML model status
+   - Verify request/response flow
+   - Monitor server logs
 
 ## Resources
 
