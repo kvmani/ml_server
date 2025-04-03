@@ -1,0 +1,75 @@
+{
+    "debug": true,
+    "secret_key": "your-secret-key",
+    "host": "127.0.0.1",
+    "port": 5000,
+
+    "super_resolution": {
+        "allowed_extensions": [
+            "png",
+            "jpg",
+            "jpeg",
+            "gif",
+            "bmp",
+            "tiff",
+            "webp"
+        ],
+        "ml_model": {
+            "url": "http://localhost:5002/infer",
+            "health_url": "http://localhost:5002",
+            "port": 5002,
+            "timeout": 30
+        },
+        "image_settings": {
+            "max_size": 10485760,
+            "min_dimensions": [100, 100],
+            "max_dimensions": [4096, 4096]
+        }
+    },
+
+    "ebsd_cleanup": {
+        "allowed_extensions": [
+            "ang",
+            "ctf",
+            "cpr",
+            "osc",
+            "h5",
+            "hdf5"
+        ],
+        "processing_options": [
+            "noise_reduction",
+            "grain_detection",
+            "phase_analysis"
+        ],
+        "file_settings": {
+            "max_size": 52428800
+        }
+    },
+
+    "feedback": {
+        "file_path": "feedback.json",
+        "max_entries": 1000,
+        "required_fields": [
+            "name",
+            "email",
+            "rating",
+            "feedback_text"
+        ]
+    },
+
+    "logging": {
+        "debug_level": "DEBUG",
+        "production_level": "INFO",
+        "log_file": "app.log",
+        "format": "%(asctime)s [%(levelname)s] %(message)s",
+        "max_size": 10485760,
+        "backup_count": 5,
+        "log_dir": "logs"
+    },
+
+    "security": {
+        "allowed_origins": ["http://localhost:5000"],
+        "csrf_enabled": true,
+        "ssl_enabled": false
+    }
+} 
