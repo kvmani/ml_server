@@ -6,6 +6,11 @@ import base64
 import requests
 import json
 from datetime import datetime
+from config import Config
+import logging
+
+# Initialize configuration
+config = Config()
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -74,10 +79,10 @@ def super_resolution():
         if file.filename == '':
             return jsonify({'success': False, 'error': 'No image selected'}), 400
 
-        if file and allowed_file(file.filename, ALLOWED_IMAGE_EXTENSIONS):
+        if file and allowed_file(file.filename, config.super_resolution_extensions):
             try:
                 # Forward the request to ML model server
-                response = requests.post(ML_MODEL_URL, files={'image': file})
+                response = requests.post(config.ml_model_url, files={'image': file})
                 if response.status_code == 200:
                     img_base64 = base64.b64encode(response.content).decode()
                     return jsonify({
@@ -87,6 +92,7 @@ def super_resolution():
                 else:
                     return jsonify({'success': False, 'error': 'Model processing failed'}), 500
             except Exception as e:
+                app.logger.error(f"Super resolution error: {str(e)}")
                 return jsonify({'success': False, 'error': str(e)}), 500
         return jsonify({'success': False, 'error': 'Invalid file type'}), 400
 
@@ -135,7 +141,7 @@ def ebsd_cleanup():
         if file.filename == '':
             return jsonify({'success': False, 'error': 'No selected file'}), 400
 
-        if file and allowed_file(file.filename, ALLOWED_EBSD_EXTENSIONS):
+        if file and allowed_file(file.filename, config.ebsd_extensions):
             try:
                 # Dummy visual EBSD map creation
                 dummy_map = Image.new('RGB', (800, 600), color='white')
@@ -186,6 +192,7 @@ def ebsd_cleanup():
                     'message': 'EBSD data processed successfully'
                 })
             except Exception as e:
+                app.logger.error(f"EBSD cleanup error: {str(e)}")
                 return jsonify({'success': False, 'error': str(e)}), 500
 
         return jsonify({'success': False, 'error': 'Invalid file type'}), 400
@@ -200,7 +207,7 @@ def download_processed_data():
 
 def check_ml_model_status():
     try:
-        response = requests.get("http://localhost:5002/")
+        response = requests.get(config.ml_model_health_url)
         return response.status_code == 200
     except requests.exceptions.RequestException:
         return False
@@ -211,4 +218,22 @@ def api_check_model_status():
     return jsonify({'running': is_running})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Setup logging based on debug mode
+    log_level = logging.DEBUG if config.debug else logging.INFO
+    logging.basicConfig(
+        level=log_level,
+        format=config.config['logging']['format'],
+        filename=os.path.join(config.config['logging']['log_dir'], config.config['logging']['log_file'])
+    )
+    
+    print(f"\nServer is running!")
+    print(f"Access the application at: http://{config.config['host']}:{config.config['port']}")
+    print(f"Debug mode: {config.debug}")
+    print(f"Press CTRL+C to quit\n")
+    
+    app.run(
+        host=config.config['host'],
+        port=config.config['port'],
+        debug=config.debug,
+        use_reloader=True
+    )
