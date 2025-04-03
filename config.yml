@@ -1,83 +1,67 @@
-# Application Configuration
+# Global Configuration
+debug: true
+secret_key: "your-secret-key"
+host: "0.0.0.0"
+port: 5000
 
-# Flask Settings
-flask:
-  debug: true
-  secret_key: "your-secret-key-here"  # Change this in production
-  host: "127.0.0.1"
-  port: 5000
+# Super Resolution Configuration
+super_resolution:
+  allowed_extensions:
+    - png
+    - jpg
+    - jpeg
+    - gif
+    - bmp
+    - tiff
+    - webp
+  ml_model:
+    url: "http://localhost:5002/infer"
+    health_url: "http://localhost:5002"
+    port: 5002
+    timeout: 30  # seconds
+  image_settings:
+    max_size: 10485760  # 10MB in bytes
+    min_dimensions: [100, 100]  # [width, height]
+    max_dimensions: [4096, 4096]
 
-# File Upload Settings
-upload:
-  max_content_length: 16777216  # 16MB in bytes
-  allowed_image_extensions:
-    - ".png"
-    - ".jpg"
-    - ".jpeg"
-    - ".gif"
-    - ".bmp"
-    - ".tiff"
-    - ".webp"
-  allowed_ebsd_extensions:
-    - ".ang"
-    - ".ctf"
-    - ".cpr"
-    - ".osc"
-    - ".h5"
-    - ".hdf5"
+# EBSD Cleanup Configuration
+ebsd_cleanup:
+  allowed_extensions:
+    - ang
+    - ctf
+    - cpr
+    - osc
+    - h5
+    - hdf5
+  processing_options:
+    - noise_reduction
+    - grain_detection
+    - phase_analysis
+  file_settings:
+    max_size: 52428800  # 50MB in bytes
 
-# Image Processing Settings
-image_processing:
-  super_resolution:
-    scale_factor: 4
-    quality: 95
-    format: "PNG"
-  ebsd_cleanup:
-    noise_reduction: true
-    grain_detection: true
-    phase_analysis: true
-    orientation_mapping: true
-
-# Security Settings
-security:
-  csrf_enabled: true
-  secure_headers:
-    - "X-Content-Type-Options: nosniff"
-    - "X-Frame-Options: SAMEORIGIN"
-    - "X-XSS-Protection: 1; mode=block"
-    - "Content-Security-Policy: default-src 'self'"
+# Feedback System
+feedback:
+  file_path: "feedback.json"
+  max_entries: 1000
+  required_fields:
+    - name
+    - email
+    - rating
+    - feedback_text
 
 # Logging Configuration
 logging:
-  level: "INFO"
-  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-  file: "app.log"
+  debug_level: DEBUG
+  production_level: INFO
+  log_file: "app.log"
+  format: "%(asctime)s [%(levelname)s] %(message)s"
   max_size: 10485760  # 10MB
   backup_count: 5
+  log_dir: "logs"
 
-# Cache Settings
-cache:
-  enabled: true
-  type: "simple"
-  default_timeout: 300  # 5 minutes
-
-# Performance Settings
-performance:
-  max_workers: 4
-  timeout: 30  # seconds
-  compression: true
-
-# Development Settings
-development:
-  auto_reload: true
-  debug_toolbar: true
-  testing: false
-
-# Production Settings
-production:
-  auto_reload: false
-  debug_toolbar: false
-  testing: false
-  server: "gunicorn"
-  workers: 4
-  timeout: 120 
+# Security Settings
+security:
+  allowed_origins: ["http://localhost:5000"]
+  csrf_enabled: true
+  ssl_enabled: false  # Set to true in production
