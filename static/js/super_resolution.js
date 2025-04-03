@@ -5,70 +5,79 @@ document.addEventListener('DOMContentLoaded', function () {
     const uploadForm = document.getElementById('uploadForm');
 
     const previewContainer = document.getElementById('previewContainer');
-    const originalPreview = document.getElementById('originalImage'); // Merged with new
-    const enhancedPreview = document.getElementById('flippedImage');  // Merged with new
+    const originalImage = document.getElementById('originalImage');
+    const flippedImage = document.getElementById('flippedImage');
     const downloadBtn = document.getElementById('downloadBtn');
-    const loadingSpinner = document.getElementById('loadingSpinner'); // Spinner from new
+    const loadingSpinner = document.getElementById('loadingSpinner');
 
-    // Handle file input via browse
-    fileInput.addEventListener('change', handleFiles);
-    browseBtn.addEventListener('click', () => fileInput.click());
+    async function checkModelStatus() {
+        try {
+            const response = await fetch('/api/check_model_status');
+            const data = await response.json();
+            return data.running;
+        } catch (error) {
+            console.error('Error checking model status:', error);
+            return false;
+        }
+    }
 
-    // Unified file handler
-    function handleFiles() {
+    async function handleFiles() {
         const files = fileInput.files;
-        if (files.length === 0) return;
+        if (!files.length) return;
 
         const file = files[0];
         const validExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff', '.webp'];
         const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
 
         if (!validExtensions.includes(fileExtension)) {
-            alert('Please upload a valid image file (PNG, JPG, JPEG, GIF, BMP, TIFF, or WebP)');
+            alert('Please upload a valid image file');
             return;
         }
 
-        // Prepare form data
-        const formData = new FormData(uploadForm);
-        formData.append('image', file);
-
-        // UI setup
+        // Show loading state immediately
         previewContainer.classList.remove('d-none');
         loadingSpinner.style.display = 'block';
         downloadBtn.style.display = 'none';
-        originalPreview.style.display = 'none';
-        enhancedPreview.style.display = 'none';
 
-        // Fetch from server
-        fetch('/superres', {
-            method: 'POST',
-            body: formData
-        })
-            .then(response => response.json())
-            .then(data => {
-                loadingSpinner.style.display = 'none';
+        try {
+            // Check if ML model is running
+            const modelRunning = await checkModelStatus();
+            if (!modelRunning) {
+                throw new Error('ML Model is not running. Please try again later.');
+            }
 
-                if (data.success) {
-                    originalPreview.src = data.original_image;
-                    enhancedPreview.src = data.enhanced_image;
+            const formData = new FormData();
+            formData.append('image', file);
 
-                    originalPreview.style.display = 'block';
-                    enhancedPreview.style.display = 'block';
-
-                    // Enable download
-                    downloadBtn.href = data.enhanced_image;
-                    downloadBtn.download = 'flipped_' + file.name;
-                    downloadBtn.style.display = 'inline-block';
-                } else {
-                    alert(data.error || 'Error processing image');
-                }
-            })
-            .catch(error => {
-                loadingSpinner.style.display = 'none';
-                console.error('Error:', error);
-                alert('An error occurred while processing the image. Please try again.');
+            const response = await fetch('/superres', {
+                method: 'POST',
+                body: formData
             });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // Display both original and flipped images
+                originalImage.src = data.original_image;
+                flippedImage.src = data.enhanced_image;
+                
+                // Show download button and set correct filename
+                downloadBtn.href = data.enhanced_image;
+                downloadBtn.download = 'flipped_' + file.name;
+                downloadBtn.style.display = 'inline-block';
+            } else {
+                throw new Error(data.error || 'Processing failed');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert(error.message || 'Error processing image. Please try again.');
+        } finally {
+            loadingSpinner.style.display = 'none';
+        }
     }
+
+    fileInput.addEventListener('change', handleFiles);
+    browseBtn.addEventListener('click', () => fileInput.click());
 
     // Drag-and-drop support
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -82,12 +91,20 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     ['dragenter', 'dragover'].forEach(eventName => {
-        dropZone.addEventListener(eventName, () => dropZone.classList.add('dragover'), false);
+        dropZone.addEventListener(eventName, highlight, false);
     });
 
     ['dragleave', 'drop'].forEach(eventName => {
-        dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'), false);
+        dropZone.addEventListener(eventName, unhighlight, false);
     });
+
+    function highlight(e) {
+        dropZone.classList.add('dragover');
+    }
+
+    function unhighlight(e) {
+        dropZone.classList.remove('dragover');
+    }
 
     dropZone.addEventListener('drop', handleDrop, false);
 

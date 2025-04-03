@@ -34,6 +34,10 @@ logger.addHandler(file_handler)
 
 @app.route("/infer", methods=["POST"])
 def infer():
+    """
+    Temporary ML model endpoint that flips images.
+    This will be replaced with actual ML model in the future.
+    """
     if 'image' not in request.files:
         logging.warning("No image uploaded in request.")
         return jsonify({"error": "No image uploaded"}), 400
@@ -42,27 +46,37 @@ def infer():
         logging.info("Image received. Starting inference...")
         start_time = time.time()
 
+        # Read and process the image
         img = Image.open(request.files['image'])
-        flipped = img.transpose(Image.FLIP_LEFT_RIGHT)
+        
+        # Convert RGBA/P images to RGB
+        if img.mode in ('RGBA', 'P'):
+            img = img.convert('RGB')
 
+        # Temporary ML logic (image flipping)
+        # This will be replaced with actual ML model processing
+        processed_img = img.transpose(Image.FLIP_LEFT_RIGHT)
+
+        # Save the processed image
         img_io = io.BytesIO()
-        flipped.save(img_io, 'PNG')
+        processed_img.save(img_io, format='PNG')
         img_io.seek(0)
 
         elapsed = time.time() - start_time
-        logging.info(f"Inference complete. Time taken: {elapsed:.3f} seconds.")
+        logging.info(f"Processing complete. Time taken: {elapsed:.3f} seconds")
 
         return send_file(img_io, mimetype='image/png')
 
     except Exception as e:
-        logging.error(f"Error during inference: {str(e)}")
-        return jsonify({"error": "Internal server error"}), 500
+        logging.error(f"Error during processing: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/", methods=["GET"])
 def health():
-    logging.info("Health check called.")
-    return jsonify({"status": "ML model server running"}), 200
+    """Health check endpoint"""
+    return jsonify({"status": "healthy", "message": "ML model server is running"}), 200
 
 if __name__ == "__main__":
-    logging.info("Starting ML model server on port 5002...")
-    app.run(host="0.0.0.0", port=5002)
+    port = 5002
+    logging.info(f"Starting ML model server on port {port}")
+    app.run(host="0.0.0.0", port=port)
