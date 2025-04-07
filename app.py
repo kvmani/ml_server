@@ -12,22 +12,19 @@ import logging
 # Initialize configuration
 config = Config()
 
+def allowed_file(filename, allowed_extensions):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in allowed_extensions
+
+
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
-
-# Constants
-ALLOWED_IMAGE_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'bmp', 'tiff', 'webp'}
-ALLOWED_EBSD_EXTENSIONS = {'ang', 'ctf', 'cpr', 'osc', 'h5', 'hdf5'}
-ML_MODEL_URL = "http://localhost:5002/infer"
 
 # Initialize feedback file
 FEEDBACK_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'feedback.json')
 if not os.path.exists(FEEDBACK_FILE):
     with open(FEEDBACK_FILE, 'w') as f:
         json.dump({'feedback': []}, f)
-
-def allowed_file(filename, extensions):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in extensions
 
 @app.route('/')
 def home():
@@ -107,7 +104,8 @@ def super_resolution():
         if file.filename == '':
             return jsonify({'success': False, 'error': 'No image selected'}), 400
 
-        if file and allowed_file(file.filename, config.super_resolution_extensions):
+
+        if file and allowed_file(file.filename, config.config['super_resolution']['allowed_extensions']):
             try:
                 # Forward the request to ML model server
                 response = requests.post(config.ml_model_url, files={'image': file})
@@ -141,7 +139,7 @@ def superres_proxy():
 
         # Forward to ML model for processing
         file.seek(0)  # Reset file pointer
-        response = requests.post(ML_MODEL_URL, files={'image': file})
+        response = requests.post(config.ml_model_url, files={'image': file})
         
         if response.status_code == 200:
             # Get processed (flipped) image data
@@ -227,11 +225,6 @@ def ebsd_cleanup():
 
     return render_template('ebsd_cleanup.html')
 
-@app.route('/download_processed_data')
-def download_processed_data():
-    dummy_data = "This is processed EBSD data"
-    return send_file(io.BytesIO(dummy_data.encode()), mimetype='text/plain', 
-                    as_attachment=True, download_name='processed_ebsd_data.ang')
 
 def check_ml_model_status():
     try:
