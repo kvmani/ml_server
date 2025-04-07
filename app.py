@@ -72,6 +72,34 @@ def submit_feedback():
 @app.route('/super_resolution', methods=['GET', 'POST'])
 def super_resolution():
     if request.method == 'POST':
+        # Check if ML model server is running
+        try:
+            response = requests.get(config.config['super_resolution']['ml_model']['health_url'])
+            if response.status_code != 200:
+                # Try to start the server if it's not running
+                if config.start_ml_model_service():
+                    return jsonify({
+                        'success': False, 
+                        'error': 'ML model server was not running. It has been started. Please try your request again.'
+                    }), 503
+                else:
+                    return jsonify({
+                        'success': False, 
+                        'error': 'ML model server is not running and could not be started. Please try again later.'
+                    }), 503
+        except requests.exceptions.RequestException:
+            # Try to start the server if it's not running
+            if config.start_ml_model_service():
+                return jsonify({
+                    'success': False, 
+                    'error': 'ML model server was not running. It has been started. Please try your request again.'
+                }), 503
+            else:
+                return jsonify({
+                    'success': False, 
+                    'error': 'ML model server is not running and could not be started. Please try again later.'
+                }), 503
+
         if 'image' not in request.files:
             return jsonify({'success': False, 'error': 'No image uploaded'}), 400
 
@@ -226,13 +254,19 @@ if __name__ == '__main__':
         filename=os.path.join(config.config['logging']['log_dir'], config.config['logging']['log_file'])
     )
     
+    print("\nChecking ML model service...")
+    if not config.start_ml_model_service():
+        print("Warning: ML model service could not be started. Some features may not work.")
+    else:
+        print("ML model service is running!")
+    
     print(f"\nServer is running!")
-    print(f"Access the application at: http://{config.config['host']}:{config.config['port']}")
+    print(f"Access the application at: http://127.0.0.1:{config.config['port']}")
     print(f"Debug mode: {config.debug}")
     print(f"Press CTRL+C to quit\n")
     
     app.run(
-        host=config.config['host'],
+        host="127.0.0.1",
         port=config.config['port'],
         debug=config.debug,
         use_reloader=True
