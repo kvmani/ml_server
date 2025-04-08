@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const formData = new FormData();
             formData.append('image', file);
 
-            const response = await fetch('/superres', {
+            const response = await fetch('/super_resolution', {
                 method: 'POST',
                 body: formData
             });
