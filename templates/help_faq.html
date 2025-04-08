@@ -3,13 +3,15 @@
 {% block title %}Help & FAQ{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container mt-5">
     <h1 class="text-center mb-5">Help & Frequently Asked Questions</h1>
 
     <div class="accordion" id="faqAccordion">
-        <!-- Microstructure Super-Resolution Section -->
+        
+        <!-- 🔍 Microstructure Super-Resolution -->
         <div class="accordion-item">
-            <h2 class="accordion-header">
+            <h2 class="accordion-header d-flex align-items-center">
+                <span class="me-2">🧬</span>
                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
                     About Microstructure Super-Resolution
                 </button>
@@ -17,17 +19,22 @@
             <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
                 <div class="accordion-body">
                     <h5>What is Microstructure Super-Resolution?</h5>
-                    <p>Microstructure Super-Resolution is a technique that enhances the quality and resolution of microstructural images using advanced image processing algorithms.</p>
-                    
+                    <p>
+                        Microstructure Super-Resolution refers to enhancing the resolution and clarity of low-quality microstructural images using advanced deep learning techniques.
+                    </p>
+
                     <h5>How does it work?</h5>
-                    <p>The system processes your input images using specialized algorithms to improve clarity, detail, and resolution without the need for deep learning.</p>
+                    <p>
+                        Our system uses state-of-the-art Generative Adversarial Networks (GANs) to transform low-resolution inputs into detailed, high-resolution images. These models are trained on high-quality data to realistically reconstruct missing details and refine image quality in a data-driven manner.
+                    </p>
                 </div>
             </div>
         </div>
 
-        <!-- EBSD Clean-Up Section -->
+        <!-- ⚙️ EBSD Clean-Up -->
         <div class="accordion-item">
-            <h2 class="accordion-header">
+            <h2 class="accordion-header d-flex align-items-center">
+                <span class="me-2">📊</span>
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
                     EBSD Clean-Up Features
                 </button>
@@ -35,17 +42,22 @@
             <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                 <div class="accordion-body">
                     <h5>What is EBSD Clean-Up?</h5>
-                    <p>EBSD Clean-Up is a tool designed to improve the quality of Electron Backscatter Diffraction (EBSD) data by removing noise and artifacts.</p>
-                    
+                    <p>
+                        EBSD Clean-Up is a utility to post-process Electron Backscatter Diffraction (EBSD) data, enhancing orientation maps by reducing noise, correcting artifacts, and improving grain boundary visualization.
+                    </p>
+
                     <h5>What file formats are supported?</h5>
-                    <p>The system supports common EBSD data formats including .ang, .ctf, and other standard formats.</p>
+                    <p>
+                        The tool supports standard EBSD file formats, including <code>.ang</code>, <code>.ctf</code>, <code>.osc</code>, <code>.h5</code>, and related formats.
+                    </p>
                 </div>
             </div>
         </div>
 
-        <!-- General Questions -->
+        <!-- 🌐 General Questions -->
         <div class="accordion-item">
-            <h2 class="accordion-header">
+            <h2 class="accordion-header d-flex align-items-center">
+                <span class="me-2">❓</span>
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
                     General Questions
                 </button>
@@ -53,16 +65,24 @@
             <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                 <div class="accordion-body">
                     <h5>How do I get started?</h5>
-                    <p>Simply select one of the available tools from the home page and follow the instructions for uploading and processing your data.</p>
-                    
+                    <p>
+                        Navigate to the home page, choose your desired tool (Super-Resolution or EBSD Clean-Up), and follow the instructions to upload and process your data.
+                    </p>
+
                     <h5>What are the system requirements?</h5>
-                    <p>Our tools are web-based and work with any modern web browser. No special software installation is required.</p>
-                    
+                    <p>
+                        All tools are fully web-based and require only a modern browser such as Chrome, Firefox, or Edge. No additional software installation is necessary.
+                    </p>
+
                     <h5>Is my data secure?</h5>
-                    <p>Yes, we take data security seriously. All uploaded files are processed securely and are not stored permanently on our servers.</p>
+                    <p>
+                        Yes. We ensure that all uploads are handled securely. Your data is not permanently stored and is only used for temporary processing during the session.
+                    </p>
                 </div>
             </div>
         </div>
     </div>
+
+   
 </div>
-{% endblock %} 
+{% endblock %}
