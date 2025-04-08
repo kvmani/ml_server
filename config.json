@@ -43,6 +43,12 @@
         ],
         "file_settings": {
             "max_size": 52428800
+        },
+        "ml_model": {
+            "url": "http://localhost:5003/infer",
+            "health_url": "http://localhost:5003",
+            "port": 5003,
+            "timeout": 30
         }
     },
 
