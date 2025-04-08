@@ -100,6 +100,12 @@ def infer():
     enhanced_map.save(enhanced_io, format='PNG')
     enhanced_b64 = base64.b64encode(enhanced_io.getvalue()).decode()
 
+    # ✅ Save enhanced map for download
+    os.makedirs("tmp", exist_ok=True)
+    enhanced_map.save("tmp/enhanced_ebsd_map.png", format="PNG")
+    logger.info("Enhanced EBSD map saved to tmp/enhanced_ebsd_map.png")
+
+
     duration = time.time() - start_time
     logger.info(f"Processing complete. Time taken: {duration:.3f} seconds")
 

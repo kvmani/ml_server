@@ -211,6 +211,17 @@ def api_check_ebsd_model_status():
     is_running = check_ebsd_model_status()
     return jsonify({'running': is_running})
 
+@app.route('/download_processed_data')
+def download_processed_data():
+    try:
+        file_path = "tmp/enhanced_ebsd_map.png"
+        if not os.path.exists(file_path):
+            return "Processed file not found.", 404
+        return send_file(file_path, mimetype='image/png', as_attachment=True, download_name="enhanced_ebsd_map.png")
+    except Exception as e:
+        app.logger.error(f"Download error: {str(e)}")
+        return "Internal Server Error", 500
+
 if __name__ == '__main__':
     # Setup logging based on debug mode
     log_level = logging.DEBUG if config.debug else logging.INFO
