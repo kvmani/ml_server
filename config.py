@@ -107,3 +107,55 @@ class Config:
         except Exception as e:
             print(f"Error starting ML model server: {str(e)}")
             return False 
+
+
+    def start_ebsd_model_service(self):
+        """Start the EBSD model service if it's not running"""
+        try:
+            # Check if EBSD model is already running
+            health_url = self.config['ebsd_cleanup']['ml_model']['health_url']
+            response = requests.get(health_url, timeout=3)
+            if response.status_code == 200:
+                logging.info("EBSD model service is already running")
+                return True
+        except requests.exceptions.RequestException:
+            logging.info("EBSD model service not found, attempting to start it...")
+
+        try:
+            # Get absolute path to fake_ebsd_model.py
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            ebsd_server_path = os.path.join(current_dir, 'fake_ebsd_model.py')
+
+            print(f"Starting EBSD model server from: {ebsd_server_path}")
+            
+            # Start the EBSD model server
+            if os.name == 'nt':  # Windows
+                subprocess.Popen(
+                    ['start', 'cmd', '/k', 'python', ebsd_server_path],
+                    shell=True
+                )
+            else:  # Unix/Linux/Mac
+                subprocess.Popen(
+                    ['python', ebsd_server_path],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE
+                )
+
+            # Wait for service to start
+            max_attempts = 10
+            for attempt in range(max_attempts):
+                try:
+                    response = requests.get(health_url)
+                    if response.status_code == 200:
+                        print("EBSD model server started successfully!")
+                        return True
+                except requests.exceptions.RequestException:
+                    time.sleep(1)
+                print(f"Waiting for EBSD model server to start... (Attempt {attempt + 1}/{max_attempts})")
+
+            print("Failed to start EBSD model server")
+            return False
+
+        except Exception as e:
+            print(f"Error starting EBSD model server: {str(e)}")
+            return False
