@@ -199,6 +199,18 @@ def api_check_model_status():
     return jsonify({'running': is_running})
 
 
+def check_ebsd_model_status():
+    try:
+        response = requests.get(config.config['ebsd_cleanup']['ml_model']['health_url'])
+        return response.status_code == 200
+    except requests.exceptions.RequestException:
+        return False
+
+@app.route('/api/check_ebsd_model_status')
+def api_check_ebsd_model_status():
+    is_running = check_ebsd_model_status()
+    return jsonify({'running': is_running})
+
 if __name__ == '__main__':
     # Setup logging based on debug mode
     log_level = logging.DEBUG if config.debug else logging.INFO
