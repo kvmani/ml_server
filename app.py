@@ -104,58 +104,33 @@ def super_resolution():
         if file.filename == '':
             return jsonify({'success': False, 'error': 'No image selected'}), 400
 
-
         if file and allowed_file(file.filename, config.config['super_resolution']['allowed_extensions']):
             try:
                 # Forward the request to ML model server
                 response = requests.post(config.ml_model_url, files={'image': file})
                 if response.status_code == 200:
-                    img_base64 = base64.b64encode(response.content).decode()
+                    # Get base64 of original image
+                    orig_io = io.BytesIO()
+                    file.seek(0)
+                    file.save(orig_io)
+                    orig_io.seek(0)
+                    original_b64 = base64.b64encode(orig_io.getvalue()).decode()
+
+                    # Get base64 of enhanced image
+                    enhanced_b64 = base64.b64encode(response.content).decode()
+
                     return jsonify({
                         'success': True,
-                        'enhanced_image': f'data:image/png;base64,{img_base64}'
+                        'original_image': f'data:image/png;base64,{original_b64}',
+                        'enhanced_image': f'data:image/png;base64,{enhanced_b64}'
                     })
                 else:
                     return jsonify({'success': False, 'error': 'Model processing failed'}), 500
             except Exception as e:
                 app.logger.error(f"Super resolution error: {str(e)}")
-                return jsonify({'success': False, 'error': str(e)}), 500
-        return jsonify({'success': False, 'error': 'Invalid file type'}), 400
-
+        return jsonify({'success': False, 'error': str(e)}), 500
     return render_template('super_resolution.html')
 
-@app.route('/superres', methods=['POST'])
-def superres_proxy():
-    if 'image' not in request.files:
-        return jsonify({"success": False, "error": "No image uploaded"}), 400
-
-    file = request.files['image']
-    try:
-        # Get original image data
-        orig_io = io.BytesIO()
-        file.save(orig_io)
-        orig_io.seek(0)
-        orig_base64 = base64.b64encode(orig_io.getvalue()).decode()
-
-        # Forward to ML model for processing
-        file.seek(0)  # Reset file pointer
-        response = requests.post(config.ml_model_url, files={'image': file})
-        
-        if response.status_code == 200:
-            # Get processed (flipped) image data
-            flipped_base64 = base64.b64encode(response.content).decode()
-
-            return jsonify({
-                "success": True,
-                "original_image": f"data:image/png;base64,{orig_base64}",
-                "enhanced_image": f"data:image/png;base64,{flipped_base64}"
-            })
-        else:
-            return jsonify({"success": False, "error": "Model processing failed"}), 500
-
-    except Exception as e:
-        app.logger.error(f"Superres processing error: {str(e)}")
-        return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route('/ebsd_cleanup', methods=['GET', 'POST'])
 def ebsd_cleanup():
@@ -167,61 +142,46 @@ def ebsd_cleanup():
         if file.filename == '':
             return jsonify({'success': False, 'error': 'No selected file'}), 400
 
-        if file and allowed_file(file.filename, config.ebsd_extensions):
-            try:
-                # Dummy visual EBSD map creation
-                dummy_map = Image.new('RGB', (800, 600), color='white')
-                draw = ImageDraw.Draw(dummy_map)
-                for i in range(0, 800, 50):
-                    for j in range(0, 600, 50):
-                        color = (
-                            int(128 + (i * j) % 128),
-                            int(128 + (i + j) % 128),
-                            int(128 + ((i - j) * 2) % 128)
-                        )
-                        draw.polygon([
-                            (i, j),
-                            (i + 50, j + 25),
-                            (i + 25, j + 50),
-                            (i - 25, j + 25)
-                        ], fill=color)
+        # Check extension
+        allowed_exts = config.config['ebsd_cleanup']['allowed_extensions']
+        if not allowed_file(file.filename, allowed_exts):
+            return jsonify({'success': False, 'error': 'Invalid file type'}), 400
 
-                buffer = io.BytesIO()
-                dummy_map.save(buffer, format='PNG')
-                original_b64 = base64.b64encode(buffer.getvalue()).decode()
+        # Check file size
+        file.seek(0, os.SEEK_END)
+        file_size = file.tell()
+        file.seek(0)
+        max_size = config.config['ebsd_cleanup']['file_settings']['max_size']
+        if file_size > max_size:
+            return jsonify({'success': False, 'error': 'File size exceeds limit'}), 400
 
-                # Enhanced map
-                enhanced_map = dummy_map.copy()
-                draw = ImageDraw.Draw(enhanced_map)
-                for i in range(0, 800, 50):
-                    for j in range(0, 600, 50):
-                        color = (
-                            int(160 + (i * j) % 96),
-                            int(160 + (i + j) % 96),
-                            int(160 + ((i - j) * 2) % 96)
-                        )
-                        draw.polygon([
-                            (i, j),
-                            (i + 50, j + 25),
-                            (i + 25, j + 50),
-                            (i - 25, j + 25)
-                        ], fill=color)
+        # ✅ Check if fake_ebsd_model.py is running
+        try:
+            health_url = config.config['ebsd_cleanup']['ml_model']['health_url']
+            health_response = requests.get(health_url, timeout=3)
+            if health_response.status_code != 200:
+                return jsonify({'success': False, 'error': 'EBSD ML model is not running'}), 503
+        except requests.exceptions.RequestException:
+            return jsonify({'success': False, 'error': 'EBSD ML model is not reachable'}), 503
 
-                buffer2 = io.BytesIO()
-                enhanced_map.save(buffer2, format='PNG')
-                enhanced_b64 = base64.b64encode(buffer2.getvalue()).decode()
+        # ✅ If model is up, send the file
+        try:
+            model_url = config.config['ebsd_cleanup']['ml_model']['url']
+            timeout = config.config['ebsd_cleanup']['ml_model'].get('timeout', 30)
+            response = requests.post(
+                model_url,
+                files={'ebsd_file': file},
+                timeout=timeout
+            )
 
-                return jsonify({
-                    'success': True,
-                    'original_map': f'data:image/png;base64,{original_b64}',
-                    'enhanced_map': f'data:image/png;base64,{enhanced_b64}',
-                    'message': 'EBSD data processed successfully'
-                })
-            except Exception as e:
-                app.logger.error(f"EBSD cleanup error: {str(e)}")
-                return jsonify({'success': False, 'error': str(e)}), 500
+            if response.status_code == 200:
+                return jsonify(response.json())
+            else:
+                return jsonify({'success': False, 'error': 'Model processing failed'}), 500
 
-        return jsonify({'success': False, 'error': 'Invalid file type'}), 400
+        except Exception as e:
+            app.logger.error(f"EBSD cleanup error: {str(e)}")
+            return jsonify({'success': False, 'error': str(e)}), 500
 
     return render_template('ebsd_cleanup.html')
 
@@ -238,6 +198,7 @@ def api_check_model_status():
     is_running = check_ml_model_status()
     return jsonify({'running': is_running})
 
+
 if __name__ == '__main__':
     # Setup logging based on debug mode
     log_level = logging.DEBUG if config.debug else logging.INFO
@@ -252,6 +213,12 @@ if __name__ == '__main__':
         print("Warning: ML model service could not be started. Some features may not work.")
     else:
         print("ML model service is running!")
+
+    print("\nChecking EBSD model service...")
+    if not config.start_ebsd_model_service():
+        print("Warning: EBSD model service could not be started. EBSD features may not work.")
+    else:
+        print("EBSD model service is running!")
     
     print(f"\nServer is running!")
     print(f"Access the application at: http://127.0.0.1:{config.config['port']}")
