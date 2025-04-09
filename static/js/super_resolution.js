@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 
                 // Show download button and set correct filename
                 downloadBtn.href = data.enhanced_image;
-                downloadBtn.download = 'flipped_' + file.name;
+                downloadBtn.download = 'Enhanced_' + file.name;
                 downloadBtn.style.display = 'inline-block';
             } else {
                 throw new Error(data.error || 'Processing failed');
