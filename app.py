@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, jsonify, send_file
 import os
 import io
-from PIL import Image, ImageDraw
 import base64
 import requests
 import json
@@ -12,13 +11,26 @@ import logging
 # Initialize configuration
 config = Config()
 
+app = Flask(__name__)
+app.secret_key = os.urandom(24)
+
+def check_service_health(health_url: str, timeout: int = 3) -> bool:
+    try:
+        response = requests.get(health_url, timeout=timeout)
+        return response.status_code == 200
+    except requests.exceptions.RequestException:
+        return False
+
+def check_ml_model_status():
+    return check_service_health(config.ml_model_health_url)
+
+def check_ebsd_model_status():
+    return check_service_health(config.config['ebsd_cleanup']['ml_model']['health_url'])
+
 def allowed_file(filename, allowed_extensions):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in allowed_extensions
 
-
-app = Flask(__name__)
-app.secret_key = os.urandom(24)
 
 # Initialize feedback file
 FEEDBACK_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'feedback.json')
@@ -104,7 +116,7 @@ def super_resolution():
         if file.filename == '':
             return jsonify({'success': False, 'error': 'No image selected'}), 400
 
-        if file and allowed_file(file.filename, config.config['super_resolution']['allowed_extensions']):
+        if allowed_file(file.filename, config.config['super_resolution']['allowed_extensions']):
             try:
                 # Forward the request to ML model server
                 response = requests.post(config.ml_model_url, files={'image': file})
@@ -186,30 +198,13 @@ def ebsd_cleanup():
     return render_template('ebsd_cleanup.html')
 
 
-def check_ml_model_status():
-    try:
-        response = requests.get(config.ml_model_health_url)
-        return response.status_code == 200
-    except requests.exceptions.RequestException:
-        return False
-
 @app.route('/api/check_model_status')
 def api_check_model_status():
-    is_running = check_ml_model_status()
-    return jsonify({'running': is_running})
-
-
-def check_ebsd_model_status():
-    try:
-        response = requests.get(config.config['ebsd_cleanup']['ml_model']['health_url'])
-        return response.status_code == 200
-    except requests.exceptions.RequestException:
-        return False
+    return jsonify({'running': check_ml_model_status()})
 
 @app.route('/api/check_ebsd_model_status')
 def api_check_ebsd_model_status():
-    is_running = check_ebsd_model_status()
-    return jsonify({'running': is_running})
+    return jsonify({'running': check_ebsd_model_status()})
 
 @app.route('/download_processed_data')
 def download_processed_data():
@@ -249,7 +244,7 @@ if __name__ == '__main__':
     print(f"Press CTRL+C to quit\n")
     
     app.run(
-        host="127.0.0.1",
+        host=config.config['host'],
         port=config.config['port'],
         debug=config.debug,
         use_reloader=True
