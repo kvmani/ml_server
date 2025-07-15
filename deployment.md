@@ -30,7 +30,10 @@ pip install -r requirements-test.txt
 The hydride segmentation feature will require additional ML packages. When that code is integrated, extend `requirements.txt` with the necessary packages and rerun the installation step.
 
 ## 3. Configuration
-Configuration values are stored in `config.json`.  Review the host and port settings and modify them if required.  For production, set `"debug": false`.
+Configuration values are stored in `config.json`.  You can override any value
+via environment variables using the `APP_` prefix and `__` for nested keys
+(e.g. `APP_PORT=8080`).  Review the host and port settings and modify them if
+required.  For production, set `"debug": false`.
 
 ## 4. Starting the Services
 The application consists of the Flask web UI and one or more ML model servers.  Start them within the virtual environment.
@@ -38,9 +41,9 @@ The application consists of the Flask web UI and one or more ML model servers.  
 ### a. Start model services
 ```bash
 # Super‑resolution (mock)
-python fake_ml_model_server.py &
+python scripts/start_ml_model_service.py &
 # EBSD cleanup (mock)
-python fake_ebsd_model.py &
+python scripts/start_ebsd_model_service.py &
 # Future: Hydride segmentation server will have its own script
 ```
 
