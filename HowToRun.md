@@ -40,11 +40,11 @@ Before running the application, ensure you have the following installed:
 
 1. **Start the ML Model Server**
    ```bash
-   # Open a terminal and run
-   python fake_ml_model_server.py
+    # Open a terminal and run
+    python scripts/start_ml_model_service.py
    
-   # The server will start on port 5002
-   # You should see: "Starting ML model server on port 5002..."
+    # The server will start on port 5002
+    # You should see: "ML model server started successfully!"
    ```
 
 2. **Start the Flask Server**

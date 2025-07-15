@@ -1,161 +1,105 @@
 import os
-import logging
 import json
-import subprocess
-import time
-import requests
+import logging
+from typing import Any, Dict
+
 
 class Config:
+    """Singleton configuration loader with environment variable overrides."""
     _instance = None
-    
+    _ENV_PREFIX = "APP_"
+
     def __new__(cls):
         if cls._instance is None:
-            cls._instance = super(Config, cls).__new__(cls)
+            cls._instance = super().__new__(cls)
             cls._instance._load_config()
         return cls._instance
-    
-    def _load_config(self):
-        config_path = os.path.join(os.path.dirname(__file__), 'config.json')
-        with open(config_path, 'r') as f:
-            self.config = json.load(f)
-            
-        # Setup logging based on debug mode
+
+    def _load_config(self) -> None:
+        config_path = os.path.join(os.path.dirname(__file__), "config.json")
+        with open(config_path, "r") as f:
+            self.config: Dict[str, Any] = json.load(f)
+        self._apply_env_overrides()
         self._setup_logging()
-    
-    def _setup_logging(self):
-        log_level = logging.DEBUG if self.config.get('debug', False) else logging.INFO
-        
-        # Create logs directory if it doesn't exist
-        log_dir = self.config['logging']['log_dir']
+
+    def _apply_env_overrides(self) -> None:
+        prefix_len = len(self._ENV_PREFIX)
+        for key, value in os.environ.items():
+            if not key.startswith(self._ENV_PREFIX):
+                continue
+            path = key[prefix_len:].lower().split("__")
+            self._set_nested_value(self.config, path, value)
+
+    def _set_nested_value(self, data: Dict[str, Any], path: list[str], value: str) -> None:
+        for part in path[:-1]:
+            if part not in data or not isinstance(data[part], dict):
+                data[part] = {}
+            data = data[part]
+        try:
+            data[path[-1]] = json.loads(value)
+        except Exception:
+            data[path[-1]] = value
+
+    def _setup_logging(self) -> None:
+        log_level = logging.DEBUG if self.debug else logging.INFO
+        log_dir = self.logging_settings.get("log_dir", "logs")
         os.makedirs(log_dir, exist_ok=True)
-        
         logging.basicConfig(
             level=log_level,
-            format=self.config['logging']['format'],
-            filename=os.path.join(log_dir, self.config['logging']['log_file'])
+            format=self.logging_settings.get("format", "%(asctime)s [%(levelname)s] %(message)s"),
+            filename=os.path.join(log_dir, self.logging_settings.get("log_file", "app.log")),
         )
-    
+
+    # === Accessors ===
     @property
-    def debug(self):
-        return self.config.get('debug', False)
-    
+    def host(self) -> str:
+        return self.config.get("host", "127.0.0.1")
+
     @property
-    def super_resolution_extensions(self):
-        return set(self.config['super_resolution']['allowed_extensions'])
-    
+    def port(self) -> int:
+        return int(self.config.get("port", 5000))
+
     @property
-    def ebsd_extensions(self):
-        return set(self.config['ebsd_cleanup']['allowed_extensions'])
-    
+    def debug(self) -> bool:
+        return bool(self.config.get("debug", False))
+
     @property
-    def ml_model_url(self):
-        return self.config['super_resolution']['ml_model']['url']
-    
+    def secret_key(self) -> str:
+        return self.config.get("secret_key", "")
+
     @property
-    def ml_model_health_url(self):
-        return self.config['super_resolution']['ml_model']['health_url']
+    def super_resolution_settings(self) -> Dict[str, Any]:
+        return self.config.get("super_resolution", {})
 
-    def start_ml_model_service(self):
-        """Start the ML model service if it's not running"""
-        try:
-            # Check if service is already running
-            response = requests.get(self.config['super_resolution']['ml_model']['health_url'])
-            if response.status_code == 200:
-                logging.info("ML model service is already running")
-                return True
-        except requests.exceptions.RequestException:
-            logging.info("ML model service not found, attempting to start it...")
-            pass
+    @property
+    def ebsd_cleanup_settings(self) -> Dict[str, Any]:
+        return self.config.get("ebsd_cleanup", {})
 
-        try:
-            # Get the absolute path to fake_ml_model_server.py
-            current_dir = os.path.dirname(os.path.abspath(__file__))
-            ml_server_path = os.path.join(current_dir, 'fake_ml_model_server.py')
-            
-            # Print the path for debugging
-            print(f"Starting ML model server from: {ml_server_path}")
-            
-            # Start the ML model server
-            if os.name == 'nt':  # Windows
-                # Use start command to open in new window
-                subprocess.Popen(
-                    ['start', 'cmd', '/k', 'python', ml_server_path],
-                    shell=True
-                )
-            else:  # Unix/Linux/Mac
-                subprocess.Popen(
-                    ['python', ml_server_path],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE
-                )
-            
-            # Wait for service to start
-            max_attempts = 10
-            for attempt in range(max_attempts):
-                try:
-                    response = requests.get(self.config['super_resolution']['ml_model']['health_url'])
-                    if response.status_code == 200:
-                        print("ML model server started successfully!")
-                        return True
-                except requests.exceptions.RequestException:
-                    time.sleep(1)  # Wait 1 second before next attempt
-                print(f"Waiting for ML model server to start... (Attempt {attempt + 1}/{max_attempts})")
-            
-            print("Failed to start ML model server")
-            return False
-            
-        except Exception as e:
-            print(f"Error starting ML model server: {str(e)}")
-            return False 
+    @property
+    def feedback_settings(self) -> Dict[str, Any]:
+        return self.config.get("feedback", {})
 
+    @property
+    def logging_settings(self) -> Dict[str, Any]:
+        return self.config.get("logging", {})
 
-    def start_ebsd_model_service(self):
-        """Start the EBSD model service if it's not running"""
-        try:
-            # Check if EBSD model is already running
-            health_url = self.config['ebsd_cleanup']['ml_model']['health_url']
-            response = requests.get(health_url, timeout=3)
-            if response.status_code == 200:
-                logging.info("EBSD model service is already running")
-                return True
-        except requests.exceptions.RequestException:
-            logging.info("EBSD model service not found, attempting to start it...")
+    @property
+    def security_settings(self) -> Dict[str, Any]:
+        return self.config.get("security", {})
 
-        try:
-            # Get absolute path to fake_ebsd_model.py
-            current_dir = os.path.dirname(os.path.abspath(__file__))
-            ebsd_server_path = os.path.join(current_dir, 'fake_ebsd_model.py')
+    # Backwards compatibility helpers
+    @property
+    def super_resolution_extensions(self) -> set:
+        return set(self.super_resolution_settings.get("allowed_extensions", []))
 
-            print(f"Starting EBSD model server from: {ebsd_server_path}")
-            
-            # Start the EBSD model server
-            if os.name == 'nt':  # Windows
-                subprocess.Popen(
-                    ['start', 'cmd', '/k', 'python', ebsd_server_path],
-                    shell=True
-                )
-            else:  # Unix/Linux/Mac
-                subprocess.Popen(
-                    ['python', ebsd_server_path],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE
-                )
+    @property
+    def ebsd_extensions(self) -> set:
+        return set(self.ebsd_cleanup_settings.get("allowed_extensions", []))
 
-            # Wait for service to start
-            max_attempts = 10
-            for attempt in range(max_attempts):
-                try:
-                    response = requests.get(health_url)
-                    if response.status_code == 200:
-                        print("EBSD model server started successfully!")
-                        return True
-                except requests.exceptions.RequestException:
-                    time.sleep(1)
-                print(f"Waiting for EBSD model server to start... (Attempt {attempt + 1}/{max_attempts})")
+    @property
+    def ml_model_url(self) -> str:
+        return self.super_resolution_settings.get("ml_model", {}).get("url", "")
 
-            print("Failed to start EBSD model server")
-            return False
-
-        except Exception as e:
-            print(f"Error starting EBSD model server: {str(e)}")
-            return False
+    @property
+    def ml_model_health_url(self) -> str:
+        return self.super_resolution_settings.get("ml_model", {}).get("health_url", "")

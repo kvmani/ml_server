@@ -50,7 +50,7 @@ pip install -r requirements.txt
 
 1. Start the ML model server:
 ```bash
-python fake_ml_model_server.py
+python scripts/start_ml_model_service.py
 ```
 
 2. Start the Flask application (in a separate terminal):
@@ -70,6 +70,19 @@ http://127.0.0.1:5000
 6. View the results using the interactive comparison slider.
 
 7. Download the processed results using the download button.
+
+## Configuration
+
+Default settings are stored in `config.json`. Any value can be overridden at
+runtime using environment variables. Variables use the prefix `APP_` and `__`
+to separate nested keys. For example to change the port and ML model URL:
+
+```bash
+export APP_PORT=8080
+export APP_SUPER_RESOLUTION__ML_MODEL__URL=http://localhost:6000/infer
+```
+
+Start the application after exporting any overrides.
 
 ## Technical Details
 
