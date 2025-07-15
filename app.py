@@ -6,6 +6,8 @@ import requests
 import json
 from datetime import datetime
 from config import Config
+from scripts.start_ml_model_service import start_ml_model_service
+from scripts.start_ebsd_model_service import start_ebsd_model_service
 import logging
 
 # Initialize configuration
@@ -86,7 +88,7 @@ def super_resolution():
             response = requests.get(config.config['super_resolution']['ml_model']['health_url'])
             if response.status_code != 200:
                 # Try to start the server if it's not running
-                if config.start_ml_model_service():
+                if start_ml_model_service():
                     return jsonify({
                         'success': False, 
                         'error': 'ML model server was not running. It has been started. Please try your request again.'
@@ -98,7 +100,7 @@ def super_resolution():
                     }), 503
         except requests.exceptions.RequestException:
             # Try to start the server if it's not running
-            if config.start_ml_model_service():
+            if start_ml_model_service():
                 return jsonify({
                     'success': False, 
                     'error': 'ML model server was not running. It has been started. Please try your request again.'
@@ -227,13 +229,13 @@ if __name__ == '__main__':
     )
     
     print("\nChecking ML model service...")
-    if not config.start_ml_model_service():
+    if not start_ml_model_service():
         print("Warning: ML model service could not be started. Some features may not work.")
     else:
         print("ML model service is running!")
 
     print("\nChecking EBSD model service...")
-    if not config.start_ebsd_model_service():
+    if not start_ebsd_model_service():
         print("Warning: EBSD model service could not be started. EBSD features may not work.")
     else:
         print("EBSD model service is running!")
