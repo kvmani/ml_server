@@ -123,6 +123,19 @@ Start the application after exporting any overrides.
 - TIFF (.tiff)
 - WebP (.webp)
 
+## Testing
+
+Run all tests using `pytest`:
+
+```bash
+pytest -q
+```
+
+The repository provides `pytest.ini` which sets `testpaths` to the `tests`
+directory and excludes the `external/` path from collection. After cloning any
+submodules, running the command above should only collect the tests inside the
+`tests/` folder.
+
 ## Contributing
 
 1. Fork the repository
