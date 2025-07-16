@@ -110,6 +110,9 @@ microstructure-analysis-flask/
    - Test ML model connectivity
    - Verify image processing
    - Check error scenarios
+   - Run the full suite with `pytest -q`. The `pytest.ini` configuration
+     collects tests from the `tests/` directory and ignores anything in
+     `external/`.
 
 ## Deployment
 
