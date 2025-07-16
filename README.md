@@ -19,6 +19,11 @@ A Flask-based web application for microstructural analysis, featuring super-reso
 - Support for standard EBSD file formats (.ang, .ctf, .cpr, .osc, .h5, .hdf5)
 - Interactive before/after comparison
 
+### Hydride Segmentation Tool
+- Automatically segment hydrides in microstructure images
+- Overlay results on original image
+- Support for common image formats (PNG, JPG, JPEG, GIF, BMP, TIFF, WebP)
+
 ### General Features
 - Modern, responsive user interface
 - Drag-and-drop file upload
@@ -63,7 +68,7 @@ python app.py
 http://127.0.0.1:5000
 ```
 
-4. Choose between Super Resolution or EBSD Clean-Up tools from the navigation menu.
+4. Choose between Super Resolution, EBSD Clean-Up or Hydride Segmentation tools from the navigation menu.
 
 5. Upload your files using the drag-and-drop interface or file browser.
 
@@ -110,6 +115,13 @@ Start the application after exporting any overrides.
 - CPR (.cpr)
 - OSC (.osc)
 - HDF5 (.h5, .hdf5)
+### Hydride Segmentation
+- PNG (.png)
+- JPEG (.jpg, .jpeg)
+- GIF (.gif)
+- BMP (.bmp)
+- TIFF (.tiff)
+- WebP (.webp)
 
 ## Contributing
 

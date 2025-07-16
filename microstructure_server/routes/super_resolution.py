@@ -11,6 +11,9 @@ config = Config()
 @bp.route('/super_resolution', methods=['GET', 'POST'])
 def super_resolution():
     if request.method == 'POST':
+        if 'image' not in request.files:
+            return jsonify({'success': False, 'error': 'No image uploaded'}), 400
+
         try:
             response = requests.get(config.config['super_resolution']['ml_model']['health_url'])
             if response.status_code != 200:
@@ -23,9 +26,6 @@ def super_resolution():
                 return jsonify({'success': False, 'error': 'ML model server was not running. It has been started. Please try your request again.'}), 503
             else:
                 return jsonify({'success': False, 'error': 'ML model server is not running and could not be started. Please try again later.'}), 503
-
-        if 'image' not in request.files:
-            return jsonify({'success': False, 'error': 'No image uploaded'}), 400
 
         file = request.files['image']
         if file.filename == '':

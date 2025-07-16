@@ -19,6 +19,7 @@ def create_app(startup: bool = False) -> Flask:
     from .routes.feedback import bp as feedback_bp
     from .routes.super_resolution import bp as super_res_bp
     from .routes.ebsd_cleanup import bp as ebsd_bp
+    from .routes.hydride_segmentation import bp as hydride_bp
     from .routes.api import bp as api_bp
     from .routes.download import bp as download_bp
 
@@ -26,6 +27,7 @@ def create_app(startup: bool = False) -> Flask:
     app.register_blueprint(feedback_bp)
     app.register_blueprint(super_res_bp)
     app.register_blueprint(ebsd_bp)
+    app.register_blueprint(hydride_bp)
     app.register_blueprint(api_bp)
     app.register_blueprint(download_bp)
 

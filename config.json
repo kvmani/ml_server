@@ -52,6 +52,24 @@
         }
     },
 
+    "hydride_segmentation": {
+        "allowed_extensions": [
+            "png",
+            "jpg",
+            "jpeg",
+            "gif",
+            "bmp",
+            "tiff",
+            "webp"
+        ],
+        "ml_model": {
+            "url": "http://localhost:5004/infer",
+            "health_url": "http://localhost:5004",
+            "port": 5004,
+            "timeout": 30
+        }
+    },
+
     "feedback": {
         "file_path": "feedback.json",
         "max_entries": 1000,

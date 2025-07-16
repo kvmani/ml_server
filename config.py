@@ -103,3 +103,10 @@ class Config:
     @property
     def ml_model_health_url(self) -> str:
         return self.super_resolution_settings.get("ml_model", {}).get("health_url", "")
+
+    # Dummy service starters for tests
+    def start_ml_model_service(self) -> bool:  # pragma: no cover - placeholder
+        return False
+
+    def start_ebsd_model_service(self) -> bool:  # pragma: no cover - placeholder
+        return False
