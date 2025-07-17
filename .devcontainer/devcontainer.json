@@ -1,0 +1,7 @@
+{
+  "name": "ml-server",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "web",
+  "workspaceFolder": "/workspace",
+  "extensions": ["ms-python.python"]
+}

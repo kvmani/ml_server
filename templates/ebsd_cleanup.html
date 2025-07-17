@@ -3,7 +3,7 @@
 {% block title %}EBSD Clean-Up - Microstructural Analysis{% endblock %}
 
 {% block content %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="{{ url_for('static', filename='vendor/js/jszip.min.js') }}"></script>
 
 <div class="container-fluid px-0">
     <div class="hero-section text-center py-5">
@@ -13,15 +13,15 @@
             <p class="lead mb-5">Enhance and clean up your EBSD maps using advanced AI algorithms</p>
             <div class="feature-badges d-flex justify-content-center gap-4 mb-4">
                 <div class="badge-item">
-                    <i class="bi bi-check-circle-fill text-success"></i>
+                    <svg class='bi text-success' width='16' height='16'><use href='{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.svg') }}#check-circle-fill'/></svg>
                     <span>Noise Reduction</span>
                 </div>
                 <div class="badge-item">
-                    <i class="bi bi-check-circle-fill text-success"></i>
+                    <svg class='bi text-success' width='16' height='16'><use href='{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.svg') }}#check-circle-fill'/></svg>
                     <span>Grain Analysis</span>
                 </div>
                 <div class="badge-item">
-                    <i class="bi bi-check-circle-fill text-success"></i>
+                    <svg class='bi text-success' width='16' height='16'><use href='{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.svg') }}#check-circle-fill'/></svg>
                     <span>Phase Detection</span>
                 </div>
             </div>
@@ -35,7 +35,7 @@
                     <div class="col-lg-8">
                         <div class="upload-container text-center p-5" id="dropZone">
                             <div class="upload-icon mb-4">
-                                <i class="bi bi-cloud-arrow-up display-3"></i>
+                                <svg class='bi display-3'><use href='{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.svg') }}#cloud-arrow-up'/></svg>
                             </div>
                             <h3 class="h4 mb-3">Upload Your EBSD File</h3>
                             <p class="text-muted mb-4">Drag and drop your EBSD file here, or click to browse</p>
@@ -43,13 +43,13 @@
                             <form id="uploadForm" method="POST" enctype="multipart/form-data">
                                 <input type="file" id="fileInput" name="ebsd_file" class="d-none" accept=".ang,.ctf,.cpr,.osc,.h5,.hdf5">
                                 <button type="button" class="btn btn-primary btn-lg px-5" id="browseBtn">
-                                    <i class="bi bi-folder me-2"></i>Browse File
+                                    <svg class='bi me-2' width='16' height='16'><use href='{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.svg') }}#folder'/></svg>Browse File
                                 </button>
                             </form>
                             
                             <div class="supported-formats mt-4">
                                 <div class="format-badge">
-                                    <i class="bi bi-file-earmark-text me-2"></i>
+                                    <svg class='bi me-2' width='16' height='16'><use href='{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.svg') }}#file-earmark-text'/></svg>
                                     <span>Supported formats:</span>
                                 </div>
                                 <div class="format-list">
@@ -103,7 +103,7 @@
 
                         <div class="text-center mt-4">
                             <button class="btn btn-primary btn-lg px-5 d-none" id="downloadBtn">
-                                <i class="bi bi-download me-2"></i>Download Enhanced EBSD Data
+                                <svg class='bi me-2' width='16' height='16'><use href='{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.svg') }}#download'/></svg>Download Enhanced EBSD Data
                             </button>
                         </div>
                     </div>

@@ -4,16 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Microstructural Analysis - {% block title %}{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap/bootstrap.min.css') }}">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="{{ url_for('main.home') }}">
-                <span class="me-2"><i class="bi bi-atom"></i></span>
+                <span class='me-2'><svg class='bi' width='16' height='16'><use href='{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.svg') }}#atom'></use></svg></span>
                 Microstructural Analysis
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -23,12 +20,12 @@
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('main.home') }}">
-                            <i class="bi bi-house-door me-1"></i>Home
+                            <svg class='bi me-1' width='16' height='16'><use href='{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.svg') }}#house-door'/></svg>Home
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('main.help_faq') }}">
-                            <i class="bi bi-question-circle me-1"></i>Help & FAQ
+                            <svg class='bi me-1' width='16' height='16'><use href='{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.svg') }}#question-circle'/></svg>Help & FAQ
                         </a>
                     </li>
                 </ul>
@@ -48,7 +45,7 @@
                     </nav>
                 </div>
                 <div class="research-badge">
-                    <i class="bi bi-shield-check me-1"></i>
+                    <svg class='bi me-1' width='16' height='16'><use href='{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.svg') }}#shield-check'/></svg>
                     Research Portal
                 </div>
             </div>
@@ -74,7 +71,7 @@
             <div class="row">
                 <div class="col-md-6 text-center text-md-start">
                     <span class="d-block mb-2">
-                        <i class="bi bi-building me-2"></i>
+                        <svg class='bi me-2' width='16' height='16'><use href='{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.svg') }}#building'/></svg>
                         Advanced Materials Research
                     </span>
                     <span class="d-block small">
@@ -92,7 +89,8 @@
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
+    <script defer src="{{ url_for('static', filename='vendor/fontawesome/all.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html> 

@@ -1,0 +1,45 @@
+from __future__ import annotations
+
+import os
+
+from flask import Flask
+from werkzeug.middleware.proxy_fix import ProxyFix
+
+from config import load_config
+
+from .services.startup import start_services
+
+
+def create_app(startup: bool = True) -> Flask:
+    """Create and configure the Flask application."""
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    app = Flask(
+        "microstructure_server",
+        template_folder=os.path.join(base_dir, "..", "templates"),
+        static_folder=os.path.join(base_dir, "..", "static"),
+    )
+    cfg = load_config()
+    app.secret_key = cfg.secret_key or os.urandom(24)
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
+
+    # Blueprints
+    from .routes.api import bp as api_bp
+    from .routes.download import bp as download_bp
+    from .routes.ebsd_cleanup import bp as ebsd_bp
+    from .routes.feedback import bp as feedback_bp
+    from .routes.hydride_segmentation import bp as hydride_bp
+    from .routes.main import bp as main_bp
+    from .routes.super_resolution import bp as super_res_bp
+
+    app.register_blueprint(main_bp)
+    app.register_blueprint(feedback_bp)
+    app.register_blueprint(super_res_bp)
+    app.register_blueprint(ebsd_bp)
+    app.register_blueprint(hydride_bp)
+    app.register_blueprint(api_bp)
+    app.register_blueprint(download_bp)
+
+    if startup:
+        start_services()
+
+    return app

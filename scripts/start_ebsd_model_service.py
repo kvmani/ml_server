@@ -1,7 +1,8 @@
+import logging
 import os
 import subprocess
 import time
-import logging
+
 import requests
 
 from config import Config
@@ -21,12 +22,16 @@ def start_ebsd_model_service() -> bool:
 
     try:
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        ebsd_server_path = os.path.join(os.path.dirname(current_dir), "fake_ebsd_model.py")
+        ebsd_server_path = os.path.join(
+            os.path.dirname(current_dir), "scripts", "fake_ebsd_model.py"
+        )
         print(f"Starting EBSD model server from: {ebsd_server_path}")
         if os.name == "nt":
-            subprocess.Popen(['start', 'cmd', '/k', 'python', ebsd_server_path], shell=True)
+            subprocess.Popen(["start", "cmd", "/k", "python", ebsd_server_path], shell=True)
         else:
-            subprocess.Popen(['python', ebsd_server_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            subprocess.Popen(
+                ["python", ebsd_server_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            )
         max_attempts = 10
         for attempt in range(max_attempts):
             try:
@@ -36,7 +41,9 @@ def start_ebsd_model_service() -> bool:
                     return True
             except requests.exceptions.RequestException:
                 time.sleep(1)
-            print(f"Waiting for EBSD model server to start... (Attempt {attempt + 1}/{max_attempts})")
+            print(
+                f"Waiting for EBSD model server to start... (Attempt {attempt + 1}/{max_attempts})"
+            )
         print("Failed to start EBSD model server")
         return False
     except Exception as e:
