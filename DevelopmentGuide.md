@@ -144,3 +144,7 @@ microstructure-analysis-flask/
 - [Pillow Documentation](https://pillow.readthedocs.io/)
 - [Bootstrap Documentation](https://getbootstrap.com/docs/)
 - [Python Style Guide](https://www.python.org/dev/peps/pep-0008/) 
+## Development Tools
+- Run `pre-commit install` after cloning to enable formatting checks.
+- Use `docker-compose up --build` for a full dev environment including Redis and Celery workers.
+

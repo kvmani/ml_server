@@ -1,9 +1,11 @@
-from flask import Blueprint, render_template, request, jsonify
 import base64
 
+from flask import Blueprint, jsonify, render_template, request
+
 from config import Config
-from ..services.utils import allowed_file
+
 from ..services.hydride_segmentation import HydrideSegmentationService
+from ..services.utils import allowed_file
 
 bp = Blueprint("hydride_segmentation", __name__)
 config = Config()

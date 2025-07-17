@@ -53,28 +53,15 @@ pip install -r requirements.txt
 
 ## Usage
 
-1. Start the ML model server:
+To run all services together use `docker-compose`:
 ```bash
-python scripts/start_ml_model_service.py
+docker-compose up --build
 ```
 
-2. Start the Flask application (in a separate terminal):
+Start the Flask server directly with optional autostart control:
 ```bash
-python app.py
+python app.py --no-autostart
 ```
-
-3. Open your web browser and navigate to:
-```
-http://127.0.0.1:5000
-```
-
-4. Choose between Super Resolution, EBSD Clean-Up or Hydride Segmentation tools from the navigation menu.
-
-5. Upload your files using the drag-and-drop interface or file browser.
-
-6. View the results using the interactive comparison slider.
-
-7. Download the processed results using the download button.
 
 ## Configuration
 

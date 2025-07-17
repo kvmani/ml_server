@@ -1,7 +1,8 @@
+import logging
 import os
 import subprocess
 import time
-import logging
+
 import requests
 
 from config import Config
@@ -21,12 +22,16 @@ def start_ml_model_service() -> bool:
 
     try:
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        ml_server_path = os.path.join(os.path.dirname(current_dir), "fake_ml_model_server.py")
+        ml_server_path = os.path.join(
+            os.path.dirname(current_dir), "scripts", "fake_ml_model_server.py"
+        )
         print(f"Starting ML model server from: {ml_server_path}")
         if os.name == "nt":
-            subprocess.Popen(['start', 'cmd', '/k', 'python', ml_server_path], shell=True)
+            subprocess.Popen(["start", "cmd", "/k", "python", ml_server_path], shell=True)
         else:
-            subprocess.Popen(['python', ml_server_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            subprocess.Popen(
+                ["python", ml_server_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            )
         max_attempts = 10
         for attempt in range(max_attempts):
             try:

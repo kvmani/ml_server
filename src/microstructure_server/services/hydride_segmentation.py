@@ -8,7 +8,7 @@ class HydrideSegmentationService:
 
     def __init__(self, config: Config | None = None) -> None:
         self.config = config or Config()
-        self.settings = self.config.config.get("hydride_segmentation", {})
+        self.settings = self.config.hydride_segmentation
 
     @property
     def model_url(self) -> str:
