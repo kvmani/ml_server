@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 
 from flask import Flask
+from flask_compress import Compress
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from config import load_config
@@ -13,11 +14,13 @@ from .services.startup import start_services
 def create_app(startup: bool = True) -> Flask:
     """Create and configure the Flask application."""
     base_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(os.path.dirname(base_dir))
     app = Flask(
         "microstructure_server",
-        template_folder=os.path.join(base_dir, "..", "templates"),
-        static_folder=os.path.join(base_dir, "..", "static"),
+        template_folder=os.path.join(project_root, "templates"),
+        static_folder=os.path.join(project_root, "static"),
     )
+    Compress(app)
     cfg = load_config()
     app.secret_key = cfg.secret_key or os.urandom(24)
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
