@@ -106,7 +106,7 @@
 
 <!-- Include external CSS and JS files -->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/super_resolution.css') }}">
-<script src="{{ url_for('static', filename='js/super_resolution.js') }}"></script>
+<script src="{{ url_for('static', filename='js/super_resolution.js') }}" nonce="{{ csp_nonce() }}"></script>
 
 <!-- Include Feedback Section -->
 {% include 'feedback_section.html' %}

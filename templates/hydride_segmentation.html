@@ -106,7 +106,7 @@
 
 <!-- Include external CSS and JS files -->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/hydride_segmentation.css') }}">
-<script src="{{ url_for('static', filename='js/hydride_segmentation.js') }}"></script>
+<script src="{{ url_for('static', filename='js/hydride_segmentation.js') }}" nonce="{{ csp_nonce() }}"></script>
 
 <!-- Include Feedback Section -->
 {% include 'feedback_section.html' %}

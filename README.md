@@ -2,6 +2,8 @@
 
 A Flask-based web application for microstructural analysis, featuring super-resolution image enhancement and EBSD data cleanup tools.
 
+Full documentation can be found in the [docs](docs/) directory.
+
 ## Features
 
 ### Super Resolution Tool

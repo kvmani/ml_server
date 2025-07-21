@@ -4,11 +4,13 @@ import os
 
 from flask import Flask
 from flask_compress import Compress
+from flask_talisman import Talisman
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from config import load_config
 
 from .services.startup import start_services
+from .services.graceful import install_signal_handlers
 
 
 def create_app(startup: bool = True) -> Flask:
@@ -21,7 +23,19 @@ def create_app(startup: bool = True) -> Flask:
         static_folder=os.path.join(project_root, "static"),
     )
     Compress(app)
+    Talisman(
+        app,
+        content_security_policy={
+            "default-src": "'self'",
+            "script-src": ["'self'", "'nonce'"],
+        },
+        force_https=False,
+        strict_transport_security=False,
+    )
+    install_signal_handlers()
     cfg = load_config()
+    if cfg.admin_token:
+        app.config["ADMIN_TOKEN"] = cfg.admin_token
     app.secret_key = cfg.secret_key or os.urandom(24)
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
 

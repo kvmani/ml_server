@@ -2,7 +2,7 @@ import json
 import os
 from datetime import datetime
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, render_template, request, current_app
 
 bp = Blueprint("feedback", __name__)
 
@@ -46,3 +46,19 @@ def submit_feedback():
     except Exception as e:
         bp.logger.error(f"Feedback error: {str(e)}")
         return jsonify({"success": False, "message": "Server error"}), 500
+
+
+@bp.route("/admin/feedback")
+def admin_feedback():
+    token = request.args.get("token")
+    admin_token = current_app.config.get("ADMIN_TOKEN")
+    if admin_token and token != admin_token:
+        return "Unauthorized", 401
+
+    page = int(request.args.get("page", 1))
+    per_page = 10
+    with open(FEEDBACK_FILE) as f:
+        data = json.load(f).get("feedback", [])
+    start = (page - 1) * per_page
+    entries = data[start : start + per_page]
+    return render_template("admin_feedback.html", feedback=entries, page=page)
