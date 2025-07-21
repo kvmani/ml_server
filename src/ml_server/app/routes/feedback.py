@@ -4,12 +4,12 @@ from datetime import datetime
 
 from flask import Blueprint, current_app, jsonify, render_template, request
 
+"""Feedback submission and rendering routes."""
+
 bp = Blueprint("feedback", __name__)
 
 # Path to feedback file relative to package
-FEEDBACK_FILE = os.path.join(
-    os.path.dirname(os.path.dirname(__file__)), "feedback.json"
-)
+FEEDBACK_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "feedback.json")
 
 # Ensure file exists
 if not os.path.exists(FEEDBACK_FILE):

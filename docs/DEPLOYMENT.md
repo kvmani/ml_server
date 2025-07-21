@@ -3,7 +3,7 @@
 This document describes a recommended process for deploying the microstructural analysis server on an Ubuntu Linux intranet environment.  The same steps can be adapted for both a testing server and the final production server.
 
 ## 1. Prepare the Server
-1. **Install Python 3.8+**
+1. **Install Python 3.10+**
    ```bash
    sudo apt-get update
    sudo apt-get install python3 python3-venv python3-pip -y
@@ -52,6 +52,34 @@ python scripts/start_ebsd_model_service.py &
 python app.py
 ```
 The server listens on the port defined in `config/config.intranet.json` (default `5000`).
+
+### c. Run as systemd services
+Create unit files in `/etc/systemd/system/` to manage the app in production. Example units:
+
+```
+[Unit]
+Description=ML Server
+After=network.target
+
+[Service]
+WorkingDirectory=/opt/ml_server/src
+Environment=PYTHONPATH=/opt/ml_server/src
+ExecStart=/opt/ml_server/env/bin/gunicorn -w 2 -b 0.0.0.0:5000 ml_server.app.microstructure_server:create_app()
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Similarly create `ml_server-celery.service` and `ml_server-celery-beat.service` using `celery -A ml_server.celery_app worker` and `celery -A ml_server.celery_app beat` as the `ExecStart` commands.
+
+Reload systemd and enable the services:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable ml_server ml_server-celery ml_server-celery-beat
+sudo systemctl start ml_server ml_server-celery ml_server-celery-beat
+```
 
 ## 5. Service Updates With Minimal Downtime
 To deploy new versions without interrupting running users:

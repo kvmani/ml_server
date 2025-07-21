@@ -25,7 +25,7 @@ def start_ml_model_service() -> bool:
         ml_server_path = os.path.join(
             os.path.dirname(current_dir), "scripts", "fake_ml_model_server.py"
         )
-        print(f"Starting ML model server from: {ml_server_path}")
+        logging.info("Starting ML model server from: %s", ml_server_path)
         if os.name == "nt":
             subprocess.Popen(["start", "cmd", "/k", "python", ml_server_path], shell=True)
         else:
@@ -37,17 +37,22 @@ def start_ml_model_service() -> bool:
             try:
                 response = requests.get(health_url)
                 if response.status_code == 200:
-                    print("ML model server started successfully!")
+                    logging.info("ML model server started successfully!")
                     return True
             except requests.exceptions.RequestException:
                 time.sleep(1)
-            print(f"Waiting for ML model server to start... (Attempt {attempt + 1}/{max_attempts})")
-        print("Failed to start ML model server")
+            logging.info(
+                "Waiting for ML model server to start... (Attempt %d/%d)",
+                attempt + 1,
+                max_attempts,
+            )
+        logging.error("Failed to start ML model server")
         return False
     except Exception as e:
-        print(f"Error starting ML model server: {e}")
+        logging.error("Error starting ML model server: %s", e)
         return False
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
     start_ml_model_service()

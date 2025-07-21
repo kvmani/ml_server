@@ -1,5 +1,7 @@
 from flask import Blueprint, render_template
 
+"""Public site routes such as the home page and help page."""
+
 bp = Blueprint("main", __name__)
 
 

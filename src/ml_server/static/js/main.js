@@ -20,7 +20,7 @@ function initComparison() {
         const x = e.clientX - rect.left;
         const percentage = (x / rect.width) * 100;
         const clampedPercentage = Math.min(Math.max(percentage, 0), 100);
-        
+
         sliderHandle.style.left = `${clampedPercentage}%`;
         afterImage.style.clipPath = `inset(0 ${100 - clampedPercentage}% 0 0)`;
         beforeLabel.style.left = `${clampedPercentage}%`;
@@ -91,11 +91,11 @@ function handleFileUpload(input, previewContainer, loadingState) {
             // Update preview images
             const originalPreview = document.querySelector('.original-image');
             const enhancedPreview = document.querySelector('.enhanced-image');
-            
+
             if (originalPreview && enhancedPreview) {
                 originalPreview.src = data.original_image;
                 enhancedPreview.src = data.enhanced_image;
-                
+
                 enhancedPreview.onload = () => {
                     previewContainer.classList.add('loaded');
                     loadingState.classList.add('d-none');
@@ -161,9 +161,9 @@ function validateForm(form) {
     }
 
     const file = fileInput.files[0];
-    const maxSize = 16 * 1024 * 1024; // 16MB
+    const maxSize = 10 * 1024 * 1024; // 10MB
     if (file.size > maxSize) {
-        alert('File size exceeds 16MB limit');
+        alert('File size exceeds 10MB limit');
         return false;
     }
 
@@ -204,4 +204,4 @@ document.addEventListener('DOMContentLoaded', function() {
     tooltips.forEach(tooltip => {
         new bootstrap.Tooltip(tooltip);
     });
-}); 
+});

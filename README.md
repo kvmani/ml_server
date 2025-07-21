@@ -56,5 +56,5 @@ Run the unit tests with:
 python -m pytest
 ```
 
-See `docs/DEPLOYMENT_INTRANET.md` for deployment instructions and
+See `docs/DEPLOYMENT.md` for deployment instructions and
 `docs/WORKFLOW_OVERVIEW.md` for an overview of how the modules interact.

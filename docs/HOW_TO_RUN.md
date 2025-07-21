@@ -42,7 +42,7 @@ Before running the application, ensure you have the following installed:
    ```bash
     # Open a terminal and run
     python scripts/start_ml_model_service.py
-   
+
     # The server will start on port 5002
     # You should see: "ML model server started successfully!"
    ```
@@ -51,7 +51,7 @@ Before running the application, ensure you have the following installed:
    ```bash
    # Open another terminal and run
    python app.py
-   
+
    # The application will start on port 5000
    ```
 
@@ -98,7 +98,7 @@ Before running the application, ensure you have the following installed:
    # Check if port 5002 is in use
    # On Windows
    netstat -ano | findstr :5002
-   
+
    # On macOS/Linux
    lsof -i :5002
    ```
@@ -108,7 +108,7 @@ Before running the application, ensure you have the following installed:
    # Check if port 5000 is in use
    # On Windows
    netstat -ano | findstr :5000
-   
+
    # On macOS/Linux
    lsof -i :5000
    ```
@@ -157,4 +157,4 @@ For production deployment:
 For additional support:
 - Check the documentation
 - Open an issue on GitHub
-- Contact the development team 
+- Contact the development team

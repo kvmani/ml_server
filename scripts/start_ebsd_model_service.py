@@ -25,7 +25,7 @@ def start_ebsd_model_service() -> bool:
         ebsd_server_path = os.path.join(
             os.path.dirname(current_dir), "scripts", "fake_ebsd_model.py"
         )
-        print(f"Starting EBSD model server from: {ebsd_server_path}")
+        logging.info("Starting EBSD model server from: %s", ebsd_server_path)
         if os.name == "nt":
             subprocess.Popen(["start", "cmd", "/k", "python", ebsd_server_path], shell=True)
         else:
@@ -37,19 +37,22 @@ def start_ebsd_model_service() -> bool:
             try:
                 response = requests.get(health_url)
                 if response.status_code == 200:
-                    print("EBSD model server started successfully!")
+                    logging.info("EBSD model server started successfully!")
                     return True
             except requests.exceptions.RequestException:
                 time.sleep(1)
-            print(
-                f"Waiting for EBSD model server to start... (Attempt {attempt + 1}/{max_attempts})"
+            logging.info(
+                "Waiting for EBSD model server to start... (Attempt %d/%d)",
+                attempt + 1,
+                max_attempts,
             )
-        print("Failed to start EBSD model server")
+        logging.error("Failed to start EBSD model server")
         return False
     except Exception as e:
-        print(f"Error starting EBSD model server: {e}")
+        logging.error("Error starting EBSD model server: %s", e)
         return False
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
     start_ebsd_model_service()
