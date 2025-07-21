@@ -2,8 +2,7 @@ import base64
 
 from flask import Blueprint, jsonify, render_template, request
 
-from config import Config
-
+from ...config import Config
 from ..services.hydride_segmentation import HydrideSegmentationService
 from ..services.utils import allowed_file
 
@@ -22,12 +21,17 @@ def hydride_segmentation():
         if file.filename == "":
             return jsonify({"success": False, "error": "No image selected"}), 400
 
-        allowed_exts = config.hydride_segmentation_settings.get("allowed_extensions", [])
+        allowed_exts = config.hydride_segmentation_settings.get(
+            "allowed_extensions", []
+        )
         if not allowed_file(file.filename, allowed_exts):
             return jsonify({"success": False, "error": "Invalid file type"}), 400
 
         if not service.is_available():
-            return jsonify({"success": False, "error": "Hydride model is not running"}), 503
+            return (
+                jsonify({"success": False, "error": "Hydride model is not running"}),
+                503,
+            )
 
         try:
             result = service.segment(file)

@@ -33,7 +33,7 @@ ml_server/
 │   ├── fake_ml_model_server.py      # Temporary ML model server
 │   └── fake_ebsd_model.py           # EBSD demo service
 ├── requirements.txt   # Python dependencies
-├── src/microstructure_server/feedback.json  # User feedback storage
+├── src/ml_server/feedback.json  # User feedback storage
 └── README.md         # Project documentation
 ```
 

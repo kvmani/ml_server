@@ -8,9 +8,9 @@ import requests
 from celery import Celery
 from celery.signals import worker_process_init
 
-from config import Config
-from .graceful import install_signal_handlers
-from .metrics import retry_counter
+from .app.services.graceful import install_signal_handlers
+from .app.services.metrics import retry_counter
+from .config import Config
 
 cfg = Config()
 celery_app = Celery(

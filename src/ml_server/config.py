@@ -17,7 +17,8 @@ class Config:
         return cls._instance
 
     def _load_config(self) -> None:
-        config_path = os.path.join(os.path.dirname(__file__), "config.json")
+        repo_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+        config_path = os.path.join(repo_root, "config", "config.intranet.json")
         with open(config_path, "r") as f:
             self.config: Dict[str, Any] = json.load(f)
         self._apply_env_overrides()
@@ -111,11 +112,15 @@ class Config:
     # Backwards compatibility helpers
     @property
     def super_resolution_extensions(self) -> set:
-        return set(self.super_resolution_settings.get("allowed_extensions", []))  # noqa: E501
+        return set(
+            self.super_resolution_settings.get("allowed_extensions", [])
+        )  # noqa: E501
 
     @property
     def ebsd_extensions(self) -> set:
-        return set(self.ebsd_cleanup_settings.get("allowed_extensions", []))  # noqa: E501
+        return set(
+            self.ebsd_cleanup_settings.get("allowed_extensions", [])
+        )  # noqa: E501
 
     @property
     def ml_model_url(self) -> str:

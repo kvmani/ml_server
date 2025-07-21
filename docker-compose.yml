@@ -14,14 +14,14 @@ services:
       - redis
   celery:
     build: .
-    command: celery -A microstructure_server.services.tasks worker --loglevel=info
+    command: celery -A ml_server.celery_app worker --loglevel=info
     volumes:
       - .:/app
     depends_on:
       - redis
   web:
     build: .
-    command: gunicorn -c gunicorn.conf.py microstructure_server:create_app\(\)
+    command: gunicorn -c gunicorn.conf.py ml_server.app.microstructure_server:create_app\(\)
     volumes:
       - .:/app
     ports:

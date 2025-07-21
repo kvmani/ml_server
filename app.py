@@ -2,13 +2,15 @@ from __future__ import annotations
 
 import argparse
 
-from config import load_config
-from microstructure_server import create_app
+from ml_server.app.microstructure_server import create_app
+from ml_server.config import load_config
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Microstructure server")
-    parser.add_argument("--no-autostart", action="store_true", help="Disable model autostart")
+    parser.add_argument(
+        "--no-autostart", action="store_true", help="Disable model autostart"
+    )
     args = parser.parse_args()
 
     cfg = load_config()

@@ -30,7 +30,7 @@ pip install -r requirements-test.txt
 The hydride segmentation feature will require additional ML packages. When that code is integrated, extend `requirements.txt` with the necessary packages and rerun the installation step.
 
 ## 3. Configuration
-Configuration values are stored in `config.json`.  You can override any value
+Configuration values are stored in `config/config.intranet.json`.  You can override any value
 via environment variables using the `APP_` prefix and `__` for nested keys
 (e.g. `APP_PORT=8080`).  Review the host and port settings and modify them if
 required.  For production, set `"debug": false`.
@@ -51,7 +51,7 @@ python scripts/start_ebsd_model_service.py &
 ```bash
 python app.py
 ```
-The server listens on the port defined in `config.json` (default `5000`).
+The server listens on the port defined in `config/config.intranet.json` (default `5000`).
 
 ## 5. Service Updates With Minimal Downtime
 To deploy new versions without interrupting running users:
@@ -61,7 +61,7 @@ To deploy new versions without interrupting running users:
 This simple blue‑green approach avoids downtime while keeping the setup minimal.
 
 ## 6. Logging and Monitoring
-Log files are written to the `logs/` directory as configured in `config.json`.  Ensure this directory exists and that the user running the service has write permission.  Monitor the log files for errors.
+Log files are written to the `logs/` directory as configured in `config/config.intranet.json`.  Ensure this directory exists and that the user running the service has write permission.  Monitor the log files for errors.
 
 ## 7. Rollback Plan
 If the new deployment fails:
@@ -107,7 +107,7 @@ pip install -r requirements.txt
 Start Redis and the services:
 ```bash
 redis-server --daemonize yes
-celery -A microstructure_server.services.tasks worker &
+celery -A ml_server.celery_app worker &
 python app.py
 ```
 Visit `http://localhost:5000` to use the application.

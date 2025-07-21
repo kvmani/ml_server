@@ -20,7 +20,7 @@ wheels/
 .installed.cfg
 *.egg
 feedback.json
-src/microstructure_server/feedback.json
+src/ml_server/feedback.json
 
 # Virtual Environment
 venv/

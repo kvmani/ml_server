@@ -1,12 +1,11 @@
-from flask import Blueprint, jsonify
 import shutil
+
 import redis
+from flask import Blueprint, jsonify
 
+from ...celery_app import celery_app
+from ...config import Config
 from ..services.metrics import disk_usage_percent, metrics_response
-from ..services.tasks import celery_app
-
-from config import Config
-
 from ..services.utils import check_service_health
 
 bp = Blueprint("api", __name__)
@@ -26,7 +25,9 @@ def api_check_ebsd_model_status():
 
 @bp.route("/api/check_hydride_model_status")
 def api_check_hydride_model_status():
-    health_url = config.hydride_segmentation_settings.get("ml_model", {}).get("health_url")
+    health_url = config.hydride_segmentation_settings.get("ml_model", {}).get(
+        "health_url"
+    )
     return jsonify({"running": check_service_health(health_url)})
 
 

@@ -7,20 +7,18 @@ from flask_compress import Compress
 from flask_talisman import Talisman
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-from config import load_config
-
-from .services.startup import start_services
+from ..config import load_config
 from .services.graceful import install_signal_handlers
+from .services.startup import start_services
 
 
 def create_app(startup: bool = True) -> Flask:
     """Create and configure the Flask application."""
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    project_root = os.path.dirname(os.path.dirname(base_dir))
+    package_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     app = Flask(
-        "microstructure_server",
-        template_folder=os.path.join(project_root, "templates"),
-        static_folder=os.path.join(project_root, "static"),
+        "ml_server",
+        template_folder=os.path.join(package_root, "templates"),
+        static_folder=os.path.join(package_root, "static"),
     )
     Compress(app)
     Talisman(
