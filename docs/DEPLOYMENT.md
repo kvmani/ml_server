@@ -85,3 +85,29 @@ This service runs on an isolated intranet with minimal concurrent users.  For si
 - Restrict network access to trusted clients.
 - Consider using a firewall to limit access to the server port.
 
+
+## Example Fresh Installation
+
+On a clean Ubuntu system run:
+```bash
+sudo apt-get update
+sudo apt-get install git python3 python3-venv python3-pip redis-server -y
+
+# optional: install build tools
+sudo apt-get install build-essential -y
+```
+Clone the code and set up:
+```bash
+git clone <repository-url>
+cd ml_server
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+Start Redis and the services:
+```bash
+redis-server --daemonize yes
+celery -A microstructure_server.services.tasks worker &
+python app.py
+```
+Visit `http://localhost:5000` to use the application.

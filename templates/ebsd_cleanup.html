@@ -3,7 +3,7 @@
 {% block title %}EBSD Clean-Up - Microstructural Analysis{% endblock %}
 
 {% block content %}
-<script src="{{ url_for('static', filename='vendor/js/jszip.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/js/jszip.min.js') }}" nonce="{{ csp_nonce() }}"></script>
 
 <div class="container-fluid px-0">
     <div class="hero-section text-center py-5">
@@ -115,7 +115,7 @@
 
 <!-- Include external CSS and JS files -->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/ebsd_cleanup.css') }}">
-<script src="{{ url_for('static', filename='js/ebsd_cleanup.js') }}"></script>
+<script src="{{ url_for('static', filename='js/ebsd_cleanup.js') }}" nonce="{{ csp_nonce() }}"></script>
 
 <!-- Include Feedback Section -->
 {% include 'feedback_section.html' %}

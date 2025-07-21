@@ -95,5 +95,6 @@
         "allowed_origins": ["http://localhost:5000"],
         "csrf_enabled": true,
         "ssl_enabled": false
+        ,"admin_token": "changeme"
     }
-} 
+}

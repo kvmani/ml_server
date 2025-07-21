@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import tempfile
 
 import requests
 from flask import Blueprint, current_app, jsonify, render_template, request
@@ -40,11 +41,18 @@ def ebsd_cleanup():
         except requests.exceptions.RequestException:
             return jsonify({"success": False, "error": "EBSD ML model is not reachable"}), 503
 
+        upload_dir = os.path.join("tmp", "uploads")
+        os.makedirs(upload_dir, exist_ok=True)
+        _, ext = os.path.splitext(file.filename)
+        with tempfile.NamedTemporaryFile(delete=False, dir=upload_dir, suffix=ext) as tmp:
+            file.save(tmp.name)
+            tmp_path = tmp.name
+
         if current_app.config.get("TESTING"):
-            result = ebsd_cleanup_task(file.read())
+            result = ebsd_cleanup_task(tmp_path)
             return jsonify(result)
 
-        task = ebsd_cleanup_task.delay(file.read())
+        task = ebsd_cleanup_task.delay(tmp_path)
         return jsonify({"task_id": task.id}), 202
 
     return render_template("ebsd_cleanup.html")
