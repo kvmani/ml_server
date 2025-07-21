@@ -70,8 +70,13 @@
         }
     },
 
+    "celery": {
+        "broker_url": "redis://redis:6379/0",
+        "result_backend": "redis://redis:6379/0"
+    },
+
     "feedback": {
-        "file_path": "feedback.json",
+        "file_path": "src/microstructure_server/feedback.json",
         "max_entries": 1000,
         "required_fields": [
             "name",

@@ -81,7 +81,7 @@ function handleFileUpload(input, previewContainer, loadingState) {
     formData.append('file', file);
 
     // Send file to server
-    fetch('/upload', {
+    fetch('/super_resolution', {
         method: 'POST',
         body: formData
     })

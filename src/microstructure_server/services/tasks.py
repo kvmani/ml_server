@@ -12,10 +12,11 @@ from config import Config
 from .graceful import install_signal_handlers
 from .metrics import retry_counter
 
+cfg = Config()
 celery_app = Celery(
     "microstructure_tasks",
-    broker="redis://redis:6379/0",
-    backend="redis://redis:6379/0",
+    broker=cfg.celery_settings.get("broker_url", "redis://redis:6379/0"),
+    backend=cfg.celery_settings.get("result_backend", "redis://redis:6379/0"),
 )
 
 

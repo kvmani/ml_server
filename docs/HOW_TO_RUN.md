@@ -16,8 +16,8 @@ Before running the application, ensure you have the following installed:
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/yourusername/microstructure-analysis-flask.git
-   cd microstructure-analysis-flask
+   git clone https://github.com/yourusername/ml_server.git
+   cd ml_server
    ```
 
 2. **Create Virtual Environment**
@@ -120,7 +120,7 @@ Before running the application, ensure you have the following installed:
 
 ### Getting Help
 
-- Check the [Development Guide](DevelopmentGuide.md)
+- Check the [Development Guide](DEVELOPMENT_GUIDE.md)
 - Review the [README](README.md)
 - Open an issue on GitHub
 

@@ -85,8 +85,12 @@ class Config:
         return self.config.get("ebsd_cleanup", {})
 
     @property
-    def hydride_segmentation(self) -> Dict[str, Any]:
+    def hydride_segmentation_settings(self) -> Dict[str, Any]:
         return self.config.get("hydride_segmentation", {})
+
+    @property
+    def celery_settings(self) -> Dict[str, Any]:
+        return self.config.get("celery", {})
 
     @property
     def feedback_settings(self) -> Dict[str, Any]:

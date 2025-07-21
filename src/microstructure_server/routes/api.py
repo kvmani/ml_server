@@ -26,7 +26,7 @@ def api_check_ebsd_model_status():
 
 @bp.route("/api/check_hydride_model_status")
 def api_check_hydride_model_status():
-    health_url = config.config["hydride_segmentation"]["ml_model"]["health_url"]
+    health_url = config.hydride_segmentation_settings.get("ml_model", {}).get("health_url")
     return jsonify({"running": check_service_health(health_url)})
 
 
@@ -39,7 +39,7 @@ def health() -> tuple:
             config.config["ebsd_cleanup"]["ml_model"]["health_url"]
         ),
         "hydride_segmentation": check_service_health(
-            config.config["hydride_segmentation"]["ml_model"]["health_url"]
+            config.hydride_segmentation_settings.get("ml_model", {}).get("health_url")
         ),
     }
     try:
