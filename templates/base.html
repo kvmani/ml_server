@@ -89,8 +89,8 @@
         </div>
     </footer>
 
-    <script src="{{ url_for('static', filename='vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
-    <script defer src="{{ url_for('static', filename='vendor/fontawesome/all.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/bootstrap/bootstrap.bundle.min.js') }}" nonce="{{ csp_nonce() }}"></script>
+    <script defer src="{{ url_for('static', filename='vendor/fontawesome/all.min.js') }}" nonce="{{ csp_nonce() }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}" nonce="{{ csp_nonce() }}"></script>
 </body>
-</html> 
+</html>

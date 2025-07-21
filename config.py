@@ -100,6 +100,10 @@ class Config:
     def security_settings(self) -> Dict[str, Any]:
         return self.config.get("security", {})
 
+    @property
+    def admin_token(self) -> str:
+        return self.security_settings.get("admin_token", "")
+
     # Backwards compatibility helpers
     @property
     def super_resolution_extensions(self) -> set:
