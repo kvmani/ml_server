@@ -6,9 +6,8 @@ import tempfile
 import requests
 from flask import Blueprint, current_app, jsonify, render_template, request
 
-from config import Config
-
-from ..services.tasks import celery_app, ebsd_cleanup_task
+from ...celery_app import celery_app, ebsd_cleanup_task
+from ...config import Config
 from ..services.utils import allowed_file
 
 bp = Blueprint("ebsd_cleanup", __name__)
@@ -30,21 +29,35 @@ def ebsd_cleanup():
             return jsonify({"success": False, "error": "Invalid file type"}), 400
 
         file.seek(0, os.SEEK_END)
-        if file.tell() > config.ebsd_cleanup_settings.get("file_settings", {}).get("max_size", 0):
+        if file.tell() > config.ebsd_cleanup_settings.get("file_settings", {}).get(
+            "max_size", 0
+        ):
             return jsonify({"success": False, "error": "File size exceeds limit"}), 400
         file.seek(0)
 
         try:
-            health_url = config.ebsd_cleanup_settings.get("ml_model", {}).get("health_url")
+            health_url = config.ebsd_cleanup_settings.get("ml_model", {}).get(
+                "health_url"
+            )
             if requests.get(health_url, timeout=3).status_code != 200:
-                return jsonify({"success": False, "error": "EBSD ML model is not running"}), 503
+                return (
+                    jsonify(
+                        {"success": False, "error": "EBSD ML model is not running"}
+                    ),
+                    503,
+                )
         except requests.exceptions.RequestException:
-            return jsonify({"success": False, "error": "EBSD ML model is not reachable"}), 503
+            return (
+                jsonify({"success": False, "error": "EBSD ML model is not reachable"}),
+                503,
+            )
 
         upload_dir = os.path.join("tmp", "uploads")
         os.makedirs(upload_dir, exist_ok=True)
         _, ext = os.path.splitext(file.filename)
-        with tempfile.NamedTemporaryFile(delete=False, dir=upload_dir, suffix=ext) as tmp:
+        with tempfile.NamedTemporaryFile(
+            delete=False, dir=upload_dir, suffix=ext
+        ) as tmp:
             file.save(tmp.name)
             tmp_path = tmp.name
 

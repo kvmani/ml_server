@@ -5,7 +5,7 @@
 - Check logs in the `logs/` directory for errors.
 
 ## Celery Tasks Stuck
-- Verify workers are running: `celery -A microstructure_server.services.tasks worker`.
+- Verify workers are running: `celery -A ml_server.celery_app worker`.
 - Inspect `logs/retries.log` for repeated failures.
 
 ## Disk Alerts

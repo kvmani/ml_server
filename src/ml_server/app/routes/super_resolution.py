@@ -4,8 +4,7 @@ import io
 import requests
 from flask import Blueprint, jsonify, render_template, request
 
-from config import Config
-
+from ...config import Config
 from ..services.utils import allowed_file
 
 bp = Blueprint("super_resolution", __name__)
@@ -19,7 +18,9 @@ def super_resolution():
             return jsonify({"success": False, "error": "No image uploaded"}), 400
 
         try:
-            response = requests.get(config.config["super_resolution"]["ml_model"]["health_url"])
+            response = requests.get(
+                config.config["super_resolution"]["ml_model"]["health_url"]
+            )
             if response.status_code != 200:
                 if config.start_ml_model_service():
                     return (
@@ -67,7 +68,9 @@ def super_resolution():
         if file.filename == "":
             return jsonify({"success": False, "error": "No image selected"}), 400
 
-        if allowed_file(file.filename, config.config["super_resolution"]["allowed_extensions"]):
+        if allowed_file(
+            file.filename, config.config["super_resolution"]["allowed_extensions"]
+        ):
             try:
                 response = requests.post(config.ml_model_url, files={"image": file})
                 if response.status_code == 200:
@@ -87,7 +90,10 @@ def super_resolution():
                         }
                     )
                 else:
-                    return jsonify({"success": False, "error": "Model processing failed"}), 500
+                    return (
+                        jsonify({"success": False, "error": "Model processing failed"}),
+                        500,
+                    )
             except Exception as e:
                 bp.logger.error(f"Super resolution error: {str(e)}")
                 return jsonify({"success": False, "error": str(e)}), 500

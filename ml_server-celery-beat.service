@@ -1,0 +1,12 @@
+[Unit]
+Description=Celery Beat
+After=network.target
+
+[Service]
+WorkingDirectory=/opt/ml_server/src
+Environment=PYTHONPATH=/opt/ml_server/src
+ExecStart=/opt/ml_server/env/bin/celery -A ml_server.celery_app beat
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

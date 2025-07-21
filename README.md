@@ -1,156 +1,60 @@
-# Microstructural Analysis Web Application
+# ML Server
 
-A Flask-based web application for microstructural analysis, featuring super-resolution image enhancement and EBSD data cleanup tools.
+A Flask and Celery based application for microstructural analysis.  The code is
+packaged under `src/ml_server` so it can be imported as `ml_server` by other
+Python applications.
 
-Full documentation can be found in the [docs](docs/) directory.
+## Quick start
 
-## Features
-
-### Super Resolution Tool
-- Process microstructural images through ML model
-- Real-time image processing
-- Interactive image comparison (original vs processed)
-- Support for multiple image formats (PNG, JPG, JPEG, GIF, BMP, TIFF, WebP)
-- ML model status checking
-
-### EBSD Clean-Up Tool
-- Process and clean EBSD data files
-- Noise reduction in EBSD maps
-- Grain boundary detection and enhancement
-- Phase analysis and identification
-- Support for standard EBSD file formats (.ang, .ctf, .cpr, .osc, .h5, .hdf5)
-- Interactive before/after comparison
-
-### Hydride Segmentation Tool
-- Automatically segment hydrides in microstructure images
-- Overlay results on original image
-- Support for common image formats (PNG, JPG, JPEG, GIF, BMP, TIFF, WebP)
-
-### General Features
-- Modern, responsive user interface
-- Drag-and-drop file upload
-- Real-time ML model status checking
-- In-memory processing (no file storage)
-- User feedback system
-- Cross-browser compatibility
-
-## Installation
-
-1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/ml_server.git
-cd ml_server
-```
-
-2. Create and activate a virtual environment:
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. Install dependencies:
-```bash
+python -m venv env
+source env/bin/activate
 pip install -r requirements.txt
 ```
 
-## Usage
-
-To run all services together use `docker-compose`:
-```bash
-docker-compose up --build
-```
-
-Start the Flask server directly with optional autostart control:
-```bash
-python app.py --no-autostart
-```
-
-## Configuration
-
-Default settings are stored in `config.json`. Any value can be overridden at
-runtime using environment variables. Variables use the prefix `APP_` and `__`
-to separate nested keys. For example to change the port and ML model URL:
+Run the web server with Gunicorn:
 
 ```bash
-export APP_PORT=8080
-export APP_SUPER_RESOLUTION__ML_MODEL__URL=http://localhost:6000/infer
+gunicorn -c gunicorn.conf.py ml_server.app.microstructure_server:create_app()
 ```
 
-Start the application after exporting any overrides.
-
-### Sensitive Configuration Values
-
-`config.json` contains default secrets such as `secret_key` and the admin token.
-For production deployments these should be replaced using environment
-variables:
+Start a Celery worker:
 
 ```bash
-export APP_SECRET_KEY=your-production-secret
-export APP_SECURITY__ADMIN_TOKEN=your-admin-token
+celery -A ml_server.celery_app worker
 ```
 
-## Technical Details
+## Health check
 
-- Built with Flask
-- Separate ML model server
-- In-memory image processing
-- Base64 encoding for image transfer
-- Real-time ML model status checking
-- Responsive design with Bootstrap 5
-- Interactive UI components with vanilla JavaScript
-
-## File Format Support
-
-### Super Resolution
-- PNG (.png)
-- JPEG (.jpg, .jpeg)
-- GIF (.gif)
-- BMP (.bmp)
-- TIFF (.tiff)
-- WebP (.webp)
-
-### EBSD Clean-Up
-- ANG (.ang)
-- CTF (.ctf)
-- CPR (.cpr)
-- OSC (.osc)
-- HDF5 (.h5, .hdf5)
-### Hydride Segmentation
-- PNG (.png)
-- JPEG (.jpg, .jpeg)
-- GIF (.gif)
-- BMP (.bmp)
-- TIFF (.tiff)
-- WebP (.webp)
-
-## Testing
-
-Run all tests using `pytest`:
+With the services running you should get a JSON status from:
 
 ```bash
-pytest -q
+curl http://localhost:5000/health
 ```
 
-The repository provides `pytest.ini` which sets `testpaths` to the `tests`
-directory and excludes the `external/` path from collection. After cloning any
-submodules, running the command above should only collect the tests inside the
-`tests/` folder.
+## Repository layout
 
-## Contributing
+```
+ml_server/
+  src/ml_server/        - Python package
+    app/                - Flask application and routes
+    celery_app.py       - Celery tasks and worker entrypoint
+    config.py           - Configuration loader
+    static/             - Static assets served by Flask
+    templates/          - Jinja2 templates
+```
 
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
+Configuration for the intranet environment is stored in
+`config/config.intranet.json` and can be overridden with environment variables
+using the `APP_` prefix.
 
-## License
+## Development
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+Run the unit tests with:
 
-## Acknowledgments
+```bash
+python -m pytest
+```
 
-- Flask web framework
-- Pillow image processing library
-- Bootstrap for the UI framework
-- All contributors and users of the application 
+See `docs/DEPLOYMENT_INTRANET.md` for deployment instructions and
+`docs/WORKFLOW_OVERVIEW.md` for an overview of how the modules interact.

@@ -6,7 +6,7 @@ import time
 from pathlib import Path
 from typing import Optional
 
-from config import Config
+from ...config import Config
 
 _LOG = logging.getLogger(__name__)
 
@@ -17,7 +17,9 @@ def _is_port_open(port: int, host: str = "127.0.0.1") -> bool:
         return sock.connect_ex((host, port)) == 0
 
 
-def launch_service(script: str, port: int, retries: int = 3) -> Optional[subprocess.Popen]:
+def launch_service(
+    script: str, port: int, retries: int = 3
+) -> Optional[subprocess.Popen]:
     """Launch a Python service script and wait for its port to become available."""
     log_dir = Path("logs")
     log_dir.mkdir(exist_ok=True)

@@ -76,7 +76,7 @@
     },
 
     "feedback": {
-        "file_path": "src/microstructure_server/feedback.json",
+        "file_path": "src/ml_server/feedback.json",
         "max_entries": 1000,
         "required_fields": [
             "name",

@@ -2,7 +2,7 @@
 import json
 import os
 
-from microstructure_server.routes import feedback as fb
+from ml_server.app.routes import feedback as fb
 
 
 def test_submit_feedback_success(client, monkeypatch):
@@ -10,7 +10,12 @@ def test_submit_feedback_success(client, monkeypatch):
     monkeypatch.setattr(fb, "FEEDBACK_FILE", tmp_file)
     with open(tmp_file, "w") as f:
         json.dump({"feedback": []}, f)
-    data = {"name": "Test User", "email": "test@example.com", "rating": 5, "feedback": "Great app!"}
+    data = {
+        "name": "Test User",
+        "email": "test@example.com",
+        "rating": 5,
+        "feedback": "Great app!",
+    }
     response = client.post("/submit_feedback", data=data)
     assert response.status_code == 200
     response_data = json.loads(response.data)

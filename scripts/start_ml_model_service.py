@@ -5,7 +5,7 @@ import time
 
 import requests
 
-from config import Config
+from ml_server.config import Config
 
 
 def start_ml_model_service() -> bool:

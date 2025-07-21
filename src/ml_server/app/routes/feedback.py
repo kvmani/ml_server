@@ -2,12 +2,14 @@ import json
 import os
 from datetime import datetime
 
-from flask import Blueprint, jsonify, render_template, request, current_app
+from flask import Blueprint, current_app, jsonify, render_template, request
 
 bp = Blueprint("feedback", __name__)
 
 # Path to feedback file relative to package
-FEEDBACK_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "feedback.json")
+FEEDBACK_FILE = os.path.join(
+    os.path.dirname(os.path.dirname(__file__)), "feedback.json"
+)
 
 # Ensure file exists
 if not os.path.exists(FEEDBACK_FILE):
@@ -24,7 +26,10 @@ def submit_feedback():
         feedback_text = request.form.get("feedback")
 
         if not all([name, email, rating, feedback_text]):
-            return jsonify({"success": False, "message": "All fields are required"}), 400
+            return (
+                jsonify({"success": False, "message": "All fields are required"}),
+                400,
+            )
 
         feedback_data = {
             "name": name,
