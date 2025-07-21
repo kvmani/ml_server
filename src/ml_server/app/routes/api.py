@@ -27,8 +27,19 @@ def api_check_ebsd_model_status():
 
 @bp.route("/api/check_hydride_model_status")
 def api_check_hydride_model_status():
-    health_url = config.hydride_segmentation_settings.get("ml_model", {}).get("health_url")
+    health_url = config.hydride_segmentation_settings.get("ml_model", {}).get(
+        "health_url"
+    )
     return jsonify({"running": check_service_health(health_url)})
+
+
+@bp.route("/api/upload_config")
+def api_upload_config():
+    """Expose frontend upload limits."""
+    max_size = config.super_resolution_settings.get("image_settings", {}).get(
+        "max_size", 0
+    )
+    return jsonify({"max_size": max_size})
 
 
 @bp.route("/health")

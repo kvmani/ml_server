@@ -1,6 +1,5 @@
 # tests/test_hydride_segmentation.py
 import io
-from unittest.mock import Mock
 
 from ml_server.app.routes import hydride_segmentation as hs
 

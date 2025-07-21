@@ -1,4 +1,6 @@
 // Common functionality for the application
+// Maximum upload size will be fetched from the backend
+window.uploadMaxSize = 10 * 1024 * 1024;
 
 // Image comparison slider functionality
 function initComparison() {
@@ -161,9 +163,8 @@ function validateForm(form) {
     }
 
     const file = fileInput.files[0];
-    const maxSize = 10 * 1024 * 1024; // 10MB
-    if (file.size > maxSize) {
-        alert('File size exceeds 10MB limit');
+    if (file.size > window.uploadMaxSize) {
+        alert(`File size exceeds ${window.uploadMaxSize / (1024 * 1024)}MB limit`);
         return false;
     }
 
@@ -172,6 +173,14 @@ function validateForm(form) {
 
 // Initialize all components when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
+    // Fetch upload limits from backend
+    fetch('/api/upload_config')
+        .then(resp => resp.json())
+        .then(cfg => {
+            if (cfg.max_size) {
+                window.uploadMaxSize = cfg.max_size;
+            }
+        });
     // Initialize file upload handlers
     const fileInputs = document.querySelectorAll('input[type="file"]');
     fileInputs.forEach(input => {

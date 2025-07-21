@@ -120,7 +120,7 @@ Before running the application, ensure you have the following installed:
 
 ### Getting Help
 
-- Check the [Development Guide](DEVELOPMENT_GUIDE.md)
+- Check the [Development Guide](DEVELOPMENT.md)
 - Review the [README](README.md)
 - Open an issue on GitHub
 

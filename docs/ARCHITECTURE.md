@@ -8,3 +8,21 @@ The application is composed of a Flask web layer and separate model services.
 - **Docker Compose** – Provides Redis, workers and the web server for local development.
 
 The app loads configuration from `config/config.intranet.json` and environment variables using `pydantic-settings`.
+
+```
++-----------+      +--------------------+
+|  Browser  +----->|    Flask App       |
++-----------+      +--------------------+
+                            |
+                            v
+                    +---------------+
+                    |  Celery Worker|
+                    +---------------+
+                            |
+                            v
+                    +------------+
+                    | ML Models  |
+                    +------------+
+```
+
+Browser requests hit the Flask app which delegates heavy jobs to Celery workers interacting with the ML model services.
