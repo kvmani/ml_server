@@ -22,7 +22,7 @@ def hydride_segmentation():
         if file.filename == "":
             return jsonify({"success": False, "error": "No image selected"}), 400
 
-        allowed_exts = config.config["hydride_segmentation"]["allowed_extensions"]
+        allowed_exts = config.hydride_segmentation_settings.get("allowed_extensions", [])
         if not allowed_file(file.filename, allowed_exts):
             return jsonify({"success": False, "error": "Invalid file type"}), 400
 

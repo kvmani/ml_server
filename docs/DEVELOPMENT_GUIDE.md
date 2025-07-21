@@ -22,16 +22,18 @@
 ## Project Structure
 
 ```
-microstructure-analysis-flask/
+ml_server/
 ├── static/
 │   ├── css/           # CSS styles
 │   ├── js/            # JavaScript files
 │   └── images/        # Static images
 ├── templates/         # HTML templates
 ├── app.py            # Main Flask application
-├── fake_ml_model_server.py  # Temporary ML model server
+├── scripts/
+│   ├── fake_ml_model_server.py      # Temporary ML model server
+│   └── fake_ebsd_model.py           # EBSD demo service
 ├── requirements.txt   # Python dependencies
-├── feedback.json     # User feedback storage
+├── src/microstructure_server/feedback.json  # User feedback storage
 └── README.md         # Project documentation
 ```
 
@@ -40,8 +42,8 @@ microstructure-analysis-flask/
 1. **Starting Development**
    ```bash
    # Clone the repository
-   git clone https://github.com/yourusername/microstructure-analysis-flask.git
-   cd microstructure-analysis-flask
+   git clone https://github.com/yourusername/ml_server.git
+   cd ml_server
 
    # Create and activate virtual environment
    python -m venv venv
@@ -54,7 +56,7 @@ microstructure-analysis-flask/
 2. **Running the Application**
    ```bash
    # Start the ML model server (in a separate terminal)
-   python fake_ml_model_server.py
+   python scripts/fake_ml_model_server.py
 
    # Start the Flask application (in another terminal)
    python app.py
@@ -74,7 +76,7 @@ microstructure-analysis-flask/
 - Error handling and validation
 - Feedback system
 
-### ML Model Server (fake_ml_model_server.py)
+### ML Model Server (scripts/fake_ml_model_server.py)
 - Image processing endpoints
 - Health check endpoint
 - Logging configuration

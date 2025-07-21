@@ -38,8 +38,8 @@ Full documentation can be found in the [docs](docs/) directory.
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/microstructure-analysis-flask.git
-cd microstructure-analysis-flask
+git clone https://github.com/yourusername/ml_server.git
+cd ml_server
 ```
 
 2. Create and activate a virtual environment:
@@ -77,6 +77,17 @@ export APP_SUPER_RESOLUTION__ML_MODEL__URL=http://localhost:6000/infer
 ```
 
 Start the application after exporting any overrides.
+
+### Sensitive Configuration Values
+
+`config.json` contains default secrets such as `secret_key` and the admin token.
+For production deployments these should be replaced using environment
+variables:
+
+```bash
+export APP_SECRET_KEY=your-production-secret
+export APP_SECURITY__ADMIN_TOKEN=your-admin-token
+```
 
 ## Technical Details
 

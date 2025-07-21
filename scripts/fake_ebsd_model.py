@@ -29,8 +29,9 @@ if logger.hasHandlers():
 console_handler = logging.StreamHandler()
 console_handler.setLevel(logging.INFO)
 
-file_handler = logging.handlers.RotatingFileHandler(log_path, maxBytes=10485760, backupCount=5)
-file_handler = logging.FileHandler(log_path)
+file_handler = logging.handlers.RotatingFileHandler(
+    log_path, maxBytes=10485760, backupCount=5
+)
 file_handler.setLevel(logging.INFO)
 
 # Formatter
