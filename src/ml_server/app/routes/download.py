@@ -2,6 +2,8 @@ import os
 
 from flask import Blueprint, send_file
 
+"""Routes for serving processed data files to the user."""
+
 bp = Blueprint("download", __name__)
 
 

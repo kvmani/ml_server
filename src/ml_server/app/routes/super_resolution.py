@@ -4,6 +4,8 @@ import io
 import requests
 from flask import Blueprint, jsonify, render_template, request
 
+"""Super-resolution image enhancement routes."""
+
 from ...config import Config
 from ..services.utils import allowed_file
 
@@ -18,16 +20,17 @@ def super_resolution():
             return jsonify({"success": False, "error": "No image uploaded"}), 400
 
         try:
-            response = requests.get(
-                config.config["super_resolution"]["ml_model"]["health_url"]
-            )
+            response = requests.get(config.config["super_resolution"]["ml_model"]["health_url"])
             if response.status_code != 200:
                 if config.start_ml_model_service():
                     return (
                         jsonify(
                             {
                                 "success": False,
-                                "error": "ML model server was not running. It has been started. Please try your request again.",
+                                "error": (
+                                    "ML model server was not running. "
+                                    "It has been started. Please try your request again."
+                                ),
                             }
                         ),
                         503,
@@ -37,7 +40,10 @@ def super_resolution():
                         jsonify(
                             {
                                 "success": False,
-                                "error": "ML model server is not running and could not be started. Please try again later.",
+                                "error": (
+                                    "ML model server is not running and could not be started. "
+                                    "Please try again later."
+                                ),
                             }
                         ),
                         503,
@@ -48,7 +54,10 @@ def super_resolution():
                     jsonify(
                         {
                             "success": False,
-                            "error": "ML model server was not running. It has been started. Please try your request again.",
+                            "error": (
+                                "ML model server was not running. "
+                                "It has been started. Please try your request again."
+                            ),
                         }
                     ),
                     503,
@@ -58,7 +67,10 @@ def super_resolution():
                     jsonify(
                         {
                             "success": False,
-                            "error": "ML model server is not running and could not be started. Please try again later.",
+                            "error": (
+                                "ML model server is not running and could not be started. "
+                                "Please try again later."
+                            ),
                         }
                     ),
                     503,
@@ -68,9 +80,7 @@ def super_resolution():
         if file.filename == "":
             return jsonify({"success": False, "error": "No image selected"}), 400
 
-        if allowed_file(
-            file.filename, config.config["super_resolution"]["allowed_extensions"]
-        ):
+        if allowed_file(file.filename, config.config["super_resolution"]["allowed_extensions"]):
             try:
                 response = requests.post(config.ml_model_url, files={"image": file})
                 if response.status_code == 200:

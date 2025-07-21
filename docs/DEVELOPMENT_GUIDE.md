@@ -3,9 +3,9 @@
 ## Development Environment Setup
 
 1. **Python Environment**
-   - Python 3.8 or higher
+   - Python 3.12 or higher
    - Virtual environment (venv)
-   - Required packages from requirements.txt
+   - Required packages from `requirements.txt` and `requirements-test.txt`
 
 2. **IDE Setup**
    - Recommended: VS Code or PyCharm
@@ -50,7 +50,9 @@ ml_server/
    source venv/bin/activate  # On Windows: venv\Scripts\activate
 
    # Install dependencies
-   pip install -r requirements.txt
+   pip install -r requirements.txt -r requirements-test.txt
+   # Install pre-commit hooks for formatting and linting
+   pre-commit install
    ```
 
 2. **Running the Application**
@@ -60,6 +62,9 @@ ml_server/
 
    # Start the Flask application (in another terminal)
    python app.py
+
+   # Or launch the full stack with Docker
+   docker-compose up --build
    ```
 
 3. **Making Changes**
@@ -145,8 +150,7 @@ ml_server/
 - [Flask Documentation](https://flask.palletsprojects.com/)
 - [Pillow Documentation](https://pillow.readthedocs.io/)
 - [Bootstrap Documentation](https://getbootstrap.com/docs/)
-- [Python Style Guide](https://www.python.org/dev/peps/pep-0008/) 
+- [Python Style Guide](https://www.python.org/dev/peps/pep-0008/)
 ## Development Tools
 - Run `pre-commit install` after cloning to enable formatting checks.
 - Use `docker-compose up --build` for a full dev environment including Redis and Celery workers.
-
