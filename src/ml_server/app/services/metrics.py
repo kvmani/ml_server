@@ -1,3 +1,5 @@
+"""Prometheus metrics helpers."""
+
 from prometheus_client import Counter, Gauge, generate_latest
 
 # Counter for Celery task retries

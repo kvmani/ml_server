@@ -1,6 +1,9 @@
 import json
 import logging
 import os
+from pathlib import Path
+
+from dotenv import load_dotenv
 from typing import Any, Dict
 
 
@@ -17,8 +20,9 @@ class Config:
         return cls._instance
 
     def _load_config(self) -> None:
-        repo_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-        config_path = os.path.join(repo_root, "config", "config.intranet.json")
+        repo_root = Path(__file__).resolve().parents[2]
+        load_dotenv(repo_root / ".env", override=False)
+        config_path = repo_root / "config" / "config.intranet.json"
         with open(config_path, "r") as f:
             self.config: Dict[str, Any] = json.load(f)
         self._apply_env_overrides()

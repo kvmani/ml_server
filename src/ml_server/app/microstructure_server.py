@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""Flask application factory and blueprint registration."""
+
 import os
 
 from flask import Flask
@@ -8,6 +10,7 @@ from flask_talisman import Talisman
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from ..config import load_config
+from ..celery_app import celery_init_app
 from .services.graceful import install_signal_handlers
 from .services.startup import start_services
 
@@ -36,6 +39,7 @@ def create_app(startup: bool = True) -> Flask:
         app.config["ADMIN_TOKEN"] = cfg.admin_token
     app.secret_key = cfg.secret_key or os.urandom(24)
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
+    celery_init_app(app)
 
     # Blueprints
     from .routes.api import bp as api_bp
