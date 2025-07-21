@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}EBSD Clean-Up - Microstructural Analysis{% endblock %}
+
+{% block content %}
+<script src="{{ url_for('static', filename='vendor/js/jszip.min.js') }}" nonce="{{ csp_nonce() }}"></script>
+
+<div class="container-fluid px-0">
+    <div class="hero-section text-center py-5">
+        <div class="hero-background"></div>
+        <div class="hero-content position-relative">
+            <h1 class="display-4 fw-bold mb-3">EBSD Clean-Up</h1>
+            <p class="lead mb-5">Enhance and clean up your EBSD maps using advanced AI algorithms</p>
+            <div class="feature-badges d-flex justify-content-center gap-4 mb-4">
+                <div class="badge-item">
+                    <svg class='bi text-success' width='16' height='16'><use href='{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.svg') }}#check-circle-fill'/></svg>
+                    <span>Noise Reduction</span>
+                </div>
+                <div class="badge-item">
+                    <svg class='bi text-success' width='16' height='16'><use href='{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.svg') }}#check-circle-fill'/></svg>
+                    <span>Grain Analysis</span>
+                </div>
+                <div class="badge-item">
+                    <svg class='bi text-success' width='16' height='16'><use href='{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.svg') }}#check-circle-fill'/></svg>
+                    <span>Phase Detection</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="upload-section py-5">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="upload-container text-center p-5" id="dropZone">
+                            <div class="upload-icon mb-4">
+                                <svg class='bi display-3'><use href='{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.svg') }}#cloud-arrow-up'/></svg>
+                            </div>
+                            <h3 class="h4 mb-3">Upload Your EBSD File</h3>
+                            <p class="text-muted mb-4">Drag and drop your EBSD file here, or click to browse</p>
+                            
+                            <form id="uploadForm" method="POST" enctype="multipart/form-data">
+                                <input type="file" id="fileInput" name="ebsd_file" class="d-none" accept=".ang,.ctf,.cpr,.osc,.h5,.hdf5">
+                                <button type="button" class="btn btn-primary btn-lg px-5" id="browseBtn">
+                                    <svg class='bi me-2' width='16' height='16'><use href='{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.svg') }}#folder'/></svg>Browse File
+                                </button>
+                            </form>
+                            
+                            <div class="supported-formats mt-4">
+                                <div class="format-badge">
+                                    <svg class='bi me-2' width='16' height='16'><use href='{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.svg') }}#file-earmark-text'/></svg>
+                                    <span>Supported formats:</span>
+                                </div>
+                                <div class="format-list">
+                                    <span class="format-item">.ang</span>
+                                    <span class="format-item">.ctf</span>
+                                    <span class="format-item">.cpr</span>
+                                    <span class="format-item">.osc</span>
+                                    <span class="format-item">.h5</span>
+                                    <span class="format-item">.hdf5</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Image Comparison Section -->
+        <div class="preview-section bg-light py-5 d-none" id="previewContainer">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        <!-- Loading State -->
+                        <div id="loadingState" class="text-center mb-4 d-none">
+                            <div class="spinner-border text-primary mb-3" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="text-muted">Processing EBSD data...</p>
+                        </div>
+
+                        <div class="image-comparison-slider">
+                            <div class="comparison-container">
+                                <div class="image-side original-side">
+                                    <div class="image-label-container">
+                                        <span class="original-label">Before Clean-Up</span>
+                                    </div>
+                                    <div class="image-wrapper">
+                                        <img id="originalPreview" class="img-fluid" alt="Original EBSD Map">
+                                    </div>
+                                </div>
+                                <div class="image-side enhanced-side">
+                                    <div class="image-label-container">
+                                        <span class="enhanced-label">After Clean-Up</span>
+                                    </div>
+                                    <div class="image-wrapper">
+                                        <img id="enhancedPreview" class="img-fluid" alt="Enhanced EBSD Map">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <button class="btn btn-primary btn-lg px-5 d-none" id="downloadBtn">
+                                <svg class='bi me-2' width='16' height='16'><use href='{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.svg') }}#download'/></svg>Download Enhanced EBSD Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include external CSS and JS files -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ebsd_cleanup.css') }}">
+<script src="{{ url_for('static', filename='js/ebsd_cleanup.js') }}" nonce="{{ csp_nonce() }}"></script>
+
+<!-- Include Feedback Section -->
+{% include 'feedback_section.html' %}
+
+{% endblock %} 
