@@ -27,9 +27,10 @@ def create_app(startup: bool = True) -> Flask:
     Talisman(
         app,
         content_security_policy={
-            "default-src": "'self'",
-            "script-src": ["'self'", "'nonce'"],
-        },
+        "default-src": ["'self'"],
+        "script-src": ["'self'", "'nonce'"],
+        "img-src": ["'self'", "data:"],  # <-- This line allows base64 images
+    },
         force_https=False,
         strict_transport_security=False,
     )

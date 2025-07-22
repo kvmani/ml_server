@@ -92,8 +92,12 @@ def infer():
         return jsonify({"error": str(e)}), 500
 
 
-@app.route("/", methods=["GET"])
+@app.route("/health", methods=["GET"])
 def health():
+    return jsonify({"status": "healthy", "message": "Fake ML model is running"}), 200
+
+@app.route("/", methods=["GET"])
+def root_alias():
     return jsonify({"status": "healthy", "message": "Fake ML model is running"}), 200
 
 

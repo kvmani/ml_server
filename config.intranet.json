@@ -1,0 +1,109 @@
+{
+    "debug": true,
+    "secret_key": "your-secret-key",
+    "host": "127.0.0.1",
+    "port": 5000,
+	
+    "ml_model_health_url": "http://localhost:5002/health",
+    "app_port": 5000,
+    "celery_broker_url": "redis://localhost:6379/0",
+    "feedback_file": "/opt/ml_server/feedback.json",
+    "super_resolution": {
+        "allowed_extensions": [
+            "png",
+            "jpg",
+            "jpeg",
+            "gif",
+            "bmp",
+            "tiff",
+            "webp"
+        ],
+        "ml_model": {
+            "url": "http://localhost:5002/infer",
+            "health_url": "http://localhost:5002",
+            "port": 5002,
+            "timeout": 30
+        },
+        "image_settings": {
+            "max_size": 10485760,
+            "min_dimensions": [100, 100],
+            "max_dimensions": [4096, 4096]
+        }
+    },
+
+    "ebsd_cleanup": {
+        "allowed_extensions": [
+            "ang",
+            "ctf",
+            "cpr",
+            "osc",
+            "h5",
+            "hdf5"
+        ],
+        "processing_options": [
+            "noise_reduction",
+            "grain_detection",
+            "phase_analysis"
+        ],
+        "file_settings": {
+            "max_size": 52428800
+        },
+        "ml_model": {
+            "url": "http://localhost:5003/infer",
+            "health_url": "http://localhost:5003",
+            "port": 5003,
+            "timeout": 30
+        }
+    },
+
+    "hydride_segmentation": {
+        "allowed_extensions": [
+            "png",
+            "jpg",
+            "jpeg",
+            "gif",
+            "bmp",
+            "tiff",
+            "webp"
+        ],
+        "ml_model": {
+            "url": "http://localhost:5004/infer",
+            "health_url": "http://localhost:5004",
+            "port": 5004,
+            "timeout": 30
+        }
+    },
+
+    "celery": {
+        "broker_url": "redis://redis:6379/0",
+        "result_backend": "redis://redis:6379/0"
+    },
+
+    "feedback": {
+        "file_path": "src/microstructure_server/feedback.json",
+        "max_entries": 1000,
+        "required_fields": [
+            "name",
+            "email",
+            "rating",
+            "feedback_text"
+        ]
+    },
+
+    "logging": {
+        "debug_level": "DEBUG",
+        "production_level": "INFO",
+        "log_file": "app.log",
+        "format": "%(asctime)s [%(levelname)s] %(message)s",
+        "max_size": 10485760,
+        "backup_count": 5,
+        "log_dir": "logs"
+    },
+
+    "security": {
+        "allowed_origins": ["http://localhost:5000"],
+        "csrf_enabled": true,
+        "ssl_enabled": false,
+        "admin_token": "changeme"
+    }
+}

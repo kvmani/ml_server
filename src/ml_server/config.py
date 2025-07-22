@@ -22,7 +22,7 @@ class Config:
     def _load_config(self) -> None:
         repo_root = Path(__file__).resolve().parents[2]
         load_dotenv(repo_root / ".env", override=False)
-        config_path = repo_root / "config" / "config.intranet.json"
+        config_path = repo_root / "config.intranet.json"
         with open(config_path, "r") as f:
             self.config: Dict[str, Any] = json.load(f)
         self._apply_env_overrides()

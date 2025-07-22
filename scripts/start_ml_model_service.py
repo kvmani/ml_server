@@ -2,7 +2,7 @@ import logging
 import os
 import subprocess
 import time
-
+from pathlib import Path
 import requests
 
 from ml_server.config import Config
@@ -10,7 +10,9 @@ from ml_server.config import Config
 
 def start_ml_model_service() -> bool:
     """Start the ML model service if it is not already running."""
-    config = Config()
+    cfg_path = r"/opt/ml_server/config.intranet.json"
+    print(f"{cfg_path=}")
+    config = Config(cfg_path)
     health_url = config.ml_model_health_url
     try:
         response = requests.get(health_url)
