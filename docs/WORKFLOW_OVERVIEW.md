@@ -1,6 +1,6 @@
 # Workflow Overview
 
-The Flask application lives in `ml_server.app.microstructure_server` and exposes
+The Flask application lives in `ml_server.app.server` and exposes
 several routes for file processing. Heavy operations are delegated to Celery
 workers communicating through Redis queues.
 
@@ -15,7 +15,7 @@ workers communicating through Redis queues.
 
 ## Modules
 
-- **ml_server.app.microstructure_server** – application factory used by Gunicorn
+- **ml_server.app.server** – application factory used by Gunicorn
 - **celery_app** – defines the Celery instance and tasks
 - **routes/** – HTTP endpoints for the web UI and API
 - **services/** – helpers and utilities used by the routes

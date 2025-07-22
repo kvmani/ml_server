@@ -64,7 +64,7 @@ After=network.target
 [Service]
 WorkingDirectory=/opt/ml_server/src
 Environment=PYTHONPATH=/opt/ml_server/src
-ExecStart=/opt/ml_server/env/bin/gunicorn -b 0.0.0.0:5000 -w 2 -t 300 ml_server.app.microstructure_server:create_app()
+ExecStart=/opt/ml_server/env/bin/gunicorn -b 0.0.0.0:5000 -w 2 -t 300 ml_server.app.server:create_app()
 Restart=always
 
 [Install]

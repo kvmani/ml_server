@@ -9,7 +9,7 @@ from celery.signals import worker_process_init
 from .app.services.graceful import install_signal_handlers
 from .config import Config
 
-celery_app = Celery("microstructure_tasks")
+celery_app = Celery("ml_tasks")
 
 
 @worker_process_init.connect

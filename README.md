@@ -16,7 +16,7 @@ pre-commit install
 Run the web server with Gunicorn:
 
 ```bash
-gunicorn -w 2 -b 0.0.0.0:5000 ml_server.app.microstructure_server:create_app()
+gunicorn -w 2 -b 0.0.0.0:5000 ml_server.app.server:create_app()
 ```
 
 Start a Celery worker:
@@ -109,8 +109,11 @@ APP_HYDRIDE_SEGMENTATION__ML_MODEL__PORT=5004
 APP_HYDRIDE_SEGMENTATION__ML_MODEL__TIMEOUT=30
 APP_FEEDBACK__FILE_PATH=src/ml_server/feedback.json
 APP_DOWNLOAD__PROCESSED_DATA_PATH=tmp/enhanced_ebsd_map.png
-APP_SECURITY__ADMIN_TOKEN=changeme
+APP_SECURITY__ADMIN_TOKEN=__SET_ADMIN_TOKEN__
 APP_SECURITY__ALLOWED_ORIGINS="[http://localhost:5000]"
 APP_SECURITY__CSRF_ENABLED=true
 APP_SECURITY__SSL_ENABLED=false
 ```
+
+**Important:** The `APP_SECRET_KEY` and `APP_SECURITY__ADMIN_TOKEN` values must be
+set to secure, unique strings before running the application in production.
