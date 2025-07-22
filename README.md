@@ -16,7 +16,7 @@ pre-commit install
 Run the web server with Gunicorn:
 
 ```bash
-gunicorn -c gunicorn.conf.py ml_server.app.microstructure_server:create_app()
+gunicorn -w 2 -b 0.0.0.0:5000 ml_server.app.microstructure_server:create_app()
 ```
 
 Start a Celery worker:

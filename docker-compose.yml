@@ -27,7 +27,7 @@ services:
       - redis
   web:
     build: .
-    command: gunicorn -c gunicorn.conf.py ml_server.app.microstructure_server:create_app\(\)
+    command: gunicorn -w 2 -b 0.0.0.0:5000 ml_server.app.microstructure_server:create_app\(\)
     volumes:
       - .:/app
     ports:
