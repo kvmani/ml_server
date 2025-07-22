@@ -15,6 +15,7 @@ service = HydrideSegmentationService(config)
 
 @bp.route("/hydride_segmentation", methods=["GET", "POST"])
 def hydride_segmentation():
+    """Run hydride segmentation on an uploaded image."""
     if request.method == "POST":
         if "image" not in request.files:
             return jsonify({"success": False, "error": "No image uploaded"}), 400
