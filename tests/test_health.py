@@ -1,4 +1,4 @@
-from ml_server.app.microstructure_server import create_app
+from ml_server.app.server import create_app
 
 
 def test_health_endpoint():

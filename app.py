@@ -2,13 +2,13 @@ from __future__ import annotations
 
 import argparse
 
-from ml_server.app.microstructure_server import create_app
+from ml_server.app.server import create_app
 from ml_server.config import load_config
 
 
 def main() -> None:
     """Command line entrypoint for starting the Flask development server."""
-    parser = argparse.ArgumentParser(description="Microstructure server")
+    parser = argparse.ArgumentParser(description="ML Server")
     parser.add_argument("--no-autostart", action="store_true", help="Disable model autostart")
     args = parser.parse_args()
 

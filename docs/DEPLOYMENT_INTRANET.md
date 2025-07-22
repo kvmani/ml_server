@@ -10,6 +10,9 @@ All settings are stored in `config/config.intranet.json`.  Environment
 variables using the `APP_` prefix can override values.  The most common
 options are the host/port and URLs for the ML model services.
 
+Be sure to edit `APP_SECRET_KEY` and `APP_SECURITY__ADMIN_TOKEN` in `.env`
+or as environment variables before exposing the service.
+
 ## Gunicorn Service
 
 Create `/etc/systemd/system/ml_server.service` with:
@@ -23,7 +26,7 @@ After=network.target
 WorkingDirectory=/opt/ml_server/src
 Environment=PYTHONPATH=/opt/ml_server/src
 EnvironmentFile=/opt/ml_server/.env
-ExecStart=/opt/ml_server/env/bin/gunicorn -b 0.0.0.0:5000 -w 2 -t 300 ml_server.app.microstructure_server:create_app()
+ExecStart=/opt/ml_server/env/bin/gunicorn -b 0.0.0.0:5000 -w 2 -t 300 ml_server.app.server:create_app()
 Restart=always
 
 [Install]

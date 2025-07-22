@@ -1,6 +1,6 @@
 {
     "debug": true,
-    "secret_key": "your-secret-key",
+    "secret_key": "__SET_SECRET_KEY__",
     "host": "127.0.0.1",
     "port": 5000,
 
@@ -104,6 +104,6 @@
         "allowed_origins": ["http://localhost:5000"],
         "csrf_enabled": true,
         "ssl_enabled": false
-        ,"admin_token": "changeme"
+        ,"admin_token": "__SET_ADMIN_TOKEN__"
     }
 }

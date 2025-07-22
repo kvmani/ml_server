@@ -17,7 +17,9 @@ services:
     depends_on:
       - redis
   celery:
-    build: .
+    build:
+      context: .
+      target: prod
     command: celery -A ml_server.celery_app worker --loglevel=info
     volumes:
       - .:/app
@@ -25,9 +27,23 @@ services:
       - .env
     depends_on:
       - redis
+
+  beat:
+    build:
+      context: .
+      target: prod
+    command: celery -A ml_server.celery_app beat --loglevel=info
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - redis
   web:
-    build: .
-    command: gunicorn -w 2 -b 0.0.0.0:5000 ml_server.app.microstructure_server:create_app\(\)
+    build:
+      context: .
+      target: prod
+    command: gunicorn -w 2 -b 0.0.0.0:5000 ml_server.app.server:create_app()
     volumes:
       - .:/app
     ports:
@@ -39,3 +55,4 @@ services:
       - ml_model
       - ebsd_model
       - celery
+      - beat
