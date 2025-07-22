@@ -4,21 +4,26 @@ from datetime import datetime
 
 from flask import Blueprint, current_app, jsonify, render_template, request
 
+from ...config import Config
+
 """Feedback submission and rendering routes."""
 
 bp = Blueprint("feedback", __name__)
+config = Config()
 
-# Path to feedback file relative to package
-FEEDBACK_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "feedback.json")
+# Path to feedback file from configuration
+FEEDBACK_FILE = config.feedback_settings.get("file_path", "src/ml_server/feedback.json")
 
 # Ensure file exists
 if not os.path.exists(FEEDBACK_FILE):
+    os.makedirs(os.path.dirname(FEEDBACK_FILE), exist_ok=True)
     with open(FEEDBACK_FILE, "w") as f:
         json.dump({"feedback": []}, f)
 
 
 @bp.route("/submit_feedback", methods=["POST"])
 def submit_feedback():
+    """Handle feedback submissions from the web UI."""
     try:
         name = request.form.get("name")
         email = request.form.get("email")
@@ -55,6 +60,7 @@ def submit_feedback():
 
 @bp.route("/admin/feedback")
 def admin_feedback():
+    """Render stored feedback entries for admins."""
     token = request.args.get("token")
     admin_token = current_app.config.get("ADMIN_TOKEN")
     if admin_token and token != admin_token:

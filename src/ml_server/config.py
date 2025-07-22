@@ -2,9 +2,9 @@ import json
 import logging
 import os
 from pathlib import Path
+from typing import Any, Dict
 
 from dotenv import load_dotenv
-from typing import Any, Dict
 
 
 class Config:
@@ -98,6 +98,14 @@ class Config:
         return self.config.get("celery", {})
 
     @property
+    def download_settings(self) -> Dict[str, Any]:
+        return self.config.get("download", {})
+
+    @property
+    def processed_data_path(self) -> str:
+        return self.download_settings.get("processed_data_path", "tmp/enhanced_ebsd_map.png")
+
+    @property
     def feedback_settings(self) -> Dict[str, Any]:
         return self.config.get("feedback", {})
 
@@ -116,15 +124,11 @@ class Config:
     # Backwards compatibility helpers
     @property
     def super_resolution_extensions(self) -> set:
-        return set(
-            self.super_resolution_settings.get("allowed_extensions", [])
-        )  # noqa: E501
+        return set(self.super_resolution_settings.get("allowed_extensions", []))  # noqa: E501
 
     @property
     def ebsd_extensions(self) -> set:
-        return set(
-            self.ebsd_cleanup_settings.get("allowed_extensions", [])
-        )  # noqa: E501
+        return set(self.ebsd_cleanup_settings.get("allowed_extensions", []))  # noqa: E501
 
     @property
     def ml_model_url(self) -> str:

@@ -3,15 +3,15 @@ from __future__ import annotations
 import os
 import tempfile
 
-import requests
+import requests  # noqa: F401 - patched in tests
 from flask import Blueprint, current_app, jsonify, render_template, request
 
 """Endpoints for the EBSD cleanup tool and Celery task orchestration."""
 
 from ...celery_app import celery_app
-from ...tasks import ebsd_cleanup_task
 from ...config import Config
-from ..services.utils import allowed_file
+from ...tasks import ebsd_cleanup_task
+from ..services.utils import allowed_file, ensure_service_available
 
 bp = Blueprint("ebsd_cleanup", __name__)
 config = Config()
@@ -19,6 +19,7 @@ config = Config()
 
 @bp.route("/ebsd_cleanup", methods=["GET", "POST"])
 def ebsd_cleanup():
+    """Handle EBSD cleanup uploads and task dispatch."""
     if request.method == "POST":
         if "ebsd_file" not in request.files:
             return jsonify({"success": False, "error": "No EBSD file uploaded"}), 400
@@ -31,36 +32,22 @@ def ebsd_cleanup():
         if not allowed_file(file.filename, allowed_exts):
             return jsonify({"success": False, "error": "Invalid file type"}), 400
 
+        err = ensure_service_available(
+            config.ebsd_cleanup_settings.get("ml_model", {}).get("health_url", ""),
+            service_name="EBSD ML model",
+        )
+        if err:
+            return err
+
         file.seek(0, os.SEEK_END)
-        if file.tell() > config.ebsd_cleanup_settings.get("file_settings", {}).get(
-            "max_size", 0
-        ):
+        if file.tell() > config.ebsd_cleanup_settings.get("file_settings", {}).get("max_size", 0):
             return jsonify({"success": False, "error": "File size exceeds limit"}), 400
         file.seek(0)
-
-        try:
-            health_url = config.ebsd_cleanup_settings.get("ml_model", {}).get(
-                "health_url"
-            )
-            if requests.get(health_url, timeout=3).status_code != 200:
-                return (
-                    jsonify(
-                        {"success": False, "error": "EBSD ML model is not running"}
-                    ),
-                    503,
-                )
-        except requests.exceptions.RequestException:
-            return (
-                jsonify({"success": False, "error": "EBSD ML model is not reachable"}),
-                503,
-            )
 
         upload_dir = os.path.join("tmp", "uploads")
         os.makedirs(upload_dir, exist_ok=True)
         _, ext = os.path.splitext(file.filename)
-        with tempfile.NamedTemporaryFile(
-            delete=False, dir=upload_dir, suffix=ext
-        ) as tmp:
+        with tempfile.NamedTemporaryFile(delete=False, dir=upload_dir, suffix=ext) as tmp:
             file.save(tmp.name)
             tmp_path = tmp.name
 

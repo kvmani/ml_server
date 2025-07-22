@@ -28,7 +28,11 @@ class HydrideSegmentationService:
     def segment(self, image_file) -> bytes:
         """Send image data to the segmentation model and return the segmented image."""
         files = {"image": image_file}
-        response = requests.post(self.model_url, files=files)
+        response = requests.post(
+            self.model_url,
+            files=files,
+            timeout=self.settings.get("ml_model", {}).get("timeout", 30),
+        )
         if response.status_code != 200:
             raise RuntimeError("Model processing failed")
         return response.content

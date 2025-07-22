@@ -75,6 +75,10 @@
         "result_backend": "redis://redis:6379/0"
     },
 
+    "download": {
+        "processed_data_path": "tmp/enhanced_ebsd_map.png"
+    },
+
     "feedback": {
         "file_path": "src/ml_server/feedback.json",
         "max_entries": 1000,

@@ -29,9 +29,7 @@ if logger.hasHandlers():
 console_handler = logging.StreamHandler()
 console_handler.setLevel(logging.INFO)
 
-file_handler = logging.handlers.RotatingFileHandler(
-    log_path, maxBytes=10485760, backupCount=5
-)
+file_handler = logging.handlers.RotatingFileHandler(log_path, maxBytes=10485760, backupCount=5)
 file_handler.setLevel(logging.INFO)
 
 # Formatter
@@ -58,7 +56,6 @@ def infer():
         logger.warning("No EBSD file received.")
         return jsonify({"success": False, "error": "No file uploaded"}), 400
 
-    file = request.files["ebsd_file"]
     logger.info("EBSD file received. Starting dummy processing...")
 
     start_time = time.time()
