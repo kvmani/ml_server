@@ -10,6 +10,7 @@ Python applications.
 python -m venv env
 source env/bin/activate
 pip install -r requirements.txt -r requirements-test.txt
+pre-commit install
 ```
 
 Run the web server with Gunicorn:
@@ -50,6 +51,12 @@ using the `APP_` prefix.
 
 ## Development
 
+Install development and testing requirements:
+
+```bash
+pip install -r requirements.txt -r requirements-test.txt
+```
+
 Run the unit tests with:
 
 ```bash
@@ -71,7 +78,8 @@ Pull requests are welcome! Please follow these guidelines:
 ## Environment Variables
 
 Configuration values are loaded from `config/config.intranet.json` and can be
-overridden with environment variables using the `APP_` prefix. Common options:
+overridden with environment variables using the `APP_` prefix. Key options are
+listed below. Nested keys use `__` to separate levels.
 
 ```ini
 APP_HOST=127.0.0.1
@@ -79,12 +87,30 @@ APP_PORT=5000
 APP_DEBUG=true
 APP_SECRET_KEY=change-me
 APP_LOGGING__LOG_DIR=logs
+APP_LOGGING__LOG_FILE=app.log
+APP_LOGGING__FORMAT="%(asctime)s [%(levelname)s] %(message)s"
 APP_CELERY__BROKER_URL=redis://redis:6379/0
 APP_CELERY__RESULT_BACKEND=redis://redis:6379/0
 APP_SUPER_RESOLUTION__ML_MODEL__URL=http://localhost:5002/infer
+APP_SUPER_RESOLUTION__ML_MODEL__HEALTH_URL=http://localhost:5002
+APP_SUPER_RESOLUTION__ML_MODEL__PORT=5002
+APP_SUPER_RESOLUTION__ML_MODEL__TIMEOUT=30
+APP_SUPER_RESOLUTION__IMAGE_SETTINGS__MAX_SIZE=10485760
+APP_SUPER_RESOLUTION__IMAGE_SETTINGS__MIN_DIMENSIONS="[100,100]"
+APP_SUPER_RESOLUTION__IMAGE_SETTINGS__MAX_DIMENSIONS="[4096,4096]"
 APP_EBSD_CLEANUP__ML_MODEL__URL=http://localhost:5003/infer
+APP_EBSD_CLEANUP__ML_MODEL__HEALTH_URL=http://localhost:5003
+APP_EBSD_CLEANUP__ML_MODEL__PORT=5003
+APP_EBSD_CLEANUP__ML_MODEL__TIMEOUT=30
+APP_EBSD_CLEANUP__FILE_SETTINGS__MAX_SIZE=52428800
 APP_HYDRIDE_SEGMENTATION__ML_MODEL__URL=http://localhost:5004/infer
+APP_HYDRIDE_SEGMENTATION__ML_MODEL__HEALTH_URL=http://localhost:5004
+APP_HYDRIDE_SEGMENTATION__ML_MODEL__PORT=5004
+APP_HYDRIDE_SEGMENTATION__ML_MODEL__TIMEOUT=30
 APP_FEEDBACK__FILE_PATH=src/ml_server/feedback.json
-APP_SECURITY__ADMIN_TOKEN=changeme
 APP_DOWNLOAD__PROCESSED_DATA_PATH=tmp/enhanced_ebsd_map.png
+APP_SECURITY__ADMIN_TOKEN=changeme
+APP_SECURITY__ALLOWED_ORIGINS="[http://localhost:5000]"
+APP_SECURITY__CSRF_ENABLED=true
+APP_SECURITY__SSL_ENABLED=false
 ```

@@ -52,6 +52,14 @@ static/temp/*
 logs/
 log/
 
+# Model files and large binaries
+*.pkl
+*.h5
+*.hdf5
+*.ckpt
+*.pt
+*.pth
+
 # Local development
 .env.local
 .env.development.local
