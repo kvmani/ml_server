@@ -1,113 +1,39 @@
 {% extends "base.html" %}
-
-{% block title %}Hydride Segmentation - Microstructural Analysis{% endblock %}
-
+{% block title %}Hydride Segmentation{% endblock %}
 {% block content %}
-<div class="container-fluid px-0">
-    <div class="hero-section text-center py-5">
-        <div class="hero-background"></div>
-        <div class="hero-content position-relative">
-            <h1 class="display-4 fw-bold mb-3">Hydride Segmentation</h1>
-            <p class="lead mb-5">Identify hydrides in your microstructural images using advanced AI algorithms</p>
-            <div class="feature-badges d-flex justify-content-center gap-4 mb-4">
-                <div class="badge-item">
-                    <i class="bi bi-check-circle-fill text-success"></i>
-                    <span>Pixel-wise Segmentation</span>
-                </div>
-                <div class="badge-item">
-                    <i class="bi bi-check-circle-fill text-success"></i>
-                    <span>Overlay Visualization</span>
-                </div>
-                <div class="badge-item">
-                    <i class="bi bi-check-circle-fill text-success"></i>
-                    <span>Batch Processing</span>
-                </div>
-            </div>
-        </div>
+<h1 class="mb-4">Hydride Segmentation</h1>
+<form method="post" enctype="multipart/form-data">
+  <div class="mb-3">
+    <label class="form-label" for="image">Image</label>
+    <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="algorithm">Algorithm</label>
+    <select class="form-select" id="algorithm" name="algorithm">
+      <option value="ml">ML</option>
+      <option value="conventional">Conventional</option>
+    </select>
+  </div>
+  <div id="conv-params" style="display:none;">
+    <div class="mb-3">
+      <label class="form-label" for="area_threshold">Area Threshold</label>
+      <input class="form-control" type="number" id="area_threshold" name="area_threshold" value="95">
     </div>
-
-    <div class="main-content">
-        <div class="upload-section py-5">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-lg-8">
-                        <div class="upload-container text-center p-5" id="dropZone">
-                            <div class="upload-icon mb-4">
-                                <i class="bi bi-cloud-arrow-up display-3"></i>
-                            </div>
-                            <h3 class="h4 mb-3">Upload Your Image</h3>
-                            <p class="text-muted mb-4">Drag and drop your image here, or click to browse</p>
-                            
-                            <form id="uploadForm" method="POST" enctype="multipart/form-data">
-                                <input type="file" id="fileInput" name="image" class="d-none" accept=".png,.jpg,.jpeg,.gif,.bmp,.tiff,.webp">
-                                <button type="button" class="btn btn-primary btn-lg px-5" id="browseBtn">
-                                    <i class="bi bi-folder me-2"></i>Browse File
-                                </button>
-                            </form>
-                            
-                            <div class="supported-formats mt-4">
-                                <div class="format-badge">
-                                    <i class="bi bi-file-earmark-image me-2"></i>
-                                    <span>Supported formats:</span>
-                                </div>
-                                <div class="format-list">
-                                    <span class="format-item">.png</span>
-                                    <span class="format-item">.jpg</span>
-                                    <span class="format-item">.jpeg</span>
-                                    <span class="format-item">.gif</span>
-                                    <span class="format-item">.bmp</span>
-                                    <span class="format-item">.tiff</span>
-                                    <span class="format-item">.webp</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- New Image Preview Section with Spinner -->
-        <div class="preview-section bg-light py-5 d-none" id="previewContainer">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-lg-10">
-
-                        <!-- Spinner -->
-                        <div id="loadingSpinner" style="display: none; text-align: center; margin: 20px;">
-                            <img src="/static/images/spinner.gif" alt="Loading..." width="50">
-                            <p>Processing image, please wait...</p>
-                        </div>
-
-                        <!-- Image Display -->
-                        <div class="image-container">
-                            <div class="original">
-                                <span class="label label-original">Original</span>
-                                <img id="originalImage" alt="Original Image" class="img-fluid" />
-                            </div>
-                            <div class="flipped">
-                                <span class="label label-flipped">Segmented</span>
-                                <img id="flippedImage" alt="Segmented Image" class="img-fluid" />
-                            </div>
-                        </div>
-
-                        <!-- Download Button -->
-                        <div class="text-center mt-4">
-                            <a id="downloadBtn" class="download-button" style="display:none;" download="segmented_image.png">
-                                ⬇️ Download Segmented Image
-                            </a>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="mb-3">
+      <label class="form-label" for="tile_size">Tile Size</label>
+      <input class="form-control" type="number" id="tile_size" name="tile_size" value="8">
     </div>
-</div>
-
-<!-- Include external CSS and JS files -->
-<link rel="stylesheet" href="{{ url_for('static', filename='css/hydride_segmentation.css') }}">
-<script src="{{ url_for('static', filename='js/hydride_segmentation.js') }}" nonce="{{ csp_nonce() }}"></script>
-
-<!-- Include Feedback Section -->
-{% include 'feedback_section.html' %}
+  </div>
+  {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
+  <button class="btn btn-primary" type="submit">Run Segmentation</button>
+</form>
+<script nonce="{{ csp_nonce() }}">
+(function() {
+  const sel = document.getElementById('algorithm');
+  const params = document.getElementById('conv-params');
+  function toggle() { params.style.display = sel.value === 'conventional' ? 'block' : 'none'; }
+  sel.addEventListener('change', toggle);
+  toggle();
+})();
+</script>
 {% endblock %}

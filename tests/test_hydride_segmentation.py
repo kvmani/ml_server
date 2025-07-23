@@ -1,36 +1,42 @@
-# tests/test_hydride_segmentation.py
 import io
+import sys
 
-from ml_server.app.routes import hydride_segmentation as hs
+from PIL import Image
+
+
+def _dummy_result():
+    img = Image.new("RGB", (1, 1), color="white")
+    return {
+        "original": img,
+        "mask": img,
+        "overlay": img,
+        "orientation": img,
+        "size_distribution": img,
+        "angle_distribution": img,
+    }
 
 
 def test_hydride_segmentation_get(client):
-    response = client.get("/hydride_segmentation")
-    assert response.status_code == 200
-    assert b"<html" in response.data
+    resp = client.get("/hydride_segmentation")
+    assert resp.status_code == 200
+    assert b"form" in resp.data
 
 
 def test_hydride_segmentation_post_no_file(client):
-    response = client.post("/hydride_segmentation", data={})
-    assert response.status_code == 400
-    assert b"No image uploaded" in response.data
+    resp = client.post("/hydride_segmentation", data={})
+    assert resp.status_code == 400
+    assert b"No image uploaded" in resp.data
 
 
 def test_hydride_segmentation_success(client, monkeypatch):
-    monkeypatch.setattr(hs.service, "is_available", lambda: True)
-    monkeypatch.setattr(hs.service, "segment", lambda f: b"data")
-    data = {"image": (io.BytesIO(b"img"), "img.png")}
-    response = client.post(
+    module = type("m", (), {"segment_hydride_image": lambda *a, **k: _dummy_result()})
+    monkeypatch.setitem(sys.modules, "hydride_segmentation_api", module)
+    buf = io.BytesIO()
+    Image.new("RGB", (1, 1)).save(buf, format="PNG")
+    buf.seek(0)
+    data = {"image": (buf, "img.png")}
+    resp = client.post(
         "/hydride_segmentation", data=data, content_type="multipart/form-data"
     )
-    assert response.status_code == 200
-    assert response.get_json()["success"] is True
-
-
-def test_hydride_segmentation_unavailable(client, monkeypatch):
-    monkeypatch.setattr(hs.service, "is_available", lambda: False)
-    data = {"image": (io.BytesIO(b"img"), "img.png")}
-    response = client.post(
-        "/hydride_segmentation", data=data, content_type="multipart/form-data"
-    )
-    assert response.status_code == 503
+    assert resp.status_code == 200
+    assert b"Segmentation Results" in resp.data

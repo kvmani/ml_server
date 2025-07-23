@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Hydride Segmentation Results{% endblock %}
+{% block content %}
+<h1 class="mb-4">Segmentation Results</h1>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+  <div class="col text-center">
+    <img src="{{ images.original }}" class="img-fluid border" alt="Original">
+    <p class="mt-2">Original</p>
+  </div>
+  <div class="col text-center">
+    <img src="{{ images.mask }}" class="img-fluid border" alt="Mask">
+    <p class="mt-2">Mask</p>
+  </div>
+  <div class="col text-center">
+    <img src="{{ images.overlay }}" class="img-fluid border" alt="Overlay">
+    <p class="mt-2">Overlay</p>
+  </div>
+  <div class="col text-center">
+    <img src="{{ images.orientation }}" class="img-fluid border" alt="Orientation">
+    <p class="mt-2">Orientation Map</p>
+  </div>
+  <div class="col text-center">
+    <img src="{{ images.size_distribution }}" class="img-fluid border" alt="Distribution">
+    <p class="mt-2">Distribution Plot</p>
+  </div>
+  <div class="col text-center">
+    <img src="{{ images.angle_distribution }}" class="img-fluid border" alt="Angles">
+    <p class="mt-2">Angle Histogram</p>
+  </div>
+</div>
+{% endblock %}

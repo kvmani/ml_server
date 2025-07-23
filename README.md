@@ -33,6 +33,10 @@ With the services running you should get a JSON status from:
 curl http://localhost:5000/health
 ```
 
+The hydride segmentation tool is available at `/hydride_segmentation`.
+Upload an image and choose either the ML or conventional algorithm. Results
+include the segmentation mask, overlay and orientation analysis.
+
 ## Repository layout
 
 ```
