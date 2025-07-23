@@ -154,6 +154,42 @@ h1:after {
     margin-top: 2rem;
 }
 
+/* Icon Grid for Home Page */
+.icon-grid {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.icon-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text-color);
+    padding: 0.5rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.icon-link:hover {
+    background-color: var(--light-gray);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.app-icon {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+}
+
+.app-label {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
 .footer span {
     color: rgba(255, 255, 255, 0.9) !important;
     font-size: 0.9rem;
