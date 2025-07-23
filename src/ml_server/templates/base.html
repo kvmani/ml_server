@@ -20,12 +20,22 @@
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('main.home') }}">
-                            <svg class='bi me-1' width='16' height='16'><use href='{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.svg') }}#house-door'/></svg>Home
+                            Home
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.help_faq') }}">
-                            <svg class='bi me-1' width='16' height='16'><use href='{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.svg') }}#question-circle'/></svg>Help & FAQ
+                        <a class="nav-link" href="{{ url_for('main.home') }}#about">
+                            About
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/docs">
+                            API Docs
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://github.com/kvmani/ml_server" target="_blank" rel="noopener noreferrer">
+                            GitHub
                         </a>
                     </li>
                 </ul>
@@ -67,25 +77,8 @@
     </div>
 
     <footer class="footer mt-5 py-4">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6 text-center text-md-start">
-                    <span class="d-block mb-2">
-                        <svg class='bi me-2' width='16' height='16'><use href='{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.svg') }}#building'/></svg>
-                        Advanced Materials Research
-                    </span>
-                    <span class="d-block small">
-                        © 2024 All rights reserved.
-                    </span>
-                </div>
-                <div class="col-md-6 text-center text-md-end">
-                    <div class="research-links">
-                        <a href="#" class="text-white me-3">Privacy Policy</a>
-                        <a href="#" class="text-white me-3">Terms of Use</a>
-                        <a href="#" class="text-white">Research Guidelines</a>
-                    </div>
-                </div>
-            </div>
+        <div class="container text-center small">
+            Developed by Materials Group | Version 1.0 | © 2025
         </div>
     </footer>
 
