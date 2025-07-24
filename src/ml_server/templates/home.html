@@ -3,26 +3,32 @@
 {% block title %}Home - Microstructural Analysis Tools{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1 class="text-center mb-4">Microstructural Analysis Tools</h1>
+<div class="container text-center">
+    <h1 class="mb-3">Microstructural Analysis Tools</h1>
+    <img src="{{ url_for('static', filename='images/ml_server_icon.png') }}"
+         alt="Microstructural Analysis" class="mb-4"
+         width="{{ config['MAIN_ICON_SIZE'][0] }}" height="{{ config['MAIN_ICON_SIZE'][1] }}">
 
     <!-- App Icon Grid -->
     <div class="row justify-content-center g-4">
         <div class="col-6 col-md-4 text-center">
             <a href="{{ url_for('hydride_segmentation.hydride_segmentation') }}" class="icon-link d-inline-flex flex-column align-items-center w-100">
-                <img src="{{ url_for('static', filename='images/hydride_icon.png') }}" alt="Hydride Segmentation" class="app-icon mb-2">
+                <img src="{{ url_for('static', filename='images/hydride_icon.png') }}" alt="Hydride Segmentation" class="app-icon mb-2"
+                     width="{{ config['TOOLS_ICONS_SIZE'][0] }}" height="{{ config['TOOLS_ICONS_SIZE'][1] }}">
                 <span class="app-label">Hydride Segmentation</span>
             </a>
         </div>
         <div class="col-6 col-md-4 text-center">
             <a href="{{ url_for('super_resolution.super_resolution') }}" class="icon-link d-inline-flex flex-column align-items-center w-100">
-                <img src="{{ url_for('static', filename='images/SUPER_RES.PNG') }}" alt="Super-Resolution" class="app-icon mb-2">
+                <img src="{{ url_for('static', filename='images/SUPER_RES.PNG') }}" alt="Super-Resolution" class="app-icon mb-2"
+                     width="{{ config['TOOLS_ICONS_SIZE'][0] }}" height="{{ config['TOOLS_ICONS_SIZE'][1] }}">
                 <span class="app-label">Super-Resolution</span>
             </a>
         </div>
         <div class="col-6 col-md-4 text-center">
             <a href="{{ url_for('pdf_tools.pdf_tools_home') }}" class="icon-link d-inline-flex flex-column align-items-center w-100">
-                <img src="{{ url_for('static', filename='images/pdf_tools.png') }}" alt="PDF Tools" class="app-icon mb-2">
+                <img src="{{ url_for('static', filename='images/pdf_tools_icon.png') }}" alt="PDF Tools" class="app-icon mb-2"
+                     width="{{ config['TOOLS_ICONS_SIZE'][0] }}" height="{{ config['TOOLS_ICONS_SIZE'][1] }}">
                 <span class="app-label">PDF Tools</span>
             </a>
         </div>
