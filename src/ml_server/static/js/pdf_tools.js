@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const status = document.getElementById('mergeStatus');
     const placeholder = '/static/images/preview_unavailable.svg';
 
+    const PREVIEW_SIZE = 200;
+
     function createItem(input) {
         const div = document.createElement('div');
         div.className = 'pdf-item card p-2 mb-2';
@@ -14,8 +16,15 @@ document.addEventListener('DOMContentLoaded', () => {
         canvas.className = 'pdf-preview mb-1';
         div.appendChild(canvas);
         const info = document.createElement('div');
-        info.className = 'small text-center';
+        info.className = 'small text-center mb-1';
         div.appendChild(info);
+
+        const range = document.createElement('input');
+        range.type = 'text';
+        range.value = 'all';
+        range.placeholder = 'pages e.g. 1-3,5';
+        range.className = 'form-control form-control-sm range-input mb-1';
+        div.appendChild(range);
 
         list.appendChild(div);
 
@@ -25,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const pdf = await pdfjsLib.getDocument({data: e.target.result}).promise;
                 const page = await pdf.getPage(1);
                 const viewport = page.getViewport({scale: 1});
-                const scale = 100 / viewport.height;
+                const scale = PREVIEW_SIZE / viewport.height;
                 const v = page.getViewport({scale});
                 canvas.width = v.width;
                 canvas.height = v.height;
@@ -46,7 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
         addBtn.addEventListener('click', () => {
             const input = document.createElement('input');
             input.type = 'file';
-            input.name = 'files';
             input.accept = 'application/pdf';
             input.classList.add('d-none');
             input.addEventListener('change', () => input.files.length && createItem(input));
@@ -60,6 +68,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     form?.addEventListener('submit', () => {
+        Array.from(list.children).forEach((item, idx) => {
+            item.querySelector('input[type="file"]').name = `file${idx}`;
+            item.querySelector('.range-input').name = `range_file${idx}`;
+        });
+        const orderField = document.createElement('input');
+        orderField.type = 'hidden';
+        orderField.name = 'order';
+        orderField.value = Array.from(list.children).map((_, i) => i).join(',');
+        form.appendChild(orderField);
+
         if (status) {
             status.textContent = '🔄 Please wait while your PDF files are being merged…';
         }
