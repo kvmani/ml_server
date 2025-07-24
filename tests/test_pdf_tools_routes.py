@@ -1,5 +1,7 @@
 from io import BytesIO
+
 from PyPDF2 import PdfWriter
+
 
 def _make_pdf(pages: int = 1) -> bytes:
     writer = PdfWriter()
@@ -18,7 +20,13 @@ def test_pdf_tools_home(client):
 
 def test_merge_endpoint(client):
     pdf = _make_pdf()
-    data = {"files": [(BytesIO(pdf), "a.pdf"), (BytesIO(pdf), "b.pdf")]}
+    data = {
+        "file0": (BytesIO(pdf), "a.pdf"),
+        "range_file0": "all",
+        "file1": (BytesIO(pdf), "b.pdf"),
+        "range_file1": "all",
+        "order": "0,1",
+    }
     resp = client.post("/pdf_tools/merge", data=data, content_type="multipart/form-data")
     assert resp.status_code == 200
     assert resp.mimetype == "application/pdf"

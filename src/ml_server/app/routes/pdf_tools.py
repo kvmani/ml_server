@@ -4,8 +4,8 @@ from io import BytesIO
 
 from flask import Blueprint, jsonify, render_template, request, send_file
 
-from ..services.pdf_tools.merge_service import MergeService
 from ..services.pdf_tools.extract_service import ExtractService
+from ..services.pdf_tools.merge_service import MergeService
 
 bp = Blueprint("pdf_tools", __name__, url_prefix="/pdf_tools")
 merge_service = MergeService()
@@ -22,14 +22,28 @@ def pdf_tools_home():
 def merge_pdfs():
     """Merge multiple PDF files."""
     if request.method == "POST":
-        files = [(BytesIO(f.read()), "all") for f in request.files.getlist("files")]
+        files: list[tuple[BytesIO, str]] = []
+        idx = 0
+        while True:
+            file = request.files.get(f"file{idx}")
+            if not file:
+                break
+            range_str = request.form.get(f"range_file{idx}", "all")
+            files.append((BytesIO(file.read()), range_str))
+            idx += 1
+
         if not files:
             return (
                 jsonify({"success": False, "error": "No files uploaded"}),
                 400,
             )
+
+        order_param = request.form.get("order")
+        order = [int(x) for x in order_param.split(",")] if order_param else None
+        output_name = request.form.get("output_name")
+
         try:
-            output = merge_service.process(files)
+            output = merge_service.process(files, order=order, output_name=output_name)
             return send_file(
                 output,
                 as_attachment=True,
