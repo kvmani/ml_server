@@ -20,7 +20,9 @@ dependencies = [
     "gunicorn==21.2.0",
     "Flask-Compress==1.14",
     "Flask-Talisman==1.1.0",
-    "prometheus-client==0.20.0"
+    "prometheus-client==0.20.0",
+    "PyPDF2",
+    "pdf2image"
 ]
 
 [project.optional-dependencies]

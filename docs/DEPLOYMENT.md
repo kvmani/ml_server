@@ -20,7 +20,7 @@ This document describes a recommended process for deploying the microstructural 
    ```
 
 ## 2. Install Dependencies
-Install all Python dependencies from `requirements.txt` and testing utilities if needed:
+Install all Python dependencies from `requirements.txt` and testing utilities if needed. The PDF tools require `PyPDF2` and `pdf2image`, which are included in the requirements file:
 ```bash
 pip install -r requirements.txt
 # Optional: install test utilities

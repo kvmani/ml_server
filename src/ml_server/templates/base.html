@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Microstructural Analysis - {% block title %}{% endblock %}</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/ml_server_icon.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap/bootstrap.min.css') }}">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="{{ url_for('main.home') }}">
-                <span class='me-2'><svg class='bi' width='16' height='16'><use href='{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.svg') }}#atom'></use></svg></span>
+                <img src="{{ url_for('static', filename='images/ml_server_icon.png') }}" alt="ML Server" width="32" height="32" class="me-2">
                 Microstructural Analysis
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">

@@ -25,4 +25,11 @@ maintainable, please follow these rules:
    - Do not commit binary or model files (`*.pkl`, `*.h5`, `*.pt`, etc.).
    - Large data artifacts should be excluded via `.gitignore`.
 
+### PDF Tools
+
+The PDF merging and extraction utilities originate from a separate internal
+repository. When modifying these tools, keep the code in
+`ml_server/app/services/pdf_tools` in sync with the upstream project. Tests for
+PDF functionality should accompany any changes.
+
 Happy coding!

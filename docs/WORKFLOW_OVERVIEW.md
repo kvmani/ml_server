@@ -19,5 +19,6 @@ workers communicating through Redis queues.
 - **celery_app** – defines the Celery instance and tasks
 - **routes/** – HTTP endpoints for the web UI and API
 - **services/** – helpers and utilities used by the routes
+- **pdf_tools/** – merge and extract page utilities integrated from the companion repository
 
 The `health` endpoint aggregates the status of Redis, Celery and model services.

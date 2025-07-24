@@ -49,6 +49,7 @@ def create_app(startup: bool = True) -> Flask:
     from .routes.feedback import bp as feedback_bp
     from .routes.hydride_segmentation import bp as hydride_bp
     from .routes.main import bp as main_bp
+    from .routes.pdf_tools import bp as pdf_tools_bp
     from .routes.super_resolution import bp as super_res_bp
 
     app.register_blueprint(main_bp)
@@ -56,6 +57,7 @@ def create_app(startup: bool = True) -> Flask:
     app.register_blueprint(super_res_bp)
     app.register_blueprint(ebsd_bp)
     app.register_blueprint(hydride_bp)
+    app.register_blueprint(pdf_tools_bp)
     app.register_blueprint(api_bp)
     app.register_blueprint(download_bp)
 

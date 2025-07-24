@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Merge PDFs{% endblock %}
+{% block content %}
+<div class="container">
+    <h1 class="text-center mb-4">Merge PDFs</h1>
+    <form method="post" enctype="multipart/form-data" class="text-center">
+        <div class="mb-3">
+            <input type="file" name="files" multiple required class="form-control" accept="application/pdf">
+        </div>
+        <button type="submit" class="btn btn-primary">Merge</button>
+    </form>
+</div>
+<script src="{{ url_for('static', filename='js/pdf_tools.js') }}" nonce="{{ csp_nonce() }}"></script>
+{% endblock %}

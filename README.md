@@ -37,6 +37,12 @@ The hydride segmentation tool is available at `/hydride_segmentation`.
 Upload an image and choose either the ML or conventional algorithm. Results
 include the segmentation mask, overlay and orientation analysis.
 
+## PDF Tools
+
+Navigate to `/pdf_tools` for secure PDF utilities. The page offers merging of
+multiple PDFs and extraction of specific page ranges. All operations run within
+the intranet and no files are stored on disk, ensuring privacy.
+
 ## Repository layout
 
 ```
