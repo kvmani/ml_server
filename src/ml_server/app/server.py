@@ -38,6 +38,8 @@ def create_app(startup: bool = True) -> Flask:
     cfg = load_config()
     if cfg.admin_token:
         app.config["ADMIN_TOKEN"] = cfg.admin_token
+    app.config["MAIN_ICON_SIZE"] = cfg.main_icon_size
+    app.config["TOOLS_ICONS_SIZE"] = cfg.tools_icons_size
     app.secret_key = cfg.secret_key or os.urandom(24)
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
     celery_init_app(app)

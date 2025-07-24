@@ -3,7 +3,6 @@
     "secret_key": "__SET_SECRET_KEY__",
     "host": "127.0.0.1",
     "port": 5000,
-
     "super_resolution": {
         "allowed_extensions": [
             "png",
@@ -22,11 +21,16 @@
         },
         "image_settings": {
             "max_size": 10485760,
-            "min_dimensions": [100, 100],
-            "max_dimensions": [4096, 4096]
+            "min_dimensions": [
+                100,
+                100
+            ],
+            "max_dimensions": [
+                4096,
+                4096
+            ]
         }
     },
-
     "ebsd_cleanup": {
         "allowed_extensions": [
             "ang",
@@ -51,7 +55,6 @@
             "timeout": 30
         }
     },
-
     "hydride_segmentation": {
         "allowed_extensions": [
             "png",
@@ -69,16 +72,13 @@
             "timeout": 30
         }
     },
-
     "celery": {
         "broker_url": "redis://redis:6379/0",
         "result_backend": "redis://redis:6379/0"
     },
-
     "download": {
         "processed_data_path": "tmp/enhanced_ebsd_map.png"
     },
-
     "feedback": {
         "file_path": "src/ml_server/feedback.json",
         "max_entries": 1000,
@@ -89,7 +89,6 @@
             "feedback_text"
         ]
     },
-
     "logging": {
         "debug_level": "DEBUG",
         "production_level": "INFO",
@@ -99,11 +98,20 @@
         "backup_count": 5,
         "log_dir": "logs"
     },
-
     "security": {
-        "allowed_origins": ["http://localhost:5000"],
+        "allowed_origins": [
+            "http://localhost:5000"
+        ],
         "csrf_enabled": true,
-        "ssl_enabled": false
-        ,"admin_token": "__SET_ADMIN_TOKEN__"
-    }
+        "ssl_enabled": false,
+        "admin_token": "__SET_ADMIN_TOKEN__"
+    },
+    "mainIconSize": [
+        100,
+        100
+    ],
+    "toolsIconsSize": [
+        75,
+        75
+    ]
 }

@@ -59,6 +59,18 @@ Configuration for the intranet environment is stored in
 `config/config.intranet.json` and can be overridden with environment variables
 using the `APP_` prefix.
 
+### UI configuration
+
+Two keys control the size of icons displayed on the site:
+
+```
+"mainIconSize": [100, 100]   # size of the logo on the homepage
+"toolsIconsSize": [75, 75]   # size of icons for individual tools
+```
+
+These defaults can also be overridden via environment variables
+`APP_MAINICONSIZE` and `APP_TOOLSICONSSIZE` using JSON arrays like `[120,120]`.
+
 ## Development
 
 Install development and testing requirements:
@@ -123,6 +135,8 @@ APP_SECURITY__ADMIN_TOKEN=__SET_ADMIN_TOKEN__
 APP_SECURITY__ALLOWED_ORIGINS="[http://localhost:5000]"
 APP_SECURITY__CSRF_ENABLED=true
 APP_SECURITY__SSL_ENABLED=false
+APP_MAINICONSIZE="[100,100]"
+APP_TOOLSICONSSIZE="[75,75]"
 ```
 
 **Important:** The `APP_SECRET_KEY` and `APP_SECURITY__ADMIN_TOKEN` values must be

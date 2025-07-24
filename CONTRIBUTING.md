@@ -8,6 +8,8 @@ maintainable, please follow these rules:
      docstring describing behaviour and return values.
    - Configuration values must be accessed via `ml_server.config.Config` and not
      hard coded.
+   - UI elements such as icon sizes must read from configuration keys rather than
+     using fixed values in templates or scripts.
    - Network calls using `requests` must specify a timeout and handle
      `RequestException` errors.
 

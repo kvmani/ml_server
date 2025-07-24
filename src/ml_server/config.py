@@ -121,6 +121,16 @@ class Config:
     def admin_token(self) -> str:
         return self.security_settings.get("admin_token", "")
 
+    @property
+    def main_icon_size(self) -> list[int]:
+        """Return (width, height) for the main site icon."""
+        return self.config.get("mainIconSize", [100, 100])
+
+    @property
+    def tools_icons_size(self) -> list[int]:
+        """Return (width, height) for tool icons."""
+        return self.config.get("toolsIconsSize", [75, 75])
+
     # Backwards compatibility helpers
     @property
     def super_resolution_extensions(self) -> set:

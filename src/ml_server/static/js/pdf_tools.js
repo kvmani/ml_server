@@ -1,46 +1,67 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const filesDiv = document.getElementById('files');
-    const addBtn = document.getElementById('add-file');
+    const addBtn = document.getElementById('addFileBtn');
+    const list = document.getElementById('fileList');
+    const form = document.getElementById('mergeForm');
+    const status = document.getElementById('mergeStatus');
+    const placeholder = '/static/images/preview_unavailable.svg';
 
-    function addFileInput() {
-        const idx = filesDiv.children.length;
-        const wrapper = document.createElement('div');
-        wrapper.className = 'file-item';
-        wrapper.innerHTML = `<input type="file" name="file${idx}" required>
-            <input type="text" name="range_file${idx}" value="all" placeholder="Page range">
-            <button type="button" class="up">&#8593;</button>
-            <button type="button" class="down">&#8595;</button>`;
-        filesDiv.appendChild(wrapper);
+    function createItem(input) {
+        const div = document.createElement('div');
+        div.className = 'pdf-item card p-2 mb-2';
+        div.appendChild(input);
+
+        const canvas = document.createElement('canvas');
+        canvas.className = 'pdf-preview mb-1';
+        div.appendChild(canvas);
+        const info = document.createElement('div');
+        info.className = 'small text-center';
+        div.appendChild(info);
+
+        list.appendChild(div);
+
+        const reader = new FileReader();
+        reader.onload = async e => {
+            try {
+                const pdf = await pdfjsLib.getDocument({data: e.target.result}).promise;
+                const page = await pdf.getPage(1);
+                const viewport = page.getViewport({scale: 1});
+                const scale = 100 / viewport.height;
+                const v = page.getViewport({scale});
+                canvas.width = v.width;
+                canvas.height = v.height;
+                await page.render({canvasContext: canvas.getContext('2d'), viewport: v}).promise;
+                info.textContent = `${input.files[0].name} (${pdf.numPages} pages)`;
+            } catch (err) {
+                const img = document.createElement('img');
+                img.src = placeholder;
+                img.className = 'mb-1';
+                canvas.replaceWith(img);
+                info.textContent = input.files[0].name;
+            }
+        };
+        reader.readAsArrayBuffer(input.files[0]);
     }
 
     if (addBtn) {
-        addBtn.addEventListener('click', addFileInput);
-        addFileInput();
+        addBtn.addEventListener('click', () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.name = 'files';
+            input.accept = 'application/pdf';
+            input.classList.add('d-none');
+            input.addEventListener('change', () => input.files.length && createItem(input));
+            form.appendChild(input);
+            input.click();
+        });
     }
 
-    filesDiv.addEventListener('click', (e) => {
-        const item = e.target.closest('.file-item');
-        if (!item) return;
-        if (e.target.classList.contains('up') && item.previousElementSibling) {
-            filesDiv.insertBefore(item, item.previousElementSibling);
-        } else if (e.target.classList.contains('down') && item.nextElementSibling) {
-            filesDiv.insertBefore(item.nextElementSibling, item);
-        }
-    });
+    if (list) {
+        new Sortable(list, {animation: 150});
+    }
 
-    document.getElementById('merge-form')?.addEventListener('submit', () => {
-        const order = [];
-        Array.from(filesDiv.children).forEach((item, idx) => {
-            const fileInput = item.querySelector('input[type="file"]');
-            const rangeInput = item.querySelector('input[type="text"]');
-            fileInput.name = `file${idx}`;
-            rangeInput.name = `range_file${idx}`;
-            order.push(idx);
-        });
-        const orderField = document.createElement('input');
-        orderField.type = 'hidden';
-        orderField.name = 'order';
-        orderField.value = order.join(',');
-        document.getElementById('merge-form').appendChild(orderField);
+    form?.addEventListener('submit', () => {
+        if (status) {
+            status.textContent = '🔄 Please wait while your PDF files are being merged…';
+        }
     });
 });

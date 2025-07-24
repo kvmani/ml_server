@@ -1,14 +1,19 @@
 {% extends "base.html" %}
 {% block title %}Merge PDFs{% endblock %}
 {% block content %}
-<div class="container">
-    <h1 class="text-center mb-4">Merge PDFs</h1>
-    <form method="post" enctype="multipart/form-data" class="text-center">
-        <div class="mb-3">
-            <input type="file" name="files" multiple required class="form-control" accept="application/pdf">
-        </div>
+<div class="container text-center">
+    <h1 class="mb-3">Merge PDFs</h1>
+    <img src="{{ url_for('static', filename='images/merge_pdfs_icon.png') }}" alt="Merge PDFs"
+         class="mb-4 app-icon" width="{{ config['TOOLS_ICONS_SIZE'][0] }}" height="{{ config['TOOLS_ICONS_SIZE'][1] }}">
+    <form id="mergeForm" method="post" enctype="multipart/form-data" class="text-center">
+        <div id="fileList" class="mb-3"></div>
+        <button type="button" id="addFileBtn" class="btn btn-secondary mb-3">Add File</button>
+        <div id="mergeStatus" class="mb-3 text-muted"></div>
         <button type="submit" class="btn btn-primary">Merge</button>
     </form>
 </div>
+<script src="{{ url_for('static', filename='vendor/js/pdf.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/js/pdf.worker.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/js/Sortable.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/pdf_tools.js') }}" nonce="{{ csp_nonce() }}"></script>
 {% endblock %}

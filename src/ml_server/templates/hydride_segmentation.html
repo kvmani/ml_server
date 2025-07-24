@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Hydride Segmentation{% endblock %}
 {% block content %}
-<div class="container">
-    <h1 class="text-center mb-4">Hydride Segmentation</h1>
+<div class="container text-center">
+    <h1 class="mb-3">Hydride Segmentation</h1>
+    <img src="{{ url_for('static', filename='images/hydride_icon.png') }}" alt="Hydride Segmentation"
+         class="mb-4 app-icon" width="{{ config['TOOLS_ICONS_SIZE'][0] }}" height="{{ config['TOOLS_ICONS_SIZE'][1] }}">
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
             <form id="segmentForm" method="post" enctype="multipart/form-data">

@@ -3,7 +3,6 @@
     "secret_key": "your-secret-key",
     "host": "127.0.0.1",
     "port": 5000,
-	
     "ml_model_health_url": "http://localhost:5002/health",
     "app_port": 5000,
     "celery_broker_url": "redis://localhost:6379/0",
@@ -26,11 +25,16 @@
         },
         "image_settings": {
             "max_size": 10485760,
-            "min_dimensions": [100, 100],
-            "max_dimensions": [4096, 4096]
+            "min_dimensions": [
+                100,
+                100
+            ],
+            "max_dimensions": [
+                4096,
+                4096
+            ]
         }
     },
-
     "ebsd_cleanup": {
         "allowed_extensions": [
             "ang",
@@ -55,7 +59,6 @@
             "timeout": 30
         }
     },
-
     "hydride_segmentation": {
         "allowed_extensions": [
             "png",
@@ -73,12 +76,10 @@
             "timeout": 30
         }
     },
-
     "celery": {
         "broker_url": "redis://redis:6379/0",
         "result_backend": "redis://redis:6379/0"
     },
-
     "feedback": {
         "file_path": "src/microstructure_server/feedback.json",
         "max_entries": 1000,
@@ -89,7 +90,6 @@
             "feedback_text"
         ]
     },
-
     "logging": {
         "debug_level": "DEBUG",
         "production_level": "INFO",
@@ -99,11 +99,20 @@
         "backup_count": 5,
         "log_dir": "logs"
     },
-
     "security": {
-        "allowed_origins": ["http://localhost:5000"],
+        "allowed_origins": [
+            "http://localhost:5000"
+        ],
         "csrf_enabled": true,
         "ssl_enabled": false,
         "admin_token": "changeme"
-    }
+    },
+    "mainIconSize": [
+        100,
+        100
+    ],
+    "toolsIconsSize": [
+        75,
+        75
+    ]
 }
