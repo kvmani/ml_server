@@ -48,7 +48,7 @@
 }
 
 .badge-item i {
-    font-size: 1.2rem;
+    font-size: var(--font-size-lg);
 }
 
 /* ---------------- Upload Section ---------------- */
@@ -105,7 +105,7 @@
     color: #1565c0;
     padding: 0.25rem 0.75rem;
     border-radius: 12px;
-    font-size: 0.875rem;
+    font-size: var(--font-size-xs);
     font-weight: 500;
     transition: all 0.2s ease;
 }
@@ -171,7 +171,7 @@
     color: white;
     padding: 5px 15px;
     border-radius: 20px;
-    font-size: 14px;
+    font-size: var(--font-size-xs);
     font-weight: 600;
     display: inline-block;
 }
@@ -181,7 +181,7 @@
     color: white;
     padding: 5px 15px;
     border-radius: 20px;
-    font-size: 14px;
+    font-size: var(--font-size-xs);
     font-weight: 600;
     display: inline-block;
 }

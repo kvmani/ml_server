@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const list = document.getElementById('fileList');
     const form = document.getElementById('mergeForm');
     const status = document.getElementById('mergeStatus');
+    const spinner = document.getElementById('loadingSpinner');
+    const submitBtn = form?.querySelector('button[type="submit"]');
     const placeholder = '/static/images/preview_unavailable.svg';
 
     const PREVIEW_SIZE = 200;
@@ -80,6 +82,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (status) {
             status.textContent = '🔄 Please wait while your PDF files are being merged…';
+        }
+        if (spinner) {
+            spinner.classList.remove('d-none');
+        }
+        if (submitBtn) {
+            submitBtn.disabled = true;
         }
     });
 });

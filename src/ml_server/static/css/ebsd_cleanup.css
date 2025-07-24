@@ -13,7 +13,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: 
+    background-image:
         linear-gradient(45deg, rgba(26, 35, 126, 0.7) 0%, rgba(13, 71, 161, 0.7) 100%),
         url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="60" fill="none"/><path d="M0 0L60 60M60 0L0 60" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></svg>');
     background-size: cover, 30px 30px;
@@ -47,7 +47,7 @@
 }
 
 .badge-item i {
-    font-size: 1.2rem;
+    font-size: var(--font-size-lg);
 }
 
 .upload-section {
@@ -103,7 +103,7 @@
     color: #1565c0;
     padding: 0.25rem 0.75rem;
     border-radius: 12px;
-    font-size: 0.875rem;
+    font-size: var(--font-size-xs);
     font-weight: 500;
     transition: all 0.2s ease;
 }
@@ -167,7 +167,7 @@
     color: white;
     padding: 5px 15px;
     border-radius: 20px;
-    font-size: 14px;
+    font-size: var(--font-size-xs);
     font-weight: 600;
     display: inline-block;
 }
@@ -177,7 +177,7 @@
     color: white;
     padding: 5px 15px;
     border-radius: 20px;
-    font-size: 14px;
+    font-size: var(--font-size-xs);
     font-weight: 600;
     display: inline-block;
 }
@@ -222,12 +222,12 @@
     .comparison-container {
         flex-direction: column;
     }
-    
+
     .original-side {
         border-right: none;
         border-bottom: 1px solid #dee2e6;
     }
-    
+
     .image-wrapper img {
         max-height: 300px;
     }
