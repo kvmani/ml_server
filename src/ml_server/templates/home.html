@@ -7,45 +7,22 @@
     <h1 class="text-center mb-4">Microstructural Analysis Tools</h1>
 
     <!-- App Icon Grid -->
-    <div class="icon-grid">
-        <a href="{{ url_for('hydride_segmentation.hydride_segmentation') }}" class="icon-link">
-            <img src="{{ url_for('static', filename='images/hydride_icon.svg') }}" alt="Hydride Segmentation" class="app-icon">
-            <span class="app-label">Hydride Segmentation</span>
-        </a>
-        <a href="{{ url_for('super_resolution.super_resolution') }}" class="icon-link">
-            <img src="{{ url_for('static', filename='images/SUPER_RES.PNG') }}" alt="Super-Resolution" class="app-icon">
-            <span class="app-label">Super-Resolution</span>
-        </a>
+    <div class="row justify-content-center g-4">
+        <div class="col-6 col-md-4 text-center">
+            <a href="{{ url_for('hydride_segmentation.hydride_segmentation') }}" class="icon-link d-inline-flex flex-column align-items-center w-100">
+                <img src="{{ url_for('static', filename='images/hydride_icon.svg') }}" alt="Hydride Segmentation" class="app-icon mb-2">
+                <span class="app-label">Hydride Segmentation</span>
+            </a>
+        </div>
+        <div class="col-6 col-md-4 text-center">
+            <a href="{{ url_for('super_resolution.super_resolution') }}" class="icon-link d-inline-flex flex-column align-items-center w-100">
+                <img src="{{ url_for('static', filename='images/SUPER_RES.PNG') }}" alt="Super-Resolution" class="app-icon mb-2">
+                <span class="app-label">Super-Resolution</span>
+            </a>
+        </div>
     </div>
 
-    <div class="mt-5">
-        <h2>Quick Hydride Segmentation</h2>
-        <form action="{{ url_for('hydride_segmentation.hydride_segmentation') }}" method="post" enctype="multipart/form-data">
-            <div class="mb-3">
-                <input type="file" name="image" class="form-control" accept="image/*" required>
-            </div>
-            <div class="mb-3">
-                <select name="algorithm" id="home-algorithm" class="form-select">
-                    <option value="ml">ML</option>
-                    <option value="conventional">Conventional</option>
-                </select>
-            </div>
-            <div id="home-conv" class="mb-3" style="display:none;">
-                <input class="form-control mb-2" type="number" name="area_threshold" value="95" placeholder="Area Threshold">
-                <input class="form-control" type="number" name="tile_size" value="8" placeholder="Tile Size">
-            </div>
-            <button class="btn btn-primary" type="submit">Segment</button>
-        </form>
-        <script nonce="{{ csp_nonce() }}">
-        (function(){
-            const sel=document.getElementById('home-algorithm');
-            const div=document.getElementById('home-conv');
-            function toggle(){div.style.display=sel.value==='conventional'?'block':'none';}
-            sel.addEventListener('change',toggle);
-            toggle();
-        })();
-        </script>
-    </div>
+
 
     <!-- About Section -->
     <div class="about-section mt-5" id="about">

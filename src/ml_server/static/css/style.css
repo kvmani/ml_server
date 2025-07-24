@@ -155,12 +155,6 @@ h1:after {
 }
 
 /* Icon Grid for Home Page */
-.icon-grid {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-}
 
 .icon-link {
     display: flex;
@@ -214,15 +208,15 @@ h1:after {
         padding-top: 1rem;
         padding-bottom: 1rem;
     }
-    
+
     .card-img-top {
         height: 220px; /* Even smaller on mobile */
     }
-    
+
     .navbar-brand {
         font-size: 1.2rem;
     }
-    
+
     h1 {
         font-size: 1.5rem;
     }
@@ -398,13 +392,13 @@ h1:after {
     .comparison-container {
         flex-direction: column;
     }
-    
+
     .original-side {
         border-right: none;
         border-bottom: 1px solid #dee2e6;
     }
-    
+
     .image-wrapper img {
         max-height: 300px;
     }
-} 
+}
