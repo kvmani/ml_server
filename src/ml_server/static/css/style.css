@@ -6,6 +6,19 @@
     --text-color: #333333;
     --light-gray: #f8f9fa;
     --border-color: #dee2e6;
+    /* font size variables */
+    --font-size-base: 1rem;
+    --font-size-sm: 0.9rem;
+    --font-size-xs: 0.875rem;
+    --font-size-lg: 1.1rem;
+    --font-size-h1: 1.8rem;
+    --font-size-brand: 1.4rem;
+    --font-size-h1-mobile: 1.5rem;
+    --font-size-input: 0.95rem;
+}
+
+html {
+    font-size: 150%;
 }
 
 body {
@@ -62,12 +75,12 @@ body {
     color: var(--primary-color);
     font-weight: 600;
     margin-bottom: 0.5rem;
-    font-size: 1.1rem;
+    font-size: var(--font-size-lg);
     text-align: center;
 }
 
 .card-text {
-    font-size: 0.9rem;
+    font-size: var(--font-size-sm);
     color: #666;
     margin-bottom: 1rem;
     text-align: center;
@@ -91,7 +104,7 @@ body {
 
 .navbar-brand {
     font-weight: 600;
-    font-size: 1.4rem;
+    font-size: var(--font-size-brand);
     color: white !important;
 }
 
@@ -115,7 +128,7 @@ h1 {
     margin-bottom: 1.5rem;
     position: relative;
     padding-bottom: 0.75rem;
-    font-size: 1.8rem; /* Slightly smaller heading */
+    font-size: var(--font-size-h1);
 }
 
 h1:after {
@@ -142,7 +155,7 @@ h1:after {
     color: white;
     padding: 0.5rem 1rem;
     border-radius: 8px; /* More curved badge */
-    font-size: 0.875rem;
+    font-size: var(--font-size-xs);
     font-weight: 500;
 }
 
@@ -178,19 +191,19 @@ h1:after {
 
 .app-label {
     margin-top: 0.5rem;
-    font-size: 0.9rem;
+    font-size: var(--font-size-sm);
     text-align: center;
 }
 
 .footer span {
     color: rgba(255, 255, 255, 0.9) !important;
-    font-size: 0.9rem;
+    font-size: var(--font-size-sm);
 }
 
 .research-links a {
     text-decoration: none;
     transition: opacity 0.3s ease;
-    font-size: 0.9rem;
+    font-size: var(--font-size-sm);
     padding: 0.25rem 0.5rem;
     border-radius: 4px;
 }
@@ -212,11 +225,11 @@ h1:after {
     }
 
     .navbar-brand {
-        font-size: 1.2rem;
+        font-size: var(--font-size-lg);
     }
 
     h1 {
-        font-size: 1.5rem;
+        font-size: var(--font-size-h1-mobile);
     }
 
     .card-body {
@@ -229,7 +242,7 @@ h1:after {
     border: 1px solid var(--border-color);
     padding: 0.75rem 1rem;
     border-radius: 8px; /* Curved form inputs */
-    font-size: 0.95rem;
+    font-size: var(--font-size-input);
 }
 
 .form-control:focus {
@@ -272,7 +285,7 @@ h1:after {
     color: white;
     padding: 0.5rem 1rem;
     border-radius: 4px;
-    font-size: 0.875rem;
+    font-size: var(--font-size-xs);
     font-weight: 500;
 }
 
@@ -347,7 +360,7 @@ h1:after {
     color: white;
     padding: 5px 15px;
     border-radius: 20px;
-    font-size: 14px;
+    font-size: var(--font-size-xs);
     font-weight: 600;
     display: inline-block;
 }
@@ -357,7 +370,7 @@ h1:after {
     color: white;
     padding: 5px 15px;
     border-radius: 20px;
-    font-size: 14px;
+    font-size: var(--font-size-xs);
     font-weight: 600;
     display: inline-block;
 }
