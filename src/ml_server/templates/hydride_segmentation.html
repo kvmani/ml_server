@@ -1,39 +1,48 @@
 {% extends "base.html" %}
 {% block title %}Hydride Segmentation{% endblock %}
 {% block content %}
-<h1 class="mb-4">Hydride Segmentation</h1>
-<form method="post" enctype="multipart/form-data">
-  <div class="mb-3">
-    <label class="form-label" for="image">Image</label>
-    <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
-  </div>
-  <div class="mb-3">
-    <label class="form-label" for="algorithm">Algorithm</label>
-    <select class="form-select" id="algorithm" name="algorithm">
-      <option value="ml">ML</option>
-      <option value="conventional">Conventional</option>
-    </select>
-  </div>
-  <div id="conv-params" style="display:none;">
-    <div class="mb-3">
-      <label class="form-label" for="area_threshold">Area Threshold</label>
-      <input class="form-control" type="number" id="area_threshold" name="area_threshold" value="95">
+<div class="container">
+    <h1 class="text-center mb-4">Hydride Segmentation</h1>
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <form id="segmentForm" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="image" class="form-label">Image</label>
+                    <div id="drop-zone" class="drop-zone">
+                        <p class="text-muted mb-2">Drag and drop an image here or click to browse</p>
+                        <button type="button" class="btn btn-outline-primary btn-sm" id="browse-button">Browse</button>
+                        <input type="file" id="image" name="image" class="d-none" accept="image/*" required>
+                        <div id="file-name" class="form-text"></div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="algorithm" class="form-label">Algorithm</label>
+                    <select id="algorithm" name="algorithm" class="form-select">
+                        <option value="ml">ML</option>
+                        <option value="conventional" selected>Conventional</option>
+                    </select>
+                </div>
+                <div id="conv-fields">
+                    <div class="mb-3">
+                        <label for="area_threshold" class="form-label">Area Threshold</label>
+                        <input type="number" id="area_threshold" name="area_threshold" class="form-control" value="95">
+                        <div class="form-text">Minimum hydride area to keep.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tile_size" class="form-label">Tile Size</label>
+                        <input type="number" id="tile_size" name="tile_size" class="form-control" value="8">
+                        <div class="form-text">Size of tiles used during processing.</div>
+                    </div>
+                </div>
+                {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
+                <div class="text-end">
+                    <button type="reset" class="btn btn-secondary me-2">Reset</button>
+                    <button type="submit" class="btn btn-primary">Run Segmentation</button>
+                </div>
+            </form>
+        </div>
     </div>
-    <div class="mb-3">
-      <label class="form-label" for="tile_size">Tile Size</label>
-      <input class="form-control" type="number" id="tile_size" name="tile_size" value="8">
-    </div>
-  </div>
-  {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
-  <button class="btn btn-primary" type="submit">Run Segmentation</button>
-</form>
-<script nonce="{{ csp_nonce() }}">
-(function() {
-  const sel = document.getElementById('algorithm');
-  const params = document.getElementById('conv-params');
-  function toggle() { params.style.display = sel.value === 'conventional' ? 'block' : 'none'; }
-  sel.addEventListener('change', toggle);
-  toggle();
-})();
-</script>
+</div>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/hydride_segmentation.css') }}">
+<script src="{{ url_for('static', filename='js/hydride_segmentation.js') }}" nonce="{{ csp_nonce() }}"></script>
 {% endblock %}
