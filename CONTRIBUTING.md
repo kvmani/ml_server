@@ -34,4 +34,11 @@ repository. When modifying these tools, keep the code in
 `ml_server/app/services/pdf_tools` in sync with the upstream project. Tests for
 PDF functionality should accompany any changes.
 
+### Monitoring
+
+New routes should record request metrics using the helpers in
+`ml_server.app.services.metrics`. If you add admin pages, register them with the
+Flask-Admin dashboard in `init_admin()`.
+
 Happy coding!
+

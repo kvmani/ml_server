@@ -1,0 +1,23 @@
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Rating</th>
+            <th>Feedback</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for item in feedback %}
+        <tr>
+            <td>{{ item.date }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.email }}</td>
+            <td>{{ item.rating }}</td>
+            <td>{{ item.feedback }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
