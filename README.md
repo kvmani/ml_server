@@ -45,17 +45,15 @@ the intranet and no files are stored on disk, ensuring privacy.
 
 ## Admin Dashboard and Monitoring
 
-An admin interface is available at `/admin`. Append `?token=<ADMIN_TOKEN>` to
-the URL to authenticate. The dashboard shows:
+Access the admin interface at `/admin?token=<ADMIN_TOKEN>`. The page now
+features a cleaner card layout and a bar chart visualising recent endpoint
+visits. Service health badges quickly indicate the status of background
+processes while logs and Prometheus metrics remain available in scrollable
+sections. These updates make it easier to monitor uptime, active users and
+system health at a glance.
 
-- Website usage statistics and active users
-- Stored user feedback
-- Health status of external services
-- Recent log entries
-- Live Prometheus metrics including CPU, memory and request latency
-
-Prometheus metrics are also exposed at `/metrics` for integration with external
-monitoring systems.
+Prometheus metrics continue to be exposed at `/metrics` for integration with
+external monitoring systems.
 
 ## Repository layout
 
@@ -82,8 +80,9 @@ Two keys control the size of icons displayed on the site:
 "toolsIconsSize": [75, 75]   # size of icons for individual tools
 ```
 
-These defaults can also be overridden via environment variables
-`APP_MAINICONSIZE` and `APP_TOOLSICONSSIZE` using JSON arrays like `[120,120]`.
+These values also control the logo in the navigation bar. Override them with the
+environment variables `APP_MAINICONSIZE` and `APP_TOOLSICONSSIZE` using JSON
+arrays like `[120,120]`.
 
 ## Development
 
