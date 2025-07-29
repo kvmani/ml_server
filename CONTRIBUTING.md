@@ -40,5 +40,7 @@ New routes should record request metrics using the helpers in
 `ml_server.app.services.metrics`. If you add admin pages, register them with the
 Flask-Admin dashboard in `init_admin()`.
 
-Happy coding!
+When updating the dashboard UI, prefer lightweight libraries such as Chart.js
+via CDN links. Do not include binary assets or screenshots in the repository.
 
+Happy coding!

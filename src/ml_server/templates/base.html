@@ -11,8 +11,9 @@
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="{{ url_for('main.home') }}">
-                <img src="{{ url_for('static', filename='images/ml_server_icon.png') }}" alt="ML Server" width="32" height="32" class="me-2">
-                Microstructural Analysis
+                <img src="{{ url_for('static', filename='images/ml_server_icon.png') }}" alt="ML Server"
+                     width="{{ config['MAIN_ICON_SIZE'][0] }}" height="{{ config['MAIN_ICON_SIZE'][1] }}" class="me-2">
+                <span class="fs-4">Microstructural Analysis</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -34,11 +35,6 @@
                             API Docs
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="https://github.com/kvmani/ml_server" target="_blank" rel="noopener noreferrer">
-                            GitHub
-                        </a>
-                    </li>
                 </ul>
             </div>
         </div>
@@ -46,20 +42,12 @@
 
     <div class="research-header py-4 bg-light border-bottom">
         <div class="container">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb mb-0">
-                            <li class="breadcrumb-item"><a href="{{ url_for('main.home') }}">Home</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">{% block breadcrumb_title %}{{ self.title() }}{% endblock %}</li>
-                        </ol>
-                    </nav>
-                </div>
-                <div class="research-badge">
-                    <svg class='bi me-1' width='16' height='16'><use href='{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.svg') }}#shield-check'/></svg>
-                    Research Portal
-                </div>
-            </div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="{{ url_for('main.home') }}">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{% block breadcrumb_title %}{{ self.title() }}{% endblock %}</li>
+                </ol>
+            </nav>
         </div>
     </div>
 

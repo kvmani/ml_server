@@ -2,21 +2,73 @@
 {% block title %}Admin Dashboard{% endblock %}
 {% block content %}
 <h2 class="mb-4">Admin Dashboard</h2>
-<p><strong>Uptime:</strong> {{ uptime }}</p>
-<p><strong>Active users:</strong> {{ active_users }}</p>
-<h3>Website Visits</h3>
-<ul>
-  {% for ep, count in visits.items() %}
-  <li>{{ ep }}: {{ count }}</li>
-  {% endfor %}
-</ul>
-<h3>Service Health</h3>
-<pre>{{ health }}</pre>
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Uptime</h5>
+                <p class="card-text">{{ uptime }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Active Users</h5>
+                <p class="card-text">{{ active_users }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Service Health</h5>
+                <ul class="list-unstyled mb-0">
+                {% for name, status in health.items() %}
+                    <li>
+                        <span class="badge {{ 'bg-success' if status else 'bg-danger' }}">{{ name }}</span>
+                    </li>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mb-4">
+    <canvas id="visitChart" width="400" height="200"></canvas>
+</div>
+
 <h3>Recent Logs</h3>
-<pre>{{ logs }}</pre>
+<pre style="max-height: 300px; overflow-y: auto;">{{ logs }}</pre>
+
 <h3>User Feedback (latest 10)</h3>
 {% include "admin_feedback_table.html" %}
-<h3>Prometheus Metrics</h3>
-<pre>{{ metrics }}</pre>
-{% endblock %}
 
+<h3>Prometheus Metrics</h3>
+<pre style="max-height: 300px; overflow-y: auto;">{{ metrics }}</pre>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js" nonce="{{ csp_nonce() }}"></script>
+<script nonce="{{ csp_nonce() }}">
+    const visitData = {{ visits | tojson }};
+    const ctx = document.getElementById('visitChart');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(visitData),
+            datasets: [{
+                label: 'Visits',
+                data: Object.values(visitData),
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+</script>
+{% endblock %}
