@@ -21,6 +21,7 @@ dependencies = [
     "Flask-Compress==1.14",
     "Flask-Talisman==1.1.0",
     "prometheus-client==0.20.0",
+    "Flask-Admin==1.6.1",
     "PyPDF2",
     "pdf2image"
 ]
@@ -38,3 +39,4 @@ test = [
 
 [project.scripts]
 ml-server = "app:main"
+

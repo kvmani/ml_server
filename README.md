@@ -43,6 +43,20 @@ Navigate to `/pdf_tools` for secure PDF utilities. The page offers merging of
 multiple PDFs and extraction of specific page ranges. All operations run within
 the intranet and no files are stored on disk, ensuring privacy.
 
+## Admin Dashboard and Monitoring
+
+An admin interface is available at `/admin`. Append `?token=<ADMIN_TOKEN>` to
+the URL to authenticate. The dashboard shows:
+
+- Website usage statistics and active users
+- Stored user feedback
+- Health status of external services
+- Recent log entries
+- Live Prometheus metrics including CPU, memory and request latency
+
+Prometheus metrics are also exposed at `/metrics` for integration with external
+monitoring systems.
+
 ## Repository layout
 
 ```
@@ -141,3 +155,15 @@ APP_TOOLSICONSSIZE="[75,75]"
 
 **Important:** The `APP_SECRET_KEY` and `APP_SECURITY__ADMIN_TOKEN` values must be
 set to secure, unique strings before running the application in production.
+
+### Prometheus Setup
+
+Metrics are available at `http://<host>:5000/metrics`. Configure Prometheus to
+scrape this endpoint:
+
+```yaml
+scrape_configs:
+  - job_name: ml_server
+    static_configs:
+      - targets: ['localhost:5000']
+```

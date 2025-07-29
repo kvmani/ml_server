@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<h2 class="mb-4">Admin Dashboard</h2>
+<p><strong>Uptime:</strong> {{ uptime }}</p>
+<p><strong>Active users:</strong> {{ active_users }}</p>
+<h3>Website Visits</h3>
+<ul>
+  {% for ep, count in visits.items() %}
+  <li>{{ ep }}: {{ count }}</li>
+  {% endfor %}
+</ul>
+<h3>Service Health</h3>
+<pre>{{ health }}</pre>
+<h3>Recent Logs</h3>
+<pre>{{ logs }}</pre>
+<h3>User Feedback (latest 10)</h3>
+{% include "admin_feedback_table.html" %}
+<h3>Prometheus Metrics</h3>
+<pre>{{ metrics }}</pre>
+{% endblock %}
+
