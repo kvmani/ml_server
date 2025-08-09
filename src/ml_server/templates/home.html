@@ -3,56 +3,71 @@
 {% block title %}Home - Microstructural Analysis Tools{% endblock %}
 
 {% block content %}
-<div class="container text-center">
-    <h1 class="mb-3">Microstructural Analysis Tools</h1>
-    <img src="{{ url_for('static', filename='images/ml_server_icon.png') }}"
-         alt="Microstructural Analysis" class="mb-4"
-         width="{{ config['MAIN_ICON_SIZE'][0] }}" height="{{ config['MAIN_ICON_SIZE'][1] }}">
+<div class="row">
 
-    <!-- App Icon Grid -->
-    <div class="row justify-content-center g-4">
-        <div class="col-6 col-md-4 text-center">
-            <a href="{{ url_for('hydride_segmentation.hydride_segmentation') }}" class="icon-link d-inline-flex flex-column align-items-center w-100">
-                <img src="{{ url_for('static', filename='images/hydride_icon.png') }}" alt="Hydride Segmentation" class="app-icon mb-2"
-                     width="{{ config['TOOLS_ICONS_SIZE'][0] }}" height="{{ config['TOOLS_ICONS_SIZE'][1] }}">
-                <span class="app-label">Hydride Segmentation</span>
-            </a>
+    <!-- Left: Microstructural Analysis Tools -->
+    <div class="col-md-6 text-center">
+        <div class="d-flex align-items-center mb-3 section-header section-header-left">
+            <img src="{{ url_for('static', filename='images/ml_server_icon.png') }}" alt="Icon" class="section-icon">
+            <h2 class="section-title mb-0">Microstructural Analysis Tools</h2>
         </div>
-        <div class="col-6 col-md-4 text-center">
-            <a href="{{ url_for('super_resolution.super_resolution') }}" class="icon-link d-inline-flex flex-column align-items-center w-100">
-                <img src="{{ url_for('static', filename='images/SUPER_RES.PNG') }}" alt="Super-Resolution" class="app-icon mb-2"
-                     width="{{ config['TOOLS_ICONS_SIZE'][0] }}" height="{{ config['TOOLS_ICONS_SIZE'][1] }}">
-                <span class="app-label">Super-Resolution</span>
-            </a>
-        </div>
-        <div class="col-6 col-md-4 text-center">
-            <a href="{{ url_for('pdf_tools.pdf_tools_home') }}" class="icon-link d-inline-flex flex-column align-items-center w-100">
-                <img src="{{ url_for('static', filename='images/pdf_tools_icon.png') }}" alt="PDF Tools" class="app-icon mb-2"
-                     width="{{ config['TOOLS_ICONS_SIZE'][0] }}" height="{{ config['TOOLS_ICONS_SIZE'][1] }}">
-                <span class="app-label">PDF Tools</span>
-            </a>
-        </div>
-    </div>
 
-
-
-    <!-- About Section -->
-    <div class="about-section mt-5" id="about">
-        <h2 class="text-center mb-4">About</h2>
-        <div class="row">
-            <div class="col-lg-8 mx-auto">
-                <div class="card">
-                    <div class="card-body">
-                        <p class="card-text">
-                            This is an experimental intranet-deployed web service providing machine
-                            learning–based microstructure enhancement tools such as hydride segmentation
-                            and super-resolution. It uses CPU-only PyTorch models to enable efficient
-                            inference on edge devices or internal servers.
-                        </p>
-                    </div>
-                </div>
+        <div class="row g-3 micro-tools-content tool-panel micro-panel-left">
+            <div class="col-6">
+                <a href="{{ url_for('hydride_segmentation.hydride_segmentation') }}" class="icon-link">
+                    <img src="{{ url_for('static', filename='images/hydride_icon.png') }}"
+                         width="{{ config['TOOLS_ICONS_SIZE'][0] }}" height="{{ config['TOOLS_ICONS_SIZE'][1] }}">
+                    <div class="app-label">Hydride Segmentation</div>
+                </a>
+            </div>
+            <div class="col-6">
+                <a href="{{ url_for('super_resolution.super_resolution') }}" class="icon-link">
+                    <img src="{{ url_for('static', filename='images/SUPER_RES.PNG') }}"
+                         width="{{ config['TOOLS_ICONS_SIZE'][0] }}" height="{{ config['TOOLS_ICONS_SIZE'][1] }}">
+                    <div class="app-label">Super-Resolution</div>
+                </a>
             </div>
         </div>
     </div>
+
+    <!-- Right: General Utility Tools -->
+    <div class="col-md-6 text-center">
+        <div class="d-flex justify-content-center align-items-center mb-3 section-header">
+            <img src="{{ url_for('static', filename='images/GeneralUtilityTools_icon.png') }}" alt="Icon" class="section-icon">
+            <h2 class="section-title mb-0">General Utility Tools</h2>
+        </div>
+
+        <div class="row justify-content-center g-3 tool-panel">
+            <div class="col-6">
+                    <a href="{{ url_for('main.pdf_tools_home') }}" class="icon-link">
+                    <img src="{{ url_for('static', filename='images/pdf_tools_icon.png') }}"
+                         width="{{ config['TOOLS_ICONS_SIZE'][0] }}" height="{{ config['TOOLS_ICONS_SIZE'][1] }}">
+                    <div class="app-label">PDF Tools</div>
+                </a>
+            </div>
+            <div class="col-6">
+                <a href="#" class="icon-link">
+                    <img src="{{ url_for('static', filename='images/File converter_icon.png') }}"
+                         width="{{ config['TOOLS_ICONS_SIZE'][0] }}" height="{{ config['TOOLS_ICONS_SIZE'][1] }}">
+                    <div class="app-label">File Converter</div>
+                </a>
+            </div>
+            <div class="col-6">
+                <a href="#" class="icon-link">
+                    <img src="{{ url_for('static', filename='images/UnitConverter_icon.png') }}"
+                         width="{{ config['TOOLS_ICONS_SIZE'][0] }}" height="{{ config['TOOLS_ICONS_SIZE'][1] }}">
+                    <div class="app-label">Unit Converter</div>
+                </a>
+            </div>
+            <div class="col-6">
+                <a href="#" class="icon-link">
+                    <img src="{{ url_for('static', filename='images/DocCompressor_icon.png') }}"
+                         width="{{ config['TOOLS_ICONS_SIZE'][0] }}" height="{{ config['TOOLS_ICONS_SIZE'][1] }}">
+                    <div class="app-label">Doc Compressor</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
 </div>
 {% endblock %}

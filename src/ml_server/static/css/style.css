@@ -31,7 +31,20 @@ body {
 .container {
     padding-top: 1.5rem;
     padding-bottom: 1.5rem;
-    max-width: 1140px; /* More compact width */
+    max-width: none;   /* Removes limit */
+    width: 100%;       /* Makes it span full width */
+}
+
+
+#drop-zone {
+    min-height: 12rem; !important;     /* ~3 rows height */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    font-size: 1.5rem;
+    border: 2px dashed #ccc;
+    background-color: #f9f9f9;
 }
 
 /* Card Styles */
@@ -99,7 +112,7 @@ body {
 .navbar {
     background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%) !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    padding: 0.75rem 0;
+    padding: 0.01rem 0;
 }
 
 .navbar-brand {
@@ -144,11 +157,13 @@ h1:after {
 }
 
 /* Research Header */
-.research-header {
+..research-header {
     background-color: var(--light-gray);
     border-bottom: 1px solid var(--border-color);
-    padding: 0.75rem 0;
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
 }
+
 
 .research-badge {
     background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
@@ -161,11 +176,14 @@ h1:after {
 
 /* Footer */
 .footer {
-    background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%) !important;
+    background-color: var(--primary-color) !important;
     color: white;
-    padding: 1.25rem 0;
-    margin-top: 2rem;
+    padding-top: 0.01rem !important;
+    padding-bottom: 0.01rem !important;
+    margin-top: 1rem;
+
 }
+
 
 /* Icon Grid for Home Page */
 
@@ -435,3 +453,129 @@ h1:after {
         max-height: 300px;
     }
 }
+/* === Layout to ensure full-height screen and sticky footer === */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    flex: 1 0 auto;
+    padding-top: 0.5rem;  /* feel free to reduce further if needed */
+    padding-bottom: 0.5rem;
+}
+
+footer.footer {
+    flex-shrink: 0;
+}
+.footer .container {
+    align-items: flex-start;
+}
+
+.footer-left, .footer-right {
+    font-size: 0.65rem;     /* smaller text */
+    line-height: 1.2;       /* tighter vertical spacing */
+    margin: 0;
+    padding: 0;
+}
+.section-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #444444;
+    white-space: nowrap;
+}
+.section-icon {
+    height: 70px;
+    width: auto;
+    margin-right: 10px;
+}
+.utility-tools-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #444444;
+    margin-top: 20px;
+    margin-bottom: 60px;
+}
+.utility-tools-icon {
+    height: 20px;
+    width: auto;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+.section-header-left {
+    justify-content: flex-start;
+    padding-left: 2px; /* Adjust this to move the title */
+}
+
+.micro-tools-content {
+    padding-left: 5px;  /* Adjust this to move only the icons */
+}
+.micro-panel-left {
+    margin-right: 2px; /* adjust the gap between the two boxes */
+}
+
+
+.tool-panel {
+    background-color: #f5f8fb;  /* soft background */
+    border: 1px solid var(--border-color);  /* subtle border */
+    border-radius: 5px;        /* rounded corners */
+    padding: 0.5rem;              /* inner spacing */
+    margin-top: -0.5rem;         /* spacing from heading */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);  /* light shadow */
+    min-height: 400px; /* set minimum height */
+}
+
+#file-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.file-card {
+  width: calc(33.33% - 1rem);
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+  border-radius: 8px;
+  background-color: #fff;
+  font-size: 1rem;
+  position: relative;
+}
+
+.truncate-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.page-input {
+  width: 100%;
+  font-size: 0.85rem;
+}
+
+.file-thumb {
+  width: 100%;
+  height: 220px;
+  object-fit: contain;
+  border: 1px solid #ccc;
+  margin-bottom: 0.5rem;
+}
+
+.remove-btn {
+font-size:2.4rem;
+color:#d00;
+cursor:pointer;
+pointer-events:auto;
+}
+.sortable-ghost {
+    opacity: 0.4;
+}
+
+}
+/

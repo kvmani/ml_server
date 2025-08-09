@@ -13,3 +13,4 @@ prometheus-client==0.20.0
 Flask-Admin==1.6.1
 PyPDF2
 pdf2image
+pdf_tools_service==0.1.0

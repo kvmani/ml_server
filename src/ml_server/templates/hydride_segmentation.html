@@ -1,50 +1,85 @@
 {% extends "base.html" %}
 {% block title %}Hydride Segmentation{% endblock %}
 {% block content %}
-<div class="container text-center">
-    <h1 class="mb-3">Hydride Segmentation</h1>
-    <img src="{{ url_for('static', filename='images/hydride_icon.png') }}" alt="Hydride Segmentation"
-         class="mb-4 app-icon" width="{{ config['TOOLS_ICONS_SIZE'][0] }}" height="{{ config['TOOLS_ICONS_SIZE'][1] }}">
-    <div class="row justify-content-center">
+<div class="container mt-4 position-relative">
+
+    <!-- Floating How-to-Use Box -->
+    <div class="how-to-use-fixed">
+        <h5>How to Use This Tool</h5>
+        <ul>
+            <li>Drag and drop your hydrided micrograph.</li>
+            <li>Select the segmentation algorithm: <strong>ML</strong> or <strong>Conventional</strong>.</li>
+            <li>If using <strong>Conventional</strong>:
+                <ul>
+                    <li><em>Adjust Area Threshold</em> and <em>Tile Size</em> as needed.</li>
+                </ul>
+            </li>
+            <li>Click <strong>Run Segmentation</strong> to process the image.</li>
+            <li>Download the segmented output once processing is complete.</li>
+        </ul>
+    </div>
+
+    <!-- Header -->
+    <div class="hydride-header text-center">
+        <img src="{{ url_for('static', filename='images/hydride_icon.png') }}"
+             alt="Hydride Icon" class="app-icon-left">
+        <h1 class="hydride-title">Hydride Segmentation</h1>
+    </div>
+
+    <!-- Form Row (Centered as before) -->
+    <div class="row justify-content-center mt-4">
         <div class="col-md-8 col-lg-6">
             <form id="segmentForm" method="post" enctype="multipart/form-data">
-                <div class="mb-3">
-                    <label for="image" class="form-label">Image</label>
+
+                <!-- Drop Zone -->
+                <div class="mb-2">
                     <div id="drop-zone" class="drop-zone">
-                        <p class="text-muted mb-2">Drag and drop an image here or click to browse</p>
-                        <button type="button" class="btn btn-outline-primary btn-sm" id="browse-button">Browse</button>
+                        <p class="text-muted mb-3 small">Drag and drop here</p>
+                        <button type="button" class="btn btn-outline-primary btn-sm mt-3" id="browse-button">Browse</button>
                         <input type="file" id="image" name="image" class="d-none" accept="image/*" required>
                         <div id="file-name" class="form-text"></div>
                     </div>
                 </div>
+
+                <!-- Algorithm -->
                 <div class="mb-3">
                     <label for="algorithm" class="form-label">Algorithm</label>
-                    <select id="algorithm" name="algorithm" class="form-select">
+                    <select id="algorithm" name="algorithm" class="form-select small-input">
                         <option value="ml">ML</option>
                         <option value="conventional" selected>Conventional</option>
                     </select>
                 </div>
+
+                <!-- Conventional Parameters -->
                 <div id="conv-fields">
-                    <div class="mb-3">
-                        <label for="area_threshold" class="form-label">Area Threshold</label>
-                        <input type="number" id="area_threshold" name="area_threshold" class="form-control" value="95">
-                        <div class="form-text">Minimum hydride area to keep.</div>
+                    <div class="mb-2">
+                        <label for="area_threshold" class="form-label">Area Threshold (min hydride area)</label><br>
+                        <input type="number" id="area_threshold" name="area_threshold"
+                               class="small-input" value="95">
                     </div>
-                    <div class="mb-3">
-                        <label for="tile_size" class="form-label">Tile Size</label>
-                        <input type="number" id="tile_size" name="tile_size" class="form-control" value="8">
-                        <div class="form-text">Size of tiles used during processing.</div>
+                    <div class="mb-2">
+                        <label for="tile_size" class="form-label">Tile Size (in pixels)</label><br>
+                        <input type="number" id="tile_size" name="tile_size"
+                               class="small-input" value="8">
                     </div>
                 </div>
-                {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
-                <div class="text-end">
+
+                <!-- Error Message -->
+                {% if error %}
+                <div class="alert alert-danger">{{ error }}</div>
+                {% endif %}
+
+                <!-- Buttons -->
+                <div class="text-end mt-3 button-row">
                     <button type="reset" class="btn btn-secondary me-2">Reset</button>
                     <button type="submit" class="btn btn-primary">Run Segmentation</button>
                 </div>
+
             </form>
         </div>
     </div>
 </div>
+
 <link rel="stylesheet" href="{{ url_for('static', filename='css/hydride_segmentation.css') }}">
 <script src="{{ url_for('static', filename='js/hydride_segmentation.js') }}" nonce="{{ csp_nonce() }}"></script>
 {% endblock %}

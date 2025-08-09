@@ -14,7 +14,8 @@ def main() -> None:
 
     cfg = load_config()
     app = create_app(startup=not args.no_autostart)
-    app.run(host=cfg.host, port=cfg.port, debug=cfg.debug)
+    app.run(host=cfg.host, port=cfg.port, debug=True)
+    #app.run(host=cfg.host, port=cfg.port, debug=cfg.debug)
 
 
 if __name__ == "__main__":

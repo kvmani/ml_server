@@ -1,29 +1,15 @@
 /* ---------------- Hero Section ---------------- */
 .hero-section {
     position: relative;
-    background: linear-gradient(135deg, #1a237e, #0d47a1);
-    color: white;
+    background: none;  /* ✅ Removes gradient */
+    color: #1a237e;     /* ✅ Optional: dark blue for text */
     overflow: hidden;
-    padding: 80px 0;
+    padding: 60px 0;    /* Optional: reduce height */
+    padding-top: 30px;
 }
 
-.hero-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image:
-        linear-gradient(45deg, rgba(26, 35, 126, 0.7) 0%, rgba(13, 71, 161, 0.7) 100%),
-        url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="60" fill="none"/><path d="M0 0L60 60M60 0L0 60" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></svg>');
-    background-size: cover, 30px 30px;
-    animation: backgroundMove 30s linear infinite;
-}
 
-@keyframes backgroundMove {
-    0% { background-position: 0 0, 0 0; }
-    100% { background-position: 0 0, 60px 60px; }
-}
+
 
 .hero-content {
     position: relative;
@@ -41,7 +27,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.2);
     padding: 0.5rem 1rem;
     border-radius: 20px;
     backdrop-filter: blur(5px);
@@ -58,6 +44,9 @@
 
 .upload-container {
     background: white;
+    max-width: 1000px;
+    min-height: 400px;
+    padding: 30px 50px;
     border: 2px dashed #cfd8dc;
     border-radius: 16px;
     transition: all 0.3s ease;
@@ -103,10 +92,10 @@
 .format-item {
     background: #e3f2fd;
     color: #1565c0;
-    padding: 0.25rem 0.75rem;
+    padding: 0.2rem 0.5rem;
     border-radius: 12px;
     font-size: var(--font-size-xs);
-    font-weight: 500;
+    font-weight: 400;
     transition: all 0.2s ease;
 }
 
@@ -258,19 +247,6 @@
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
-
-/* ---------------- Loading Overlay (if needed in future) ---------------- */
-.loading::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.8);
-    z-index: 5;
-}
-
 /* ---------------- Responsive ---------------- */
 @media (max-width: 768px) {
     .comparison-container {
@@ -286,3 +262,31 @@
         max-height: 300px;
     }
 }
+.super-resolution-title {
+    font-size: 1.8rem;  /* Adjust as needed, default display-4 is ~2.5rem */
+    font-weight: bold;
+    color: #1a237e;
+    margin-top: -78px;
+    }
+.super-res-icon {
+    height: 75px;
+    width: 75px;
+    object-fit: contain;
+}
+.super-resolution-title::after {
+    content: none !important;
+    display: none !important;
+}
+.custom-upload-spacing {
+    margin-top: -80px !important;
+}
+.super-res-subtitle {
+    color: #607d8b;  /* Slate Gray */
+    font-style: italic;
+    font-size: 1.05rem;
+    margin-top: -10px;
+    margin-bottom: 20px;
+}
+
+
+

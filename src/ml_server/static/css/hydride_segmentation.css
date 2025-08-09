@@ -118,18 +118,59 @@
 
 /* ---------------- Button ---------------- */
 .btn-primary {
-    background: linear-gradient(135deg, #1a237e, #0d47a1);
-    border: none;
-    padding: 0.75rem 2rem;
+    background:  #1a237e;
+    border: 1.5px solid #0c2c66;
+    padding: 0.25rem 1.8rem;
     border-radius: 12px;
+    position: relative;
+    overflow: hidden;
     transition: all 0.3s ease;
+    box-shadow: 0 6px 16px rgba(0, 123, 255, 0.3);
+    color: #fff;
+    font size: 0.95rem;
 }
 
+/* Stronger gloss overlay */
+.btn-primary::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.35), rgba(255,255,255,0));
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Ensure text appears above gloss */
+.btn-primary span,
+.btn-primary i,
+.btn-primary svg {
+    position: relative;
+    z-index: 2;
+}
+
+/* Hover stays smooth */
 .btn-primary:hover {
     background: linear-gradient(135deg, #0d47a1, #1a237e);
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(26, 35, 126, 0.3);
+    box-shadow: 0 10px 22px rgba(26, 35, 126, 0.4);
 }
+
+.button-row {
+    margin-right: 2.2rem;  /* or try 0.75rem or 0.5rem for smaller shift */
+
+}
+.btn-secondary {
+    padding: 0.35rem 1.2rem;  /* Adjust height and width */
+    font-size: 0.9rem;
+    border-radius: 10px;
+}
+
+
 
 /* ---------------- Preview Section ---------------- */
 .preview-section {
@@ -212,8 +253,8 @@
     background-color: #0d6efd;
     color: white;
     text-decoration: none;
-    border-radius: 5px;
-    margin-top: 20px;
+    border-radius: 3px;
+    margin-top: 10px;
 }
 
 .download-button:hover {
@@ -288,16 +329,83 @@
 }
 
 /* --------- Simple Drop Zone --------- */
-.drop-zone {
-    border: 2px dashed #cfd8dc;
-    border-radius: 12px;
-    padding: 2rem;
+#drop-zone {
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    padding: 0.5rem;
+    min-height: 60px;
     text-align: center;
-    cursor: pointer;
-    transition: background-color 0.2s, border-color 0.2s;
+    font-size: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
+
 
 .drop-zone.dragover {
     background-color: #f0f8ff;
     border-color: #1a237e;
 }
+.hydride-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2rem;
+    margin-top: -1rem; /* Shift upward */
+}
+
+.hydride-header .app-icon-left {
+    height: 40px;
+    margin-right: 10px;
+}
+
+.hydride-title {
+    font-size: 1.4rem;
+    margin: 0;
+    font-weight: 600;
+    color: var(--primary-color);
+    position: relative;
+    padding-bottom: 0.25rem;
+}
+
+.hydride-title::after {
+    display: none;
+}
+.hydride-panel label,
+.form-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 0.2rem;
+    display: inline-block;
+    color: #000; /* Black font color */
+}
+select.small-input {
+    border: 1px solid var(--border-color);
+    border-radius: 9px;
+    padding: 0.1rem 0.8rem;
+    font-size: 0.9rem;
+    height: 38px; /* match with input fields */
+    appearance: none; /* removes native arrow in some browsers */
+    background-color: white;
+}
+.how-to-use-fixed {
+    position: absolute;
+    top: -80px; /* adjust based on your header height */
+    left: -450px;
+    width: 400px;
+    background-color: #f8f9fa;
+    padding: 1px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 0.88rem;
+}
+.how-to-use-fixed ul {
+    padding-left: 30px;
+}
+.how-to-use-fixed ul ul {
+    list-style-type: circle;
+    padding-left: 20px;
+}
+
