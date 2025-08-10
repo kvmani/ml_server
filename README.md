@@ -55,6 +55,24 @@ system health at a glance.
 Prometheus metrics continue to be exposed at `/metrics` for integration with
 external monitoring systems.
 
+## Plugins
+
+`ml_server` supports external tools via a simple plugin interface. See the
+[Plugin Developer Guide](docs/plugin_developer_guide.md) for full details.
+
+Add tools by creating a YAML file:
+
+```yaml
+api_version: 1
+tools:
+  - name: pdf_tools
+    mode: remote
+    base_url: http://localhost:8000/pdf_tools
+    auth: {type: none}
+```
+
+Load this file at startup to have the admin dashboard poll registered plugins.
+
 ## Repository layout
 
 ```

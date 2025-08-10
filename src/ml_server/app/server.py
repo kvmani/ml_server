@@ -13,6 +13,8 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 from ..config import load_config
 from ..celery_app import celery_init_app
+from ..plugins import PluginRegistry
+from ..admin import bp as admin_plugins_bp
 from .services.graceful import install_signal_handlers
 from .services.startup import start_services
 from .services.metrics import (
@@ -38,10 +40,10 @@ def create_app(startup: bool = True) -> Flask:
     Talisman(
         app,
         content_security_policy={
-        "default-src": ["'self'"],
-        "script-src": ["'self'", "'nonce'"],
-        "img-src": ["'self'", "data:"],  # <-- This line allows base64 images
-    },
+            "default-src": ["'self'"],
+            "script-src": ["'self'", "'nonce'"],
+            "img-src": ["'self'", "data:"],  # <-- This line allows base64 images
+        },
         force_https=False,
         strict_transport_security=False,
     )
@@ -84,6 +86,14 @@ def create_app(startup: bool = True) -> Flask:
         update_uptime(app.start_time)
         return response
 
+    # Plugin registry
+    registry = PluginRegistry(app)
+    project_root = os.path.dirname(package_root)
+    tools_path = os.path.join(project_root, "config", "tools.yaml")
+    if os.path.exists(tools_path):
+        registry.load_from_file(tools_path)
+    app.extensions["plugin_registry"] = registry
+
     # Blueprints
     from .routes.api import bp as api_bp
     from .routes.download import bp as download_bp
@@ -91,7 +101,7 @@ def create_app(startup: bool = True) -> Flask:
     from .routes.feedback import bp as feedback_bp
     from .routes.hydride_segmentation import bp as hydride_bp
     from .routes.main import bp as main_bp
-    #from .routes.pdf_tools import bp as pdf_tools_bp
+    # from .routes.pdf_tools import bp as pdf_tools_bp
     from pdf_tools_service.app.controllers import pdf_tools_bp
 
     from .routes.super_resolution import bp as super_res_bp
@@ -101,13 +111,14 @@ def create_app(startup: bool = True) -> Flask:
     app.register_blueprint(super_res_bp)
     app.register_blueprint(ebsd_bp)
     app.register_blueprint(hydride_bp)
-    #app.register_blueprint(pdf_tools_bp)
-    app.register_blueprint(pdf_tools_bp, url_prefix="/pdf-tools")
+    # app.register_blueprint(pdf_tools_bp)
+    app.register_blueprint(pdf_tools_bp, url_prefix="/pdf_tools")
     app.register_blueprint(api_bp)
     app.register_blueprint(download_bp)
 
     # Admin dashboard
     init_admin(app)
+    app.register_blueprint(admin_plugins_bp)
 
     if startup:
         start_services()

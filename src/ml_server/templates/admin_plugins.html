@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Plugins</h1>
+<table class="table">
+  <thead>
+    <tr><th>Name</th><th>Status</th><th>Version</th></tr>
+  </thead>
+  <tbody>
+  {% for tool in tools %}
+    <tr>
+      <td>{{ tool.name }}</td>
+      <td>{{ tool.health.status if tool.health.__class__.__name__ == 'HealthV1' else 'error' }}</td>
+      <td>{{ tool.info.version if tool.info.__class__.__name__ == 'InfoV1' else 'n/a' }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
