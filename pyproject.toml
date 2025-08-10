@@ -23,7 +23,9 @@ dependencies = [
     "prometheus-client==0.20.0",
     "Flask-Admin==1.6.1",
     "PyPDF2",
-    "pdf2image"
+    "pdf2image",
+    "pydantic",
+    "PyYAML"
 ]
 
 [project.optional-dependencies]
@@ -34,9 +36,13 @@ test = [
     "flake8",
     "black",
     "isort",
-    "mypy"
+    "mypy",
+    "ruff"
 ]
 
 [project.scripts]
 ml-server = "app:main"
 
+[tool.isort]
+profile = "black"
+line_length = 100

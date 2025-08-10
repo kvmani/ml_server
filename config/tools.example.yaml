@@ -1,0 +1,10 @@
+api_version: 1
+tools:
+  - name: pdf_tools
+    mode: remote
+    base_url: http://localhost:8000/pdf_tools
+    auth: {type: none}
+  - name: hydride_segmentation
+    mode: embedded
+    import: hydride_segmentation_service.plugin:create_blueprint
+    mount: /hydride

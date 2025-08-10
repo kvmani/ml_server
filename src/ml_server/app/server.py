@@ -1,29 +1,30 @@
-from __future__ import annotations
-
 """Flask application factory and blueprint registration."""
 
+from __future__ import annotations
+
+import logging
 import os
 import time
-import logging
 
 from flask import Flask, g, request
 from flask_compress import Compress
 from flask_talisman import Talisman
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-from ..config import load_config
 from ..celery_app import celery_init_app
-from .services.graceful import install_signal_handlers
-from .services.startup import start_services
-from .services.metrics import (
-    request_latency,
-    request_count,
-    error_count,
-    visit_counter,
-    active_users_gauge,
-    update_uptime,
-)
+from ..config import load_config
+from ..plugins.registry import PluginRegistry
 from .admin.dashboard import init_admin
+from .services.graceful import install_signal_handlers
+from .services.metrics import (
+    active_users_gauge,
+    error_count,
+    request_count,
+    request_latency,
+    update_uptime,
+    visit_counter,
+)
+from .services.startup import start_services
 
 
 def create_app(startup: bool = True) -> Flask:
@@ -38,10 +39,10 @@ def create_app(startup: bool = True) -> Flask:
     Talisman(
         app,
         content_security_policy={
-        "default-src": ["'self'"],
-        "script-src": ["'self'", "'nonce'"],
-        "img-src": ["'self'", "data:"],  # <-- This line allows base64 images
-    },
+            "default-src": ["'self'"],
+            "script-src": ["'self'", "'nonce'"],
+            "img-src": ["'self'", "data:"],  # <-- This line allows base64 images
+        },
         force_https=False,
         strict_transport_security=False,
     )
@@ -91,9 +92,7 @@ def create_app(startup: bool = True) -> Flask:
     from .routes.feedback import bp as feedback_bp
     from .routes.hydride_segmentation import bp as hydride_bp
     from .routes.main import bp as main_bp
-    #from .routes.pdf_tools import bp as pdf_tools_bp
-    from pdf_tools_service.app.controllers import pdf_tools_bp
-
+    from .routes.pdf_tools import bp as pdf_tools_bp
     from .routes.super_resolution import bp as super_res_bp
 
     app.register_blueprint(main_bp)
@@ -101,10 +100,21 @@ def create_app(startup: bool = True) -> Flask:
     app.register_blueprint(super_res_bp)
     app.register_blueprint(ebsd_bp)
     app.register_blueprint(hydride_bp)
-    #app.register_blueprint(pdf_tools_bp)
-    app.register_blueprint(pdf_tools_bp, url_prefix="/pdf-tools")
+    app.register_blueprint(pdf_tools_bp)
     app.register_blueprint(api_bp)
     app.register_blueprint(download_bp)
+
+    # Plugin registry
+    config_dir = os.path.join(os.path.dirname(package_root), "config")
+    tools_file = os.environ.get("TOOLS_CONFIG", os.path.join(config_dir, "tools.yaml"))
+    if not os.path.exists(tools_file):
+        tools_file = os.path.join(config_dir, "tools.example.yaml")
+    if os.path.exists(tools_file):
+        registry = PluginRegistry.from_file(tools_file, app)
+        app.config["PLUGIN_REGISTRY"] = registry
+    from ..admin.routes import bp as admin_plugins_bp
+
+    app.register_blueprint(admin_plugins_bp)
 
     # Admin dashboard
     init_admin(app)

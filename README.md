@@ -52,8 +52,25 @@ processes while logs and Prometheus metrics remain available in scrollable
 sections. These updates make it easier to monitor uptime, active users and
 system health at a glance.
 
+See [`docs/ADMIN.md`](docs/ADMIN.md) for details on plugin monitoring.
+
 Prometheus metrics continue to be exposed at `/metrics` for integration with
 external monitoring systems.
+
+## Plugins
+
+`ml_server` can load external tools using a simple plugin interface. See
+[`docs/plugin_developer_guide.md`](docs/plugin_developer_guide.md) for full
+details. To add a tool, list it in `config/tools.yaml`:
+
+```yaml
+tools:
+  - name: pdf_tools
+    mode: remote
+    base_url: http://localhost:8000/pdf_tools
+```
+
+An example configuration is provided at `config/tools.example.yaml`.
 
 ## Repository layout
 

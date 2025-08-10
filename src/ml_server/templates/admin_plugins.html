@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Plugins</h1>
+<table class="table">
+  <tr><th>Name</th><th>Status</th><th>Version</th></tr>
+  {% for p in plugins %}
+  <tr>
+    <td>{{ p.name }}</td>
+    <td>{{ p.health.status if p.health else 'error' }}</td>
+    <td>{{ p.info.version if p.info else '' }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}
