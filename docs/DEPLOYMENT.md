@@ -3,7 +3,7 @@
 This document describes a recommended process for deploying the microstructural analysis server on an Ubuntu Linux intranet environment.  The same steps can be adapted for both a testing server and the final production server.
 
 ## 1. Prepare the Server
-1. **Install Python 3.10+**
+1. **Install Python 3.12+**
    ```bash
    sudo apt-get update
    sudo apt-get install python3 python3-venv python3-pip -y
@@ -33,6 +33,12 @@ PDF Tools is likewise installed from the local owner repository with
 `scripts/setup_local.ps1`; it is intentionally not fetched as a package from
 the public package index.
 
+Tabular ML is installed from the immutable `v0.1.0` source archive declared in
+`requirements.txt`. For local development, `scripts/setup_local.ps1` replaces
+that install with an editable sibling checkout at `..\tabular_ml`. The
+companion is CPU-only: deployment does not require CUDA, ROCm, a GPU driver, or
+an accelerator runtime.
+
 Every companion service may also be deployed independently. Follow the owning repository's
 standalone web-app instructions when only one tool is required; the portal deployment is an
 optional gateway arrangement and is not a prerequisite.
@@ -49,6 +55,7 @@ The application consists of the Flask web UI and one or more ML model servers.  
 ### a. Start the mature companion services
 ```bash
 # Hydride segmentation runs from its own repository and service.
+# Tabular ML is mounted by the portal at /tabular_ml/ and may also run alone.
 ```
 
 ### b. Start the main Flask app

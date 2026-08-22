@@ -31,6 +31,8 @@ ENV/
 
 # IDE
 .idea/
+.playwright-cli/
+output/
 .vscode/
 *.swp
 *.swo

@@ -2,28 +2,28 @@ from __future__ import annotations
 
 """Flask application factory and blueprint registration."""
 
+import logging
 import os
 import time
-import logging
 
 from flask import Flask, g, request
 from flask_compress import Compress
 from flask_talisman import Talisman
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-from ..config import load_config
 from ..celery_app import celery_init_app
-from .services.graceful import install_signal_handlers
-from .services.startup import start_services
-from .services.metrics import (
-    request_latency,
-    request_count,
-    error_count,
-    visit_counter,
-    active_users_gauge,
-    update_uptime,
-)
+from ..config import load_config
 from .admin.dashboard import init_admin
+from .services.graceful import install_signal_handlers
+from .services.metrics import (
+    active_users_gauge,
+    error_count,
+    request_count,
+    request_latency,
+    update_uptime,
+    visit_counter,
+)
+from .services.startup import start_services
 
 
 def create_app(startup: bool = True) -> Flask:
@@ -38,12 +38,18 @@ def create_app(startup: bool = True) -> Flask:
     Talisman(
         app,
         content_security_policy={
-        "default-src": ["'self'"],
-        "script-src": ["'self'", "'nonce'"],
-        "img-src": ["'self'", "data:"],  # <-- This line allows base64 images
-        "frame-src": ["'self'", "blob:"],
-        "object-src": ["'self'", "blob:"],
-    },
+            "default-src": ["'self'"],
+            "script-src": ["'self'"],
+            # Plotly uses runtime style attributes to position its SVG/canvas output.
+            "style-src": ["'self'", "'unsafe-inline'"],
+            "img-src": ["'self'", "data:", "blob:"],
+            "font-src": ["'self'"],
+            "connect-src": ["'self'"],
+            "worker-src": ["'self'", "blob:"],
+            "frame-src": ["'self'", "blob:"],
+            "object-src": ["'self'", "blob:"],
+        },
+        content_security_policy_nonce_in=["script-src"],
         force_https=False,
         strict_transport_security=False,
     )
@@ -87,16 +93,20 @@ def create_app(startup: bool = True) -> Flask:
         return response
 
     # Blueprints
+    from pdf_tools_service.app import pdf_tools_bp
+    from tabular_ml_service.app import tabular_ml_bp
+
     from .routes.api import bp as api_bp
     from .routes.download import bp as download_bp
     from .routes.feedback import bp as feedback_bp
     from .routes.main import bp as main_bp
-    from pdf_tools_service.app import pdf_tools_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(feedback_bp)
     # The companion service owns the stable /pdf_tools/* contract.
     app.register_blueprint(pdf_tools_bp)
+    # Tabular ML owns the same /tabular_ml/* contract standalone and in the portal.
+    app.register_blueprint(tabular_ml_bp)
     app.register_blueprint(api_bp)
     app.register_blueprint(download_bp)
 

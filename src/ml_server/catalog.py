@@ -46,6 +46,27 @@ def tool_catalog() -> list[dict[str, Any]]:
             "internal": True,
         },
         {
+            "id": "tabular-ml",
+            "name": "Tabular ML Workbench",
+            "summary": (
+                "Explore tables, prepare features, compare models, and explain "
+                "classification or regression results."
+            ),
+            "category": "Data Science",
+            "tags": [
+                "machine learning",
+                "CSV",
+                "Excel",
+                "classification",
+                "regression",
+            ],
+            "state": "active",
+            "owner": "tabular_ml",
+            "href": "/tabular_ml/",
+            "icon": "tabular-ml-mark.svg",
+            "internal": True,
+        },
+        {
             "id": "scientific-calculator",
             "name": "Scientific Calculator",
             "summary": "Evaluate expressions with variables, functions, and engineering plots.",
@@ -53,9 +74,7 @@ def tool_catalog() -> list[dict[str, Any]]:
             "tags": ["units", "trigonometry", "constants"],
             "state": "active",
             "owner": "scientific_calculator",
-            "href": os.getenv(
-                "SCIENTIFIC_CALCULATOR_URL", "http://127.0.0.1:5055"
-            ),
+            "href": os.getenv("SCIENTIFIC_CALCULATOR_URL", "http://127.0.0.1:5055"),
             "icon": "calculator-mark.svg",
             "internal": False,
         },

@@ -44,6 +44,19 @@ Navigate to `/pdf_tools/` for secure PDF utilities. The page offers merging of
 multiple PDFs and extraction of specific page ranges. All operations run within
 the intranet and no files are stored on disk, ensuring privacy.
 
+## Tabular ML Workbench
+
+Navigate to `/tabular_ml/` for the integrated visual machine-learning
+workbench. It profiles CSV and Excel tables, makes preprocessing and outlier
+choices explicit, compares CPU-only classification and regression algorithms,
+renders configurable validation figures, and runs in-session inference. Six
+licensed public datasets are included for guided exploration.
+
+The owning repository remains independently runnable at
+`C:\Users\kvman\PycharmProjects\tabular_ml`. The portal installs its stable
+companion package and mounts the same `/tabular_ml/*` blueprint contract; no
+training logic is duplicated here.
+
 ## Admin Dashboard and Monitoring
 
 Access the admin interface at `/admin?token=<ADMIN_TOKEN>`. The page now
@@ -94,7 +107,8 @@ pip install -r requirements.txt -r requirements-test.txt
 ```
 
 For the complete local platform, use the setup helper so the companion PDF
-Tools repository is installed from its local owner repository:
+Tools and Tabular ML repositories are installed from their local owner
+repositories:
 
 ```powershell
 .\scripts\setup_local.ps1
@@ -113,6 +127,10 @@ Run the unit tests with:
 ```bash
 python -m pytest
 ```
+
+Portal development now requires Python 3.12 or newer because the Tabular ML
+companion uses the current scientific Python stack. Tabular ML is CPU-only and
+does not install a GPU runtime.
 
 See `docs/DEPLOYMENT.md` for deployment instructions and
 `docs/WORKFLOW_OVERVIEW.md` for an overview of how the modules interact.

@@ -13,3 +13,4 @@ prometheus-client==0.20.0
 Flask-Admin==1.6.1
 PyPDF2
 pdf2image
+tabular-ml-service @ https://github.com/kvmani/tabular_ml/archive/refs/tags/v0.1.0.zip

@@ -6,6 +6,7 @@ if (-not (Test-Path $python)) {
 }
 & $python -m pip install -r (Join-Path $root "requirements.txt")
 & $python -m pip install -e (Join-Path $root "..\pdf_tools")
+& $python -m pip install -e (Join-Path $root "..\tabular_ml")
 & $python -m pip install -r (Join-Path $root "requirements-test.txt")
 $calculatorRoot = (Resolve-Path (Join-Path $root "..\scientific_calculator")).Path
 $calculatorPython = Join-Path $calculatorRoot ".venv\Scripts\python.exe"

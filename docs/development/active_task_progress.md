@@ -2,7 +2,8 @@
 
 ## Objective
 
-Deliver a professional local portal for mature services only: the standalone HydrideSegmentation service, PyTex, PDF Tools, and the standalone scientific calculator.
+Deliver a professional local portal for mature services only, including the
+independently owned Tabular ML Workbench.
 
 ## Decisions
 
@@ -10,6 +11,8 @@ Deliver a professional local portal for mature services only: the standalone Hyd
 - HydrideSegmentation remains the owner of segmentation functionality and is linked at `C:\Users\kvman\HydrideSegmentation` on port 5005.
 - PyTex remains the owner of crystallographic functionality and is linked at its own local service.
 - PDF Tools remains its own service and is linked through the integrated blueprint.
+- Tabular ML remains CPU-only and independently deployable; the portal mounts
+  its stable companion blueprint without owning ML implementation details.
 - The general scientific calculator has a new owner repository at `C:\Users\kvman\PycharmProjects\scientific_calculator`.
 - Experimental and placeholder utilities remain unavailable from the portal.
 
@@ -21,6 +24,8 @@ Deliver a professional local portal for mature services only: the standalone Hyd
 - [x] Remove the preliminary hydride implementation and point the portal at the mature repository.
 - [x] Run focused portal tests and calculator smoke tests.
 - [x] Run the local launcher smoke check and verify health/landing links for all four services.
+- [x] Mount Tabular ML, add its reviewed catalog card, and verify index,
+  health, dataset discovery, and built-in loading through host tests.
 
 ## Final verification
 
