@@ -3,30 +3,6 @@
     "secret_key": "__SET_SECRET_KEY__",
     "host": "127.0.0.1",
     "port": 5000,
-    "ebsd_cleanup": {
-        "allowed_extensions": [
-            "ang",
-            "ctf",
-            "cpr",
-            "osc",
-            "h5",
-            "hdf5"
-        ],
-        "processing_options": [
-            "noise_reduction",
-            "grain_detection",
-            "phase_analysis"
-        ],
-        "file_settings": {
-            "max_size": 52428800
-        },
-        "ml_model": {
-            "url": "http://localhost:5003/infer",
-            "health_url": "http://localhost:5003",
-            "port": 5003,
-            "timeout": 30
-        }
-    },
     "celery": {
         "broker_url": "redis://redis:6379/0",
         "result_backend": "redis://redis:6379/0"

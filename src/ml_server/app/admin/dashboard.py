@@ -34,7 +34,7 @@ class DashboardView(_SecureMixin, AdminIndexView):
             with open(feedback_file) as f:
                 feedback = json.load(f).get("feedback", [])
 
-        health = {"ebsd_cleanup": cfg.ebsd_cleanup_settings.get("ml_model", {}).get("health_url")}
+        health = {}
 
         uptime = getattr(current_app, "start_time", None)
         uptime_str = "n/a"

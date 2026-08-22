@@ -82,10 +82,6 @@ class Config:
         return self.config.get("secret_key", "")
 
     @property
-    def ebsd_cleanup_settings(self) -> Dict[str, Any]:
-        return self.config.get("ebsd_cleanup", {})
-
-    @property
     def celery_settings(self) -> Dict[str, Any]:
         return self.config.get("celery", {})
 
@@ -95,7 +91,7 @@ class Config:
 
     @property
     def processed_data_path(self) -> str:
-        return self.download_settings.get("processed_data_path", "tmp/enhanced_ebsd_map.png")
+        return self.download_settings.get("processed_data_path", "tmp/processed_data.bin")
 
     @property
     def feedback_settings(self) -> Dict[str, Any]:
@@ -122,13 +118,6 @@ class Config:
     def tools_icons_size(self) -> list[int]:
         """Return (width, height) for tool icons."""
         return self.config.get("toolsIconsSize", [75, 75])
-
-    @property
-    def ebsd_extensions(self) -> set:
-        return set(self.ebsd_cleanup_settings.get("allowed_extensions", []))  # noqa: E501
-
-    def start_ebsd_model_service(self) -> bool:  # pragma: no cover
-        return False
 
 
 def load_config() -> Config:

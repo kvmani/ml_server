@@ -50,17 +50,5 @@ def launch_service(
 
 
 def start_services() -> None:
-    config = Config()
-    services = [
-        (
-            os.path.join(
-                os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-                "scripts",
-                "fake_ebsd_model.py",
-            ),
-            config.ebsd_cleanup_settings.get("ml_model", {}).get("port", 5003),
-        ),
-    ]
-    for script, port in services:
-        if not _is_port_open(port):
-            launch_service(script, port)
+    """The portal does not launch dropped or experimental model stubs."""
+    return None

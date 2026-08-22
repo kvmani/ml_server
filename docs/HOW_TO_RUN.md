@@ -38,15 +38,7 @@ Before running the application, ensure you have the following installed:
 
 ## Running the Application
 
-1. **Start the EBSD Model Server**
-   ```bash
-    # Open a terminal and run
-    python scripts/start_ebsd_model_service.py
-
-    # The server will start on the configured EBSD model port
-   ```
-
-2. **Start the Flask Server**
+1. **Start the Flask Server**
    ```bash
    # Open another terminal and run
    python app.py
@@ -60,19 +52,10 @@ Before running the application, ensure you have the following installed:
 
 ## Using the Application
 
-### EBSD Clean-Up Tool
+### Working Services
 
-1. **Upload EBSD Data**
-   - Click "Choose File" or drag and drop an EBSD file
-   - Supported formats: .ang, .ctf, .cpr, .osc, .h5, .hdf5
-
-2. **Process Data**
-   - Select processing options
-   - Click "Process" to start analysis
-
-3. **View Results**
-   - Compare original and processed maps
-   - Download processed data using the download button
+Use the portal home page to open the reviewed Hydride Segmentation, PyTex,
+PDF Tools, Scientific Calculator, and Unit Converter services.
 
 ## Troubleshooting
 

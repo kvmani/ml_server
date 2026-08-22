@@ -89,14 +89,12 @@ def create_app(startup: bool = True) -> Flask:
     # Blueprints
     from .routes.api import bp as api_bp
     from .routes.download import bp as download_bp
-    from .routes.ebsd_cleanup import bp as ebsd_bp
     from .routes.feedback import bp as feedback_bp
     from .routes.main import bp as main_bp
     from pdf_tools_service.app import pdf_tools_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(feedback_bp)
-    app.register_blueprint(ebsd_bp)
     # The companion service owns the stable /pdf_tools/* contract.
     app.register_blueprint(pdf_tools_bp)
     app.register_blueprint(api_bp)

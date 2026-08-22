@@ -30,8 +30,7 @@ ml_server/
 ├── templates/         # HTML templates
 ├── app.py            # Main Flask application
 ├── scripts/
-│   ├── fake_ml_model_server.py      # Temporary ML model server
-│   └── fake_ebsd_model.py           # EBSD demo service
+│   └── fake_ml_model_server.py      # Temporary image utility server
 ├── requirements.txt   # Python dependencies
 ├── src/ml_server/feedback.json  # User feedback storage
 └── README.md         # Project documentation

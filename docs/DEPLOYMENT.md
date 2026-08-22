@@ -44,8 +44,6 @@ The application consists of the Flask web UI and one or more ML model servers.  
 
 ### a. Start the mature companion services
 ```bash
-# EBSD cleanup (mock)
-python scripts/start_ebsd_model_service.py &
 # Hydride segmentation runs from its own repository and service.
 ```
 

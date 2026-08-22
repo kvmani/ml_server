@@ -36,7 +36,7 @@ def tool_catalog() -> list[dict[str, Any]]:
         {
             "id": "pdf-tools",
             "name": "PDF Tools",
-            "summary": "Merge documents, extract pages, and prepare research PDFs.",
+            "summary": "Preview, reorder, merge, and extract pages from research PDFs.",
             "category": "Productivity",
             "tags": ["PDF", "merge", "extract"],
             "state": "active",
@@ -48,7 +48,7 @@ def tool_catalog() -> list[dict[str, Any]]:
         {
             "id": "scientific-calculator",
             "name": "Scientific Calculator",
-            "summary": "A focused calculator for reproducible engineering and science work.",
+            "summary": "Evaluate expressions with variables, functions, and engineering plots.",
             "category": "Productivity",
             "tags": ["units", "trigonometry", "constants"],
             "state": "active",

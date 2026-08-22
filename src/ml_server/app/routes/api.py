@@ -14,28 +14,16 @@ bp = Blueprint("api", __name__)
 config = Config()
 
 
-@bp.route("/api/check_ebsd_model_status")
-def api_check_ebsd_model_status():
-    """Health check for the EBSD cleanup model."""
-    health_url = config.config["ebsd_cleanup"]["ml_model"]["health_url"]
-    return jsonify({"running": check_service_health(health_url)})
-
-
 @bp.route("/api/upload_config")
 def api_upload_config():
     """Expose frontend upload limits."""
-    max_size = config.ebsd_cleanup_settings.get("file_settings", {}).get("max_size", 0)
-    return jsonify({"max_size": max_size})
+    return jsonify({"max_size": 50 * 1024 * 1024})
 
 
 @bp.route("/health")
 def health() -> tuple:
     """Aggregated health check for all services."""
-    services = {
-        "ebsd_cleanup": check_service_health(
-            config.config["ebsd_cleanup"]["ml_model"]["health_url"]
-        ),
-    }
+    services = {}
     try:
         r = redis.Redis(host="redis", port=6379)
         r.ping()

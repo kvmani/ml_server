@@ -497,7 +497,7 @@ not change its public link.
 
 - separately released productivity-tools service for supported PDF utilities;
 - an explicit product decision for deferred image enhancement;
-- retirement or validated ownership of the EBSD-cleanup stub;
+- retirement of unapproved experimental service stubs;
 - deletion of preliminary hydride code after its compatibility window; and
 - removal of unused Celery, Redis, model, image, and PDF dependencies from the portal.
 
