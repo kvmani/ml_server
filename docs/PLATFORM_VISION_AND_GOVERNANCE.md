@@ -1,7 +1,9 @@
 # Office Scientific Tools Platform Vision and Engineering Governance
 
-**Policy version:** 1.0  
-**Effective date:** 2026-08-22  
+**Policy version:** 1.0
+
+**Effective date:** 2026-08-22
+
 **Canonical location:** `ml_server/docs/PLATFORM_VISION_AND_GOVERNANCE.md`
 
 ## 1. Authority and scope
