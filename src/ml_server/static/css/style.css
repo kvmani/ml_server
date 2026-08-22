@@ -545,7 +545,10 @@ body:has(.portal-shell) .navbar-brand img { width: 54px !important; height: 54px
 body:has(.portal-shell) .navbar-brand { font-size: 1rem !important; }
 body:has(.portal-shell) .navbar-dark .navbar-nav .nav-link { padding: .35rem .7rem !important; font-size: .85rem !important; }
 body:has(.portal-shell) > .container { margin-top: 0 !important; padding-top: 0 !important; }
-body:has(.portal-shell) .portal-hero { min-height: 0 !important; height: 165px !important; }
+body:has(.portal-shell) .portal-hero { min-height: 0 !important; height: auto !important; grid-template-columns: 1fr !important; padding: .35rem 0 .55rem !important; }
+body:has(.portal-shell) .portal-hero h1 { font-size: clamp(2rem, 3.2vw, 3rem) !important; max-width: none !important; }
+body:has(.portal-shell) .hero-lede { max-width: 760px !important; }
+body:has(.portal-shell) .hero-actions { margin-top: .65rem !important; }
 body:has(.portal-shell) .portal-intro { padding: .7rem 0 .45rem !important; }
 body:has(.portal-shell) .portal-intro h2 { font-size: 1.2rem !important; }
 body:has(.portal-shell) .portal-intro > p { font-size: .72rem !important; }

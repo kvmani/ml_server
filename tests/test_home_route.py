@@ -7,6 +7,8 @@ def test_home_route(client):
     assert response.data.count(b"data-tool-card") == 6
     assert b"Tabular ML Workbench" in response.data
     assert b"active-user-count" in response.data
+    assert b"hero-visual" not in response.data
+    assert b"LOCAL \xc2\xb7 VERIFIED" not in response.data
 
 
 def test_active_user_count_is_anonymized_and_at_least_one(client):
