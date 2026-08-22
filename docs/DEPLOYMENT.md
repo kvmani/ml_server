@@ -33,6 +33,10 @@ PDF Tools is likewise installed from the local owner repository with
 `scripts/setup_local.ps1`; it is intentionally not fetched as a package from
 the public package index.
 
+Every companion service may also be deployed independently. Follow the owning repository's
+standalone web-app instructions when only one tool is required; the portal deployment is an
+optional gateway arrangement and is not a prerequisite.
+
 ## 3. Configuration
 Configuration values are stored in `config/config.intranet.json`.  You can override any value
 via environment variables using the `APP_` prefix and `__` for nested keys

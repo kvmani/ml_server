@@ -33,7 +33,7 @@ With the services running you should get a JSON status from:
 curl http://localhost:5000/health
 ```
 
-Hydride Segmentation is provided by the mature standalone repository at
+Hydride Segmentation is provided by the well-tested standalone repository at
 `C:\Users\kvman\HydrideSegmentation` and is linked from the portal at its own
 service URL. The portal does not contain a duplicate segmentation
 implementation.
@@ -100,6 +100,13 @@ Tools repository is installed from its local owner repository:
 .\scripts\setup_local.ps1
 .\start_platform.ps1
 ```
+
+## Standalone and integrated operation
+
+The portal is an optional common intranet gateway. Every linked tool remains an independently
+deployable web application with its own environment, startup command, health check, tests, and
+deployment documentation. A user may run only one tool without deploying the full platform; the
+portal adds discovery and integration but is not a prerequisite for the companion repositories.
 
 Run the unit tests with:
 

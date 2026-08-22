@@ -1,6 +1,6 @@
 # Office Scientific Tools Platform Vision and Engineering Governance
 
-**Policy version:** 1.0
+**Policy version:** 1.1
 
 **Effective date:** 2026-08-22
 
@@ -116,7 +116,19 @@ The portal and gateway depend on small operational contracts, not on tool intern
 change language, framework, host, model, or deployment method while its public URL and operational
 contract stay stable.
 
-### 3.5 Verification is proportional to risk
+### 3.5 Standalone by default; composable by integration
+
+Every tool repository participating in this platform MUST be independently deployable and runnable
+as a complete local web application. Each repository must document its own installation,
+configuration, startup, health check, test, and deployment workflow, without requiring
+`ml_server` or unrelated tools to be installed or running.
+
+The portal is an optional integration layer. It may link to a tool by service URL, API, or mounted
+blueprint through a stable boundary, but integration must never weaken or break standalone
+operation. A user who needs only one tool must be able to develop, test, and deploy that tool in
+an otherwise independent environment.
+
+### 3.6 Verification is proportional to risk
 
 Run the smallest test set that gives credible evidence for the changed behavior during normal
 development. Do not run every repository's complete suite after every minor change.
@@ -125,12 +137,12 @@ Focused testing is not permission to skip verification. Full testing is mandator
 release, production deployment, architecture migration, shared-contract change, or other change
 whose failure could affect multiple tools or users.
 
-### 3.6 Releases are explicit products
+### 3.7 Releases are explicit products
 
 Every member repository owns its version, changelog, release notes, artifacts, compatibility
 claims, and rollback information. A deployed working tree without a named version is not a release.
 
-### 3.7 Common operations are centralized; domain safety stays local
+### 3.8 Common operations are centralized; domain safety stays local
 
 The gateway owns network-wide controls such as TLS, routing, trusted client-IP handling, access
 logs, request IDs, and general rate limits. The portal owns discovery, feedback, launch analytics,

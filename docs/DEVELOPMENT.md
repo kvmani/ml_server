@@ -1,5 +1,12 @@
 # Development Guide
 
+## Standalone and integrated development
+
+Develop and test each companion repository in its own environment first. A tool must run through
+its documented standalone web-app entry point without `ml_server`, Redis, Celery, or unrelated
+companions. Portal integration is an additional contract test: it verifies the stable service URL
+or blueprint boundary without moving ownership of the tool into this repository.
+
 ## Development Environment Setup
 
 1. **Python Environment**
