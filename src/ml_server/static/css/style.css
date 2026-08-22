@@ -513,12 +513,10 @@ footer.footer {
 .tool-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
 .tool-card { position: relative; display: flex; flex-direction: column; min-height: 295px; padding: 1.25rem; border: 1px solid #d7e1e2; border-radius: 16px; background: rgba(255,255,255,.78); color: #183b56; text-decoration: none; transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
 .tool-card:hover { color: #183b56; transform: translateY(-6px); border-color: #0d554d; box-shadow: 0 18px 38px rgba(24,59,86,.11); }
-.tool-card-featured { background: #183b56; color: #fff; border-color: #183b56; }
-.tool-card-featured:hover { color: #fff; }
 .tool-card-top { display: flex; justify-content: space-between; align-items: center; font-size: .62rem; text-transform: uppercase; letter-spacing: .1em; }
-.tool-category { color: #e86f51; font-weight: 700; }.tool-card-featured .tool-category { color: #f6c58e; }.tool-state { color: #6d7d87; }.tool-card-featured .tool-state { color: #bdd3d2; }
+.tool-category { color: #e86f51; font-weight: 700; }.tool-state { color: #6d7d87; }
 .tool-icon { width: 58px; height: 58px; margin: 1.5rem 0 1.1rem; }.tool-icon img { width: 100%; height: 100%; object-fit: contain; border-radius: 15px; }
-.tool-card h3 { font-size: 1.2rem; letter-spacing: -.02em; margin-bottom: .55rem; }.tool-card p { color: #667784; font-size: .83rem; line-height: 1.5; margin: 0; }.tool-card-featured p { color: #c3d3d8; }
+.tool-card h3 { font-size: 1.2rem; letter-spacing: -.02em; margin-bottom: .55rem; }.tool-card p { color: #667784; font-size: .83rem; line-height: 1.5; margin: 0; }
 .tool-launch { margin-top: auto; padding-top: 1rem; font-size: .8rem; font-weight: 700; }.tool-launch span { color: #e86f51; margin-left: .3rem; }
 .trust-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin: 4.5rem 0 1rem; padding: 2rem 0 0; border-top: 1px solid #d7e1e2; }.trust-strip > div { display: grid; grid-template-columns: 35px 1fr; column-gap: .7rem; }.trust-number { color: #e86f51; font: 700 .75rem Georgia, serif; }.trust-strip strong { color: #183b56; font-size: .9rem; }.trust-strip p { grid-column: 2; color: #74828a; font-size: .78rem; line-height: 1.5; margin: .35rem 0 0; }
 .intranet-note { display:flex; gap:1rem; align-items:baseline; margin:2rem 0 0; padding:1rem 1.25rem; border:1px solid #b9d9cf; border-radius:12px; background:#effaf6; color:#667784; font-size:.9rem; }.intranet-note strong { color:#183b56; white-space:nowrap; }
