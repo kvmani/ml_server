@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Microstructural Analysis - {% block title %}{% endblock %}</title>
+    <title>Scientific Tools Portal - {% block title %}{% endblock %}</title>
     <link rel="icon" href="{{ url_for('static', filename='images/ml_server_icon.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
@@ -13,9 +13,9 @@
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid mt-4 px-4">
             <a class="navbar-brand d-flex align-items-center" href="{{ url_for('main.home') }}">
-                <img src="{{ url_for('static', filename='images/ml_server_icon.png') }}" alt="ML Server"
+                <img src="{{ url_for('static', filename='images/ml_server_icon.png') }}" alt="Scientific Tools"
                      width="{{ config['MAIN_ICON_SIZE'][0] }}" height="{{ config['MAIN_ICON_SIZE'][1] }}" class="me-2">
-                <span class="fs-4">Microstructural Analysis</span>
+                <span class="brand-lockup"><span class="brand-mark">∿</span> Scientific Tools</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -32,17 +32,13 @@
                             About
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/docs">
-                            API Docs
-                        </a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.home') }}#tools">Tools</a></li><li class="nav-item"><a class="nav-link" href="{{ url_for('main.help_faq') }}">Support</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <div class="research-header bg-light border-bottom">
+    <div class="research-header bg-light border-bottom d-none">
         <div class="container">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0">
@@ -70,11 +66,12 @@
     <footer class="footer mt-auto py-4">
     <div class="container d-flex justify-content-between small text-white">
         <div class="footer-left">
-            <strong>Developed by Materials Group</strong><br>
-            Version 1.0 | © 2025
+            <strong>Office Scientific Tools</strong><br>
+            Developed and Maintained By Dr K V Mani Krishna, Materials Group<br>
+            Portal release 0.2.0 · © 2026
         </div>
         <div class="footer-right text-end" style="max-width: 480px;">
-            This intranet tool provides ML-based microstructure enhancement(e.g., hydride segmentation, super-resolution)<br> using CPU-only PyTorch models on internal servers and edge devices.
+            A local-first portal for mature scientific and productivity services.
         </div>
     </div>
 </footer>
@@ -85,5 +82,6 @@
     <script src="{{ url_for('static', filename='vendor/bootstrap/bootstrap.bundle.min.js') }}" nonce="{{ csp_nonce() }}"></script>
     <script defer src="{{ url_for('static', filename='vendor/fontawesome/all.min.js') }}" nonce="{{ csp_nonce() }}"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}" nonce="{{ csp_nonce() }}"></script>
+    <script defer src="{{ url_for('static', filename='js/portal.js') }}" nonce="{{ csp_nonce() }}"></script>
 </body>
 </html>

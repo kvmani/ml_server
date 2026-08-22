@@ -56,14 +56,6 @@ def start_services() -> None:
             os.path.join(
                 os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
                 "scripts",
-                "fake_ml_model_server.py",
-            ),
-            config.super_resolution_settings.get("ml_model", {}).get("port", 5002),
-        ),
-        (
-            os.path.join(
-                os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-                "scripts",
                 "fake_ebsd_model.py",
             ),
             config.ebsd_cleanup_settings.get("ml_model", {}).get("port", 5003),

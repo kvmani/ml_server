@@ -24,6 +24,7 @@ src/ml_server/feedback.json
 
 # Virtual Environment
 venv/
+.venv/
 env/
 ENV/
 .env
@@ -97,4 +98,5 @@ var/
 wheels/
 *.egg-info/
 .installed.cfg
-*.egg 
+*.egg
+tmp/

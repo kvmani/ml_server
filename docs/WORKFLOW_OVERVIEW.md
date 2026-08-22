@@ -6,7 +6,7 @@ workers communicating through Redis queues.
 
 ## Request lifecycle
 
-1. A browser sends a request to an endpoint such as `/super_resolution`.
+1. A browser sends a request to an endpoint such as `/ebsd_cleanup` or `/pdf_tools/`.
 2. `create_app()` registers blueprints found under `ml_server.app.routes`.
 3. For long running tasks (e.g. EBSD clean up) a Celery task defined in
    `ml_server.celery_app` is queued.

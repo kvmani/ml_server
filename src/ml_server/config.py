@@ -82,16 +82,8 @@ class Config:
         return self.config.get("secret_key", "")
 
     @property
-    def super_resolution_settings(self) -> Dict[str, Any]:
-        return self.config.get("super_resolution", {})
-
-    @property
     def ebsd_cleanup_settings(self) -> Dict[str, Any]:
         return self.config.get("ebsd_cleanup", {})
-
-    @property
-    def hydride_segmentation_settings(self) -> Dict[str, Any]:
-        return self.config.get("hydride_segmentation", {})
 
     @property
     def celery_settings(self) -> Dict[str, Any]:
@@ -131,32 +123,9 @@ class Config:
         """Return (width, height) for tool icons."""
         return self.config.get("toolsIconsSize", [75, 75])
 
-    # Backwards compatibility helpers
-    @property
-    def super_resolution_extensions(self) -> set:
-        return set(self.super_resolution_settings.get("allowed_extensions", []))  # noqa: E501
-
     @property
     def ebsd_extensions(self) -> set:
         return set(self.ebsd_cleanup_settings.get("allowed_extensions", []))  # noqa: E501
-
-    @property
-    def ml_model_url(self) -> str:
-        return self.super_resolution_settings.get("ml_model", {}).get(
-            "url",
-            "",
-        )
-
-    @property
-    def ml_model_health_url(self) -> str:
-        return self.super_resolution_settings.get("ml_model", {}).get(
-            "health_url",
-            "",
-        )
-
-    # Dummy service starters for tests
-    def start_ml_model_service(self) -> bool:  # pragma: no cover
-        return False
 
     def start_ebsd_model_service(self) -> bool:  # pragma: no cover
         return False

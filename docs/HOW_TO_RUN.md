@@ -38,13 +38,12 @@ Before running the application, ensure you have the following installed:
 
 ## Running the Application
 
-1. **Start the ML Model Server**
+1. **Start the EBSD Model Server**
    ```bash
     # Open a terminal and run
-    python scripts/start_ml_model_service.py
+    python scripts/start_ebsd_model_service.py
 
-    # The server will start on port 5002
-    # You should see: "ML model server started successfully!"
+    # The server will start on the configured EBSD model port
    ```
 
 2. **Start the Flask Server**
@@ -60,20 +59,6 @@ Before running the application, ensure you have the following installed:
    - Navigate to: `http://127.0.0.1:5000`
 
 ## Using the Application
-
-### Super Resolution Tool
-
-1. **Check ML Model Status**
-   - The application automatically checks if the ML model is running
-   - You'll see a warning if the model server is not available
-
-2. **Upload an Image**
-   - Click "Choose File" or drag and drop an image
-   - Supported formats: PNG, JPG, JPEG, GIF, BMP, TIFF, WebP
-
-3. **View Results**
-   - Original and processed images will be displayed side by side
-   - Use the download button to save the processed image
 
 ### EBSD Clean-Up Tool
 

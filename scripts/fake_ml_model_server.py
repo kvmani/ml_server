@@ -15,7 +15,7 @@ LOG_DIR = "logs"
 os.makedirs(LOG_DIR, exist_ok=True)
 log_path = os.path.join(LOG_DIR, LOG_FILE)
 
-logger = logging.getLogger("FakeSuperResLogger")
+logger = logging.getLogger("FakeModelLogger")
 logger.setLevel(logging.INFO)
 logger.propagate = False
 if logger.hasHandlers():
@@ -55,7 +55,7 @@ def infer():
                 logger.error("Fixed output image missing!")
                 return jsonify({"error": "Fixed enhanced image not found."}), 500
 
-        # === Generic Fake Super-Resolution Enhancement ===
+        # === Generic image cleanup enhancement ===
         img = Image.open(uploaded_file)
         if img.mode in ("RGBA", "P"):
             img = img.convert("RGB")
@@ -88,7 +88,7 @@ def infer():
         return send_file(img_io, mimetype="image/png", as_attachment=False)
 
     except Exception as e:
-        logger.error(f"Error in super-resolution logic: {str(e)}")
+        logger.error(f"Error in image cleanup logic: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 
@@ -102,5 +102,5 @@ def root_alias():
 
 
 if __name__ == "__main__":
-    logger.info("Starting fake super-resolution server on port 5002...")
+    logger.info("Starting fake image cleanup server on port 5002...")
     app.run(host="0.0.0.0", port=5002)

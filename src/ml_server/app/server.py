@@ -41,6 +41,8 @@ def create_app(startup: bool = True) -> Flask:
         "default-src": ["'self'"],
         "script-src": ["'self'", "'nonce'"],
         "img-src": ["'self'", "data:"],  # <-- This line allows base64 images
+        "frame-src": ["'self'", "blob:"],
+        "object-src": ["'self'", "blob:"],
     },
         force_https=False,
         strict_transport_security=False,
@@ -89,20 +91,14 @@ def create_app(startup: bool = True) -> Flask:
     from .routes.download import bp as download_bp
     from .routes.ebsd_cleanup import bp as ebsd_bp
     from .routes.feedback import bp as feedback_bp
-    from .routes.hydride_segmentation import bp as hydride_bp
     from .routes.main import bp as main_bp
-    #from .routes.pdf_tools import bp as pdf_tools_bp
-    from pdf_tools_service.app.controllers import pdf_tools_bp
-
-    from .routes.super_resolution import bp as super_res_bp
+    from pdf_tools_service.app import pdf_tools_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(feedback_bp)
-    app.register_blueprint(super_res_bp)
     app.register_blueprint(ebsd_bp)
-    app.register_blueprint(hydride_bp)
-    #app.register_blueprint(pdf_tools_bp)
-    app.register_blueprint(pdf_tools_bp, url_prefix="/pdf-tools")
+    # The companion service owns the stable /pdf_tools/* contract.
+    app.register_blueprint(pdf_tools_bp)
     app.register_blueprint(api_bp)
     app.register_blueprint(download_bp)
 

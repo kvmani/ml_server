@@ -7,7 +7,7 @@ name = "ml_server"
 version = "0.1.0"
 description = "Flask and Celery based microstructural analysis server"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.9"
 dependencies = [
     "Flask==3.0.2",
     "Werkzeug==3.0.1",

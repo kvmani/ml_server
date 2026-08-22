@@ -3,34 +3,6 @@
     "secret_key": "__SET_SECRET_KEY__",
     "host": "127.0.0.1",
     "port": 5000,
-    "super_resolution": {
-        "allowed_extensions": [
-            "png",
-            "jpg",
-            "jpeg",
-            "gif",
-            "bmp",
-            "tiff",
-            "webp"
-        ],
-        "ml_model": {
-            "url": "http://localhost:5002/infer",
-            "health_url": "http://localhost:5002",
-            "port": 5002,
-            "timeout": 30
-        },
-        "image_settings": {
-            "max_size": 10485760,
-            "min_dimensions": [
-                100,
-                100
-            ],
-            "max_dimensions": [
-                4096,
-                4096
-            ]
-        }
-    },
     "ebsd_cleanup": {
         "allowed_extensions": [
             "ang",
@@ -52,23 +24,6 @@
             "url": "http://localhost:5003/infer",
             "health_url": "http://localhost:5003",
             "port": 5003,
-            "timeout": 30
-        }
-    },
-    "hydride_segmentation": {
-        "allowed_extensions": [
-            "png",
-            "jpg",
-            "jpeg",
-            "gif",
-            "bmp",
-            "tiff",
-            "webp"
-        ],
-        "ml_model": {
-            "url": "http://localhost:5004/infer",
-            "health_url": "http://localhost:5004",
-            "port": 5004,
             "timeout": 30
         }
     },

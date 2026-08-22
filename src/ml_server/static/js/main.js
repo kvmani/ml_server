@@ -2,119 +2,6 @@
 // Maximum upload size will be fetched from the backend
 window.uploadMaxSize = 10 * 1024 * 1024;
 
-// Image comparison slider functionality
-function initComparison() {
-    const slider = document.querySelector('.comparison-slider');
-    const beforeImage = document.querySelector('.original-image');
-    const afterImage = document.querySelector('.enhanced-image');
-    const sliderHandle = document.querySelector('.slider-handle');
-    const beforeLabel = document.querySelector('.before-label');
-    const afterLabel = document.querySelector('.after-label');
-
-    if (!slider || !beforeImage || !afterImage || !sliderHandle) return;
-
-    let isDragging = false;
-    let startX;
-    let sliderLeft;
-
-    function updateSliderPosition(e) {
-        const rect = slider.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const percentage = (x / rect.width) * 100;
-        const clampedPercentage = Math.min(Math.max(percentage, 0), 100);
-
-        sliderHandle.style.left = `${clampedPercentage}%`;
-        afterImage.style.clipPath = `inset(0 ${100 - clampedPercentage}% 0 0)`;
-        beforeLabel.style.left = `${clampedPercentage}%`;
-        afterLabel.style.left = `${clampedPercentage}%`;
-    }
-
-    function startDragging(e) {
-        isDragging = true;
-        startX = e.clientX;
-        sliderLeft = sliderHandle.offsetLeft;
-        sliderHandle.classList.add('dragging');
-    }
-
-    function stopDragging() {
-        isDragging = false;
-        sliderHandle.classList.remove('dragging');
-    }
-
-    sliderHandle.addEventListener('mousedown', startDragging);
-    document.addEventListener('mousemove', (e) => {
-        if (isDragging) {
-            updateSliderPosition(e);
-        }
-    });
-    document.addEventListener('mouseup', stopDragging);
-    document.addEventListener('mouseleave', stopDragging);
-
-    // Touch events for mobile
-    sliderHandle.addEventListener('touchstart', (e) => {
-        isDragging = true;
-        startX = e.touches[0].clientX;
-        sliderLeft = sliderHandle.offsetLeft;
-        sliderHandle.classList.add('dragging');
-    });
-
-    document.addEventListener('touchmove', (e) => {
-        if (isDragging) {
-            e.preventDefault();
-            updateSliderPosition(e.touches[0]);
-        }
-    });
-
-    document.addEventListener('touchend', stopDragging);
-}
-
-// File upload handling
-function handleFileUpload(input, previewContainer, loadingState) {
-    const file = input.files[0];
-    if (!file) return;
-
-    // Show loading state
-    previewContainer.classList.remove('d-none');
-    loadingState.classList.remove('d-none');
-    previewContainer.classList.remove('loaded');
-
-    // Create FormData
-    const formData = new FormData();
-    formData.append('file', file);
-
-    // Send file to server
-    fetch('/super_resolution', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Update preview images
-            const originalPreview = document.querySelector('.original-image');
-            const enhancedPreview = document.querySelector('.enhanced-image');
-
-            if (originalPreview && enhancedPreview) {
-                originalPreview.src = data.original_image;
-                enhancedPreview.src = data.enhanced_image;
-
-                enhancedPreview.onload = () => {
-                    previewContainer.classList.add('loaded');
-                    loadingState.classList.add('d-none');
-                    initComparison();
-                };
-            }
-        } else {
-            throw new Error(data.error || 'Upload failed');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        loadingState.classList.add('d-none');
-        alert('An error occurred while processing the file. Please try again.');
-    });
-}
-
 // Drag and drop functionality
 function initDragAndDrop(dropZone, fileInput) {
     if (!dropZone || !fileInput) return;
@@ -150,7 +37,7 @@ function initDragAndDrop(dropZone, fileInput) {
         const dt = e.dataTransfer;
         const files = dt.files;
         fileInput.files = files;
-        handleFileUpload(fileInput);
+        fileInput.dispatchEvent(new Event('change', {bubbles: true}));
     }
 }
 
@@ -181,16 +68,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 window.uploadMaxSize = cfg.max_size;
             }
         });
-    // Initialize file upload handlers
-    const fileInputs = document.querySelectorAll('input[type="file"]');
-    fileInputs.forEach(input => {
-        input.addEventListener('change', function() {
-            const previewContainer = this.closest('.upload-container').nextElementSibling;
-            const loadingState = previewContainer.querySelector('.loading-state');
-            handleFileUpload(this, previewContainer, loadingState);
-        });
-    });
-
     // Initialize drag and drop
     const dropZones = document.querySelectorAll('.drop-zone');
     dropZones.forEach(zone => {

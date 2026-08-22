@@ -33,13 +33,14 @@ With the services running you should get a JSON status from:
 curl http://localhost:5000/health
 ```
 
-The hydride segmentation tool is available at `/hydride_segmentation`.
-Upload an image and choose either the ML or conventional algorithm. Results
-include the segmentation mask, overlay and orientation analysis.
+Hydride Segmentation is provided by the mature standalone repository at
+`C:\Users\kvman\HydrideSegmentation` and is linked from the portal at its own
+service URL. The portal does not contain a duplicate segmentation
+implementation.
 
 ## PDF Tools
 
-Navigate to `/pdf_tools` for secure PDF utilities. The page offers merging of
+Navigate to `/pdf_tools/` for secure PDF utilities. The page offers merging of
 multiple PDFs and extraction of specific page ranges. All operations run within
 the intranet and no files are stored on disk, ensuring privacy.
 
@@ -92,6 +93,14 @@ Install development and testing requirements:
 pip install -r requirements.txt -r requirements-test.txt
 ```
 
+For the complete local platform, use the setup helper so the companion PDF
+Tools repository is installed from its local owner repository:
+
+```powershell
+.\scripts\setup_local.ps1
+.\start_platform.ps1
+```
+
 Run the unit tests with:
 
 ```bash
@@ -126,22 +135,11 @@ APP_LOGGING__LOG_FILE=app.log
 APP_LOGGING__FORMAT="%(asctime)s [%(levelname)s] %(message)s"
 APP_CELERY__BROKER_URL=redis://redis:6379/0
 APP_CELERY__RESULT_BACKEND=redis://redis:6379/0
-APP_SUPER_RESOLUTION__ML_MODEL__URL=http://localhost:5002/infer
-APP_SUPER_RESOLUTION__ML_MODEL__HEALTH_URL=http://localhost:5002
-APP_SUPER_RESOLUTION__ML_MODEL__PORT=5002
-APP_SUPER_RESOLUTION__ML_MODEL__TIMEOUT=30
-APP_SUPER_RESOLUTION__IMAGE_SETTINGS__MAX_SIZE=10485760
-APP_SUPER_RESOLUTION__IMAGE_SETTINGS__MIN_DIMENSIONS="[100,100]"
-APP_SUPER_RESOLUTION__IMAGE_SETTINGS__MAX_DIMENSIONS="[4096,4096]"
 APP_EBSD_CLEANUP__ML_MODEL__URL=http://localhost:5003/infer
 APP_EBSD_CLEANUP__ML_MODEL__HEALTH_URL=http://localhost:5003
 APP_EBSD_CLEANUP__ML_MODEL__PORT=5003
 APP_EBSD_CLEANUP__ML_MODEL__TIMEOUT=30
 APP_EBSD_CLEANUP__FILE_SETTINGS__MAX_SIZE=52428800
-APP_HYDRIDE_SEGMENTATION__ML_MODEL__URL=http://localhost:5004/infer
-APP_HYDRIDE_SEGMENTATION__ML_MODEL__HEALTH_URL=http://localhost:5004
-APP_HYDRIDE_SEGMENTATION__ML_MODEL__PORT=5004
-APP_HYDRIDE_SEGMENTATION__ML_MODEL__TIMEOUT=30
 APP_FEEDBACK__FILE_PATH=src/ml_server/feedback.json
 APP_DOWNLOAD__PROCESSED_DATA_PATH=tmp/enhanced_ebsd_map.png
 APP_SECURITY__ADMIN_TOKEN=__SET_ADMIN_TOKEN__

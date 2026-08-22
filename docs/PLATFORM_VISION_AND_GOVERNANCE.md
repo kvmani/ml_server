@@ -205,7 +205,7 @@ explainable-result requirements.
 
 Lightweight office utilities such as PDF merge and extraction belong in a separately released
 repository and service. A compute-heavy or independently evolving capability such as a real
-super-resolution product should gain its own repository instead of turning the productivity
+deferred image-enhancement product should gain its own repository instead of turning the productivity
 service into another monolith.
 
 ### 5.5 Platform-infrastructure repository
@@ -496,7 +496,7 @@ not change its public link.
 **Deliverables:**
 
 - separately released productivity-tools service for supported PDF utilities;
-- an explicit product decision for super-resolution;
+- an explicit product decision for deferred image enhancement;
 - retirement or validated ownership of the EBSD-cleanup stub;
 - deletion of preliminary hydride code after its compatibility window; and
 - removal of unused Celery, Redis, model, image, and PDF dependencies from the portal.

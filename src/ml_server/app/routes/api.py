@@ -14,12 +14,6 @@ bp = Blueprint("api", __name__)
 config = Config()
 
 
-@bp.route("/api/check_model_status")
-def api_check_model_status():
-    """Health check for the super-resolution model."""
-    return jsonify({"running": check_service_health(config.ml_model_health_url)})
-
-
 @bp.route("/api/check_ebsd_model_status")
 def api_check_ebsd_model_status():
     """Health check for the EBSD cleanup model."""
@@ -27,17 +21,10 @@ def api_check_ebsd_model_status():
     return jsonify({"running": check_service_health(health_url)})
 
 
-@bp.route("/api/check_hydride_model_status")
-def api_check_hydride_model_status():
-    """Health check for the hydride segmentation model."""
-    health_url = config.hydride_segmentation_settings.get("ml_model", {}).get("health_url")
-    return jsonify({"running": check_service_health(health_url)})
-
-
 @bp.route("/api/upload_config")
 def api_upload_config():
     """Expose frontend upload limits."""
-    max_size = config.super_resolution_settings.get("image_settings", {}).get("max_size", 0)
+    max_size = config.ebsd_cleanup_settings.get("file_settings", {}).get("max_size", 0)
     return jsonify({"max_size": max_size})
 
 
@@ -45,12 +32,8 @@ def api_upload_config():
 def health() -> tuple:
     """Aggregated health check for all services."""
     services = {
-        "super_resolution": check_service_health(config.ml_model_health_url),
         "ebsd_cleanup": check_service_health(
             config.config["ebsd_cleanup"]["ml_model"]["health_url"]
-        ),
-        "hydride_segmentation": check_service_health(
-            config.hydride_segmentation_settings.get("ml_model", {}).get("health_url")
         ),
     }
     try:

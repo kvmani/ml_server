@@ -27,7 +27,11 @@ pip install -r requirements.txt
 pip install -r requirements-test.txt
 ```
 
-The hydride segmentation feature will require additional ML packages. When that code is integrated, extend `requirements.txt` with the necessary packages and rerun the installation step.
+Hydride segmentation is a separately deployed service owned by `C:\Users\kvman\HydrideSegmentation`. Install and run that repository using its own deployment instructions; the portal only links to its stable service URL.
+
+PDF Tools is likewise installed from the local owner repository with
+`scripts/setup_local.ps1`; it is intentionally not fetched as a package from
+the public package index.
 
 ## 3. Configuration
 Configuration values are stored in `config/config.intranet.json`.  You can override any value
@@ -38,13 +42,11 @@ required.  For production, set `"debug": false`.
 ## 4. Starting the Services
 The application consists of the Flask web UI and one or more ML model servers.  Start them within the virtual environment.
 
-### a. Start model services
+### a. Start the mature companion services
 ```bash
-# Super‑resolution (mock)
-python scripts/start_ml_model_service.py &
 # EBSD cleanup (mock)
 python scripts/start_ebsd_model_service.py &
-# Future: Hydride segmentation server will have its own script
+# Hydride segmentation runs from its own repository and service.
 ```
 
 ### b. Start the main Flask app
