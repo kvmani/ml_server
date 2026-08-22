@@ -6,7 +6,7 @@
     <title>Scientific Tools Portal - {% block title %}{% endblock %}</title>
     <link rel="icon" href="{{ url_for('static', filename='images/ml_server_icon.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=20260823-compact4">
 
 </head>
 <body>
@@ -83,6 +83,6 @@
     <script src="{{ url_for('static', filename='js/browser_support.js') }}" nonce="{{ csp_nonce() }}"></script>
     <script defer src="{{ url_for('static', filename='vendor/fontawesome/all.min.js') }}" nonce="{{ csp_nonce() }}"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}" nonce="{{ csp_nonce() }}"></script>
-    <script defer src="{{ url_for('static', filename='js/portal.js') }}" nonce="{{ csp_nonce() }}"></script>
+    <script defer src="{{ url_for('static', filename='js/portal.js') }}?v=20260823-presence" nonce="{{ csp_nonce() }}"></script>
 </body>
 </html>
