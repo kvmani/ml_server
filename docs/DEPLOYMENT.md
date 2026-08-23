@@ -1,6 +1,12 @@
 # Deployment Guide
 
-This document describes a recommended process for deploying the microstructural analysis server on an Ubuntu Linux intranet environment.  The same steps can be adapted for both a testing server and the final production server.
+This document describes a recommended process for deploying the microstructural analysis server on an Ubuntu Linux intranet environment.
+
+> **Deploying onto an office intranet host with local Python/Node mirrors and CPU-only packages?**
+> Use [`DEPLOYMENT_UBUNTU_INTRANET.md`](DEPLOYMENT_UBUNTU_INTRANET.md) instead — it is the
+> step-by-step runbook for that environment, including mirror configuration, CPU-only wheel
+> enforcement, the vendored offline MathJax check, and the privacy guarantees.
+  The same steps can be adapted for both a testing server and the final production server.
 
 ## 1. Prepare the Server
 1. **Install Python 3.12+**
@@ -20,7 +26,7 @@ This document describes a recommended process for deploying the microstructural 
    ```
 
 ## 2. Install Dependencies
-Install all Python dependencies from `requirements.txt` and testing utilities if needed. The PDF tools require `PyPDF2` and `pdf2image`, which are included in the requirements file:
+Install all Python dependencies from `requirements.txt` and testing utilities if needed. The PDF tools require `pypdf` and `pdf2image`, which are included in the requirements file:
 ```bash
 pip install -r requirements.txt
 # Optional: install test utilities
@@ -33,9 +39,9 @@ PDF Tools is likewise installed from the local owner repository with
 `scripts/setup_local.ps1`; it is intentionally not fetched as a package from
 the public package index.
 
-Tabular ML is installed from the immutable `v0.1.0` source archive declared in
+PDF Tools and Tabular ML are installed from the immutable `v0.2.0` source archives declared in
 `requirements.txt`. For local development, `scripts/setup_local.ps1` replaces
-that install with an editable sibling checkout at `..\tabular_ml`. The
+those installs with editable sibling checkouts. The
 companion is CPU-only: deployment does not require CUDA, ROCm, a GPU driver, or
 an accelerator runtime.
 
@@ -49,6 +55,10 @@ via environment variables using the `APP_` prefix and `__` for nested keys
 (e.g. `APP_PORT=8080`).  Review the host and port settings and modify them if
 required.  For production, set `"debug": false`.
 
+For the coordinated release manifest, tagged-artifact order, smoke-test matrix, blue-green
+procedure, and rollback checklist, use `docs/PRODUCTION_RELEASE_2026_08.md` as the authoritative
+runbook.
+
 ## 4. Starting the Services
 The application consists of the Flask web UI and one or more ML model servers.  Start them within the virtual environment.
 
@@ -60,9 +70,10 @@ The application consists of the Flask web UI and one or more ML model servers.  
 
 ### b. Start the main Flask app
 ```bash
-python app.py
+ml-server --host 127.0.0.1 --port 5000
 ```
-The server listens on the port defined in `config/config.intranet.json` (default `5000`).
+`python app.py` is a compatibility wrapper for the same Waitress-backed entry point. The server
+otherwise uses the host and port in the file selected by `ML_SERVER_CONFIG`.
 
 ### c. Run as systemd services
 Create unit files in `/etc/systemd/system/` to manage the app in production. Example units:
@@ -73,9 +84,9 @@ Description=ML Server
 After=network.target
 
 [Service]
-WorkingDirectory=/opt/ml_server/src
+WorkingDirectory=/opt/ml_server
 Environment=PYTHONPATH=/opt/ml_server/src
-ExecStart=/opt/ml_server/env/bin/gunicorn -b 0.0.0.0:5000 -w 2 -t 300 ml_server.app.server:create_app()
+ExecStart=/opt/ml_server/env/bin/gunicorn -b 127.0.0.1:5000 -w 2 -t 300 ml_server.app.server:create_app()
 Restart=always
 
 [Install]
@@ -108,21 +119,21 @@ If the new deployment fails:
 2. Restart the previous working version (from its virtual environment or previous Git checkout).
 3. Inspect logs to identify issues before attempting another deployment.
 
-## 8. Periodic Code Updates
-To fetch updates from the repository and redeploy:
-```bash
-cd ml_server
-git pull
-source venv/bin/activate
-pip install -r requirements.txt  # update packages if needed
-```
-Restart the services using the blue‑green method described above.
+## 8. Release Updates
+Do not update the live checkout or virtual environment in place. Build and hash the approved
+release artifacts, install them into a new versioned environment, run the acceptance checks in
+`PRODUCTION_RELEASE_2026_08.md`, and switch traffic using the blue-green procedure above. Retain
+the previous environment until the observation window closes.
 
 ## 9. Security Notes
-This service runs on an isolated intranet with minimal concurrent users.  For simplicity, standard security hardening is not emphasized, but you should:
-- Keep the system patched.
-- Restrict network access to trusted clients.
-- Consider using a firewall to limit access to the server port.
+An intranet is not a trust boundary. The production deployment must:
+
+- bind application services to loopback and expose only a TLS reverse proxy;
+- load secrets from the deployment secret store through `ML_SERVER_CONFIG`/environment variables;
+- use a non-default admin token and stable secret key, with debug and reloaders disabled;
+- run under an unprivileged service account with least-privilege data-directory permissions;
+- enforce request-size limits, patch the host regularly, and restrict ingress with a firewall;
+- collect access/application logs and alert on readiness degradation and elevated error rates.
 
 
 ## Example Fresh Installation
@@ -143,10 +154,10 @@ python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 ```
-Start Redis and the services:
+Validate configuration, then start Redis and the supervised services:
 ```bash
-redis-server --daemonize yes
-celery -A ml_server.celery_app worker &
-python app.py
+export ML_SERVER_CONFIG=/etc/ml-server/config.intranet.json
+ml-server --host 127.0.0.1 --port 5000
 ```
-Visit `http://localhost:5000` to use the application.
+Use the systemd units for the portal and Celery worker/beat in production; the foreground command
+above is only a pre-cutover smoke. Access the application through the configured TLS proxy.

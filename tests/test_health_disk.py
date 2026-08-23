@@ -1,8 +1,18 @@
 from ml_server.app.routes import api
+from ml_server import __version__
+
+
+def test_liveness_is_dependency_independent(client):
+    response = client.get("/health/live")
+    assert response.status_code == 200
+    assert response.get_json() == {
+        "service": "ml_server",
+        "status": "ok",
+        "version": __version__,
+    }
 
 
 def test_health_endpoint(client, monkeypatch):
-    monkeypatch.setattr(api, "check_service_health", lambda *a, **k: True)
     monkeypatch.setattr(
         api.redis, "Redis", lambda *a, **k: type("R", (), {"ping": lambda self: True})()
     )

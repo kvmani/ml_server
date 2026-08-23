@@ -7,6 +7,10 @@
     <h1 class="text-center mb-5">Help & Frequently Asked Questions</h1>
 
     <div class="accordion" id="faqAccordion">
+        <div class="accordion-item">
+            <h2 class="accordion-header"><button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#scientificGuides">Scientific guides</button></h2>
+            <div id="scientificGuides" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion"><div class="accordion-body"><p>Each released tool has a guide covering its algorithm, equations, workflow, critical inputs, interpretation limits, and validation checks.</p><div class="support-guide-grid">{% for tool in tools %}<a href="{{ url_for('main.scientific_help', tool_id=tool.id) }}"><strong>{{ tool.name }}</strong><span>{{ tool.summary }}</span></a>{% endfor %}</div></div></div>
+        </div>
         
         <!-- 🌐 General Questions -->
         <div class="accordion-item">
@@ -28,10 +32,31 @@
                         All tools are fully web-based and require only a modern browser such as Chrome, Firefox, or Edge. No additional software installation is necessary.
                     </p>
 
-                    <h5>Is my data secure?</h5>
+                    <h5>Can I upload any document, or only scientific ones?</h5>
                     <p>
-                        The tools run behind our office secure servers on the campus intranet. Files are processed within that environment and are not sent to public or untrusted websites. Services are designed for temporary processing, with each tool following its own documented retention behavior.
+                        Any document is welcome. PDF Tools in particular accepts <strong>any PDF</strong> — official notes, administrative forms, scanned records, presentations, manuscripts, or drawings. The tool reads only the page structure of a file; it never inspects, indexes, or interprets what your document is about.
                     </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Privacy and data security -->
+        <div class="accordion-item">
+            <h2 class="accordion-header d-flex align-items-center">
+                <span class="me-2">🔒</span>
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqPrivacy">
+                    Privacy and data security
+                </button>
+            </h2>
+            <div id="faqPrivacy" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    <p>Privacy and data security are given the utmost importance across every service in this portal.</p>
+                    <ul>
+                        <li><strong>Nothing leaves the office network.</strong> Every service runs on office intranet hardware. No file, page, or fragment of your data is transmitted to the public internet or to any third-party service.</li>
+                        <li><strong>Nothing is stored.</strong> Uploads are held only in server memory for the lifetime of your request and are discarded as soon as your result is returned. No copy is kept in a database, an archive, or a shared folder.</li>
+                        <li><strong>No personal information is collected.</strong> The portal does not build user profiles and does not identify who you are. Only anonymous, aggregate service-health counts are kept so the platform can be kept running reliably.</li>
+                        <li><strong>You stay in control of what you share.</strong> The only details we hold are the name, email, and message you choose to type into the feedback form, and they are used solely to reply to you.</li>
+                    </ul>
                 </div>
             </div>
         </div>

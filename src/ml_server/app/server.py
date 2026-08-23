@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 import os
 import time
+import uuid
 
 from flask import Flask, g, request
 from flask_compress import Compress
@@ -15,6 +16,7 @@ from ..celery_app import celery_init_app
 from ..config import load_config
 from .admin.dashboard import init_admin
 from .services.graceful import install_signal_handlers
+from .services.engagement import initialize_database, record_event
 from .services.metrics import (
     active_users_gauge,
     error_count,
@@ -61,14 +63,26 @@ def create_app(startup: bool = True) -> Flask:
         app.config["ADMIN_TOKEN"] = cfg.admin_token
     app.config["MAIN_ICON_SIZE"] = cfg.main_icon_size
     app.config["TOOLS_ICONS_SIZE"] = cfg.tools_icons_size
+    app.config["ENGAGEMENT_DATABASE"] = cfg.feedback_settings.get(
+        "database_path", "data/engagement.sqlite3"
+    )
+    app.config["ANALYTICS_ENABLED"] = bool(cfg.analytics_settings.get("enabled", True))
+    app.config["EMAIL_SETTINGS"] = cfg.email_settings
     app.secret_key = cfg.secret_key or os.urandom(24)
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
     celery_init_app(app)
+    initialize_database(app.config["ENGAGEMENT_DATABASE"])
 
     # Metrics instrumentation
     @app.before_request
     def _before_request() -> None:
         g.start_time = time.time()
+        candidate = request.cookies.get("ml_session", "")
+        g.analytics_session_id = (
+            candidate
+            if 16 <= len(candidate) <= 80 and candidate.replace("-", "").replace("_", "").isalnum()
+            else uuid.uuid4().hex
+        )
 
     @app.after_request
     def _after_request(response):  # type: ignore[override]
@@ -90,6 +104,39 @@ def create_app(startup: bool = True) -> Flask:
         active_users_gauge.set(len(active))
         app._active_users = active
         update_uptime(app.start_time)
+        response.set_cookie(
+            "ml_session",
+            g.analytics_session_id,
+            max_age=8 * 60 * 60,
+            httponly=True,
+            samesite="Lax",
+        )
+        if (
+            app.config["ANALYTICS_ENABLED"]
+            and endpoint not in {"feedback.analytics_event", "main.active_users"}
+            and not request.path.startswith("/static/")
+        ):
+            tool_id = tool_name = None
+            if request.path.startswith("/pdf_tools"):
+                tool_id, tool_name = "pdf-tools", "PDF Tools"
+            elif request.path.startswith("/tabular_ml"):
+                tool_id, tool_name = "tabular-ml", "Tabular ML Workbench"
+            try:
+                record_event(
+                    app.config["ENGAGEMENT_DATABASE"],
+                    session_id=g.analytics_session_id,
+                    user_agent=request.user_agent.string,
+                    event_name="request",
+                    tool_id=tool_id,
+                    tool_name=tool_name,
+                    path=request.path[:1000],
+                    duration_ms=round(latency * 1000),
+                    status_code=response.status_code,
+                )
+            except Exception:
+                logging.getLogger(__name__).warning(
+                    "Request analytics could not be stored", exc_info=True
+                )
         return response
 
     # Blueprints

@@ -1,5 +1,5 @@
 {
-    "debug": true,
+    "debug": false,
     "secret_key": "your-secret-key",
     "host": "127.0.0.1",
     "port": 5000,
@@ -11,14 +11,20 @@
         "result_backend": "redis://redis:6379/0"
     },
     "feedback": {
-        "file_path": "src/microstructure_server/feedback.json",
-        "max_entries": 1000,
-        "required_fields": [
-            "name",
-            "email",
-            "rating",
-            "feedback_text"
-        ]
+        "database_path": "data/engagement.sqlite3"
+    },
+    "analytics": {
+        "enabled": true
+    },
+    "email": {
+        "enabled": false,
+        "smtp_host": "",
+        "smtp_port": 25,
+        "use_tls": false,
+        "username": "",
+        "password": "",
+        "from_address": "noreply@intranet.local",
+        "developer_address": "kvmani@barc.gov.in"
     },
     "logging": {
         "debug_level": "DEBUG",

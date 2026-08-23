@@ -6,12 +6,18 @@ from flask import Blueprint, jsonify
 from ...celery_app import celery_app
 from ...config import Config
 from ..services.metrics import disk_usage_percent, metrics_response
-from ..services.utils import check_service_health
+from ... import __version__
 
 """API endpoints for checking service status and metrics."""
 
 bp = Blueprint("api", __name__)
 config = Config()
+
+
+@bp.get("/health/live")
+def liveness():
+    """Process-level liveness probe that does not depend on companion services."""
+    return jsonify({"status": "ok", "service": "ml_server", "version": __version__})
 
 
 @bp.route("/api/upload_config")

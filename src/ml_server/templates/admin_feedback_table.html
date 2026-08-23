@@ -1,21 +1,25 @@
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>Date</th>
+            <th>Reference / Date</th>
+            <th>Type</th>
+            <th>Tool</th>
             <th>Name</th>
             <th>Email</th>
-            <th>Rating</th>
-            <th>Feedback</th>
+            <th>Message</th>
+            <th>Email status</th>
         </tr>
     </thead>
     <tbody>
     {% for item in feedback %}
         <tr>
-            <td>{{ item.date }}</td>
+            <td>#{{ item.id }}<br><small>{{ item.created_at }}</small></td>
+            <td>{{ item.kind|replace('_', ' ')|title }}</td>
+            <td>{{ item.tool_name }}</td>
             <td>{{ item.name }}</td>
             <td>{{ item.email }}</td>
-            <td>{{ item.rating }}</td>
-            <td>{{ item.feedback }}</td>
+            <td>{{ item.message }}</td>
+            <td><small>User: {{ item.acknowledgement_email_status }}<br>Developer: {{ item.developer_email_status }}</small></td>
         </tr>
     {% endfor %}
     </tbody>

@@ -13,6 +13,10 @@ def tool_catalog() -> list[dict[str, Any]]:
             "id": "hydride-segmentation",
             "name": "Hydride Segmentation",
             "summary": "Measure hydride morphology and distributions from micrographs.",
+            "detail": (
+                "An AI-assisted advanced segmentation tool for identifying, reviewing, "
+                "and quantifying hydrides and other microstructural features."
+            ),
             "category": "Microstructure",
             "tags": ["segmentation", "microstructure", "zirconium"],
             "state": "active",
@@ -25,6 +29,10 @@ def tool_catalog() -> list[dict[str, Any]]:
             "id": "pytex",
             "name": "PyTex Workbench",
             "summary": "Texture, diffraction, EBSD, TEM, and crystallographic analysis.",
+            "detail": (
+                "A convention-explicit crystallography workbench for orientation, texture, "
+                "diffraction, microscopy, and phase-transformation workflows."
+            ),
             "category": "Crystallography",
             "tags": ["texture", "diffraction", "EBSD", "TEM"],
             "state": "active",
@@ -36,9 +44,25 @@ def tool_catalog() -> list[dict[str, Any]]:
         {
             "id": "pdf-tools",
             "name": "PDF Tools",
-            "summary": "Preview, reorder, merge, and extract pages from research PDFs.",
+            "summary": "Preview, reorder, merge, split, and extract pages from any PDF.",
+            "detail": (
+                "A general-purpose PDF workbench for every kind of document — reports, scans, "
+                "forms, presentations, or manuscripts. Files are processed in memory on this "
+                "intranet server, are never stored, and never leave the office network."
+            ),
             "category": "Productivity",
-            "tags": ["PDF", "merge", "extract"],
+            "tags": [
+                "PDF",
+                "merge",
+                "split",
+                "extract",
+                "reorder",
+                "documents",
+                "scans",
+                "forms",
+                "any pdf",
+                "private",
+            ],
             "state": "active",
             "owner": "pdf_tools",
             "href": "/pdf_tools/",
@@ -51,6 +75,10 @@ def tool_catalog() -> list[dict[str, Any]]:
             "summary": (
                 "Explore tables, prepare features, compare models, and explain "
                 "classification or regression results."
+            ),
+            "detail": (
+                "A guided, CPU-only machine-learning workflow with leakage-aware preparation, "
+                "model comparison, validation metrics, and interpretable predictions."
             ),
             "category": "Data Science",
             "tags": [
@@ -70,6 +98,10 @@ def tool_catalog() -> list[dict[str, Any]]:
             "id": "scientific-calculator",
             "name": "Scientific Calculator",
             "summary": "Evaluate expressions with variables, functions, and engineering plots.",
+            "detail": (
+                "A safe numerical expression engine for reproducible scalar calculations and "
+                "bounded one- or two-variable engineering plots."
+            ),
             "category": "Productivity",
             "tags": ["units", "trigonometry", "constants"],
             "state": "active",
@@ -82,6 +114,10 @@ def tool_catalog() -> list[dict[str, Any]]:
             "id": "unit-converter",
             "name": "Unit Converter",
             "summary": "Convert engineering units and evaluate dimensional expressions.",
+            "detail": (
+                "A dimension-aware engineering converter for quantities, compound units, "
+                "temperature scales, and auditable unit expressions."
+            ),
             "category": "Productivity",
             "tags": ["units", "engineering", "conversion"],
             "state": "active",

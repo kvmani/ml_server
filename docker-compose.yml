@@ -1,4 +1,3 @@
-version: '3.9'
 services:
   redis:
     image: redis:7
@@ -6,25 +5,23 @@ services:
     build: .
     command: python scripts/fake_ml_model_server.py
     env_file:
-      - .env
+      - ${ML_SERVER_ENV_FILE:-.env}
     depends_on:
       - redis
   ebsd_model:
     build: .
     command: python scripts/fake_ebsd_model.py
     env_file:
-      - .env
+      - ${ML_SERVER_ENV_FILE:-.env}
     depends_on:
       - redis
   celery:
     build:
       context: .
       target: prod
-    command: celery -A ml_server.celery_app worker --loglevel=info
-    volumes:
-      - .:/app
+    command: ["celery", "-A", "ml_server.celery_app", "worker", "--loglevel=info"]
     env_file:
-      - .env
+      - ${ML_SERVER_ENV_FILE:-.env}
     depends_on:
       - redis
 
@@ -32,24 +29,20 @@ services:
     build:
       context: .
       target: prod
-    command: celery -A ml_server.celery_app beat --loglevel=info
-    volumes:
-      - .:/app
+    command: ["celery", "-A", "ml_server.celery_app", "beat", "--loglevel=info"]
     env_file:
-      - .env
+      - ${ML_SERVER_ENV_FILE:-.env}
     depends_on:
       - redis
   web:
     build:
       context: .
       target: prod
-    command: gunicorn -w 2 -b 0.0.0.0:5000 ml_server.app.server:create_app()
-    volumes:
-      - .:/app
+    command: ["gunicorn", "-w", "2", "-b", "0.0.0.0:5000", "ml_server.app.server:create_app()"]
     ports:
-      - "5000:5000"
+      - "127.0.0.1:5000:5000"
     env_file:
-      - .env
+      - ${ML_SERVER_ENV_FILE:-.env}
     depends_on:
       - redis
       - ml_model

@@ -33,10 +33,17 @@ With the services running you should get a JSON status from:
 curl http://localhost:5000/health
 ```
 
+Use `/health/live` for process liveness; `/health` also checks Redis and Celery and can report
+`degraded` while the web process itself remains healthy.
+
 Hydride Segmentation is provided by the well-tested standalone repository at
 `C:\Users\kvman\HydrideSegmentation` and is linked from the portal at its own
 service URL. The portal does not contain a duplicate segmentation
 implementation.
+
+Every catalog card has a separate **Scientific help** action. The central `/help/faq` index and
+`/tools/<tool-id>/help` guides document workflows, mathematical core, critical inputs, result
+interpretation, and limitations with accessible SVG diagrams.
 
 ## PDF Tools
 
@@ -66,6 +73,17 @@ processes while logs and Prometheus metrics remain available in scrollable
 sections. These updates make it easier to monitor uptime, active users and
 system health at a glance.
 
+Feedback, feature requests, IP/session activity, tool launches, session
+duration, and request timings are persisted in `data/engagement.sqlite3` and
+shown only in the token-protected admin views. The homepage tells users what is
+collected. Set `APP_ANALYTICS__ENABLED=false` to disable new analytics writes.
+
+Feedback email is optional and disabled by default. To use an internal relay,
+set `APP_EMAIL__ENABLED=true`, `APP_EMAIL__SMTP_HOST`, and the related values in
+`.env`. The relay may be unauthenticated (leave username/password empty) or use
+TLS/authentication. SMTP runs after the database commit in a background thread;
+a relay failure is recorded in the submission but never loses the message.
+
 Prometheus metrics continue to be exposed at `/metrics` for integration with
 external monitoring systems.
 
@@ -83,7 +101,8 @@ ml_server/
 
 Configuration for the intranet environment is stored in
 `config/config.intranet.json` and can be overridden with environment variables
-using the `APP_` prefix.
+using the `APP_` prefix. Installed-wheel deployments should set `ML_SERVER_CONFIG` to the
+absolute path of their protected configuration file.
 
 ### UI configuration
 
@@ -132,8 +151,12 @@ Portal development now requires Python 3.12 or newer because the Tabular ML
 companion uses the current scientific Python stack. Tabular ML is CPU-only and
 does not install a GPU runtime.
 
-See `docs/DEPLOYMENT.md` for deployment instructions and
-`docs/WORKFLOW_OVERVIEW.md` for an overview of how the modules interact.
+See `docs/DEPLOYMENT_UBUNTU_INTRANET.md` for the office-intranet Ubuntu runbook (local Python/npm
+mirrors, CPU-only packages, offline MathJax verification, privacy guarantees),
+`docs/DEPLOYMENT.md` for the general deployment instructions, and
+`docs/PRODUCTION_RELEASE_2026_08.md` for the coordinated version manifest, verification matrix,
+blue-green procedure, and rollback plan. `docs/WORKFLOW_OVERVIEW.md` explains how the modules
+interact.
 
 ## Contributing
 
@@ -153,14 +176,21 @@ listed below. Nested keys use `__` to separate levels.
 ```ini
 APP_HOST=127.0.0.1
 APP_PORT=5000
-APP_DEBUG=true
+APP_DEBUG=false
 APP_SECRET_KEY=change-me
 APP_LOGGING__LOG_DIR=logs
 APP_LOGGING__LOG_FILE=app.log
 APP_LOGGING__FORMAT="%(asctime)s [%(levelname)s] %(message)s"
 APP_CELERY__BROKER_URL=redis://redis:6379/0
 APP_CELERY__RESULT_BACKEND=redis://redis:6379/0
-APP_FEEDBACK__FILE_PATH=src/ml_server/feedback.json
+APP_FEEDBACK__DATABASE_PATH=data/engagement.sqlite3
+APP_ANALYTICS__ENABLED=true
+APP_EMAIL__ENABLED=false
+APP_EMAIL__SMTP_HOST=
+APP_EMAIL__SMTP_PORT=25
+APP_EMAIL__USE_TLS=false
+APP_EMAIL__FROM_ADDRESS=noreply@intranet.local
+APP_EMAIL__DEVELOPER_ADDRESS=kvmani@barc.gov.in
 APP_DOWNLOAD__PROCESSED_DATA_PATH=tmp/processed_data.bin
 APP_SECURITY__ADMIN_TOKEN=__SET_ADMIN_TOKEN__
 APP_SECURITY__ALLOWED_ORIGINS="[http://localhost:5000]"

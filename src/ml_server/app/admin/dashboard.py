@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-import json
 import os
 from datetime import datetime
 from typing import Any
 
-from flask import current_app, request, render_template
+from flask import current_app, request
 from flask_admin import Admin, BaseView, expose, AdminIndexView
 
 from ...config import Config
 from ..services.metrics import visit_summary, active_user_count, metrics_response
+from ..services.engagement import analytics_summary, list_feedback
 
 
 class _SecureMixin:
@@ -28,11 +28,9 @@ class DashboardView(_SecureMixin, AdminIndexView):
     @expose("/")
     def index(self):
         cfg = Config()
-        feedback_file = cfg.feedback_settings.get("file_path", "src/ml_server/feedback.json")
-        feedback: list[dict[str, Any]] = []
-        if os.path.exists(feedback_file):
-            with open(feedback_file) as f:
-                feedback = json.load(f).get("feedback", [])
+        database_path = current_app.config["ENGAGEMENT_DATABASE"]
+        feedback = list_feedback(database_path, limit=10)
+        engagement = analytics_summary(database_path)
 
         health = {}
 
@@ -45,7 +43,10 @@ class DashboardView(_SecureMixin, AdminIndexView):
             minutes = (seconds % 3600) // 60
             uptime_str = f"{days}d {hours}h {minutes}m"
 
-        logs_path = os.path.join(cfg.logging_settings.get("log_dir", "logs"), cfg.logging_settings.get("log_file", "app.log"))
+        logs_path = os.path.join(
+            cfg.logging_settings.get("log_dir", "logs"),
+            cfg.logging_settings.get("log_file", "app.log"),
+        )
         log_lines: list[str] = []
         if os.path.exists(logs_path):
             with open(logs_path) as lf:
@@ -62,22 +63,22 @@ class DashboardView(_SecureMixin, AdminIndexView):
             uptime=uptime_str,
             logs="".join(log_lines),
             metrics=metrics_text,
+            engagement=engagement,
         )
 
 
 class FeedbackView(_SecureMixin, BaseView):
     @expose("/")
     def index(self):
-        cfg = Config()
-        feedback_file = cfg.feedback_settings.get("file_path", "src/ml_server/feedback.json")
-        feedback: list[dict[str, Any]] = []
-        if os.path.exists(feedback_file):
-            with open(feedback_file) as f:
-                feedback = json.load(f).get("feedback", [])
+        feedback = list_feedback(current_app.config["ENGAGEMENT_DATABASE"], limit=100)
         return self.render("admin_feedback.html", feedback=feedback, page=1)
 
 
 def init_admin(app) -> None:
-    admin = Admin(app, name="Dashboard", index_view=DashboardView(url="/admin"), template_mode="bootstrap3")
+    admin = Admin(
+        app,
+        name="Dashboard",
+        index_view=DashboardView(url="/admin"),
+        template_mode="bootstrap3",
+    )
     admin.add_view(FeedbackView(name="All Feedback", endpoint="feedback_admin"))
-

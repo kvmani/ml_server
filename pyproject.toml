@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ml_server"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Flask and Celery based microstructural analysis server"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -22,9 +22,11 @@ dependencies = [
     "Flask-Talisman==1.1.0",
     "prometheus-client==0.20.0",
     "Flask-Admin==1.6.1",
-    "PyPDF2",
+    "pypdf>=6,<7",
     "pdf2image",
-    "tabular-ml-service @ https://github.com/kvmani/tabular_ml/archive/refs/tags/v0.1.0.zip"
+    "waitress>=3,<4",
+    "pdf-tools-service @ https://github.com/kvmani/pdf_tools/archive/refs/tags/v0.2.0.zip",
+    "tabular-ml-service @ https://github.com/kvmani/tabular_ml/archive/refs/tags/v0.2.0.zip"
 ]
 
 [project.optional-dependencies]
@@ -39,5 +41,14 @@ test = [
 ]
 
 [project.scripts]
-ml-server = "app:main"
+ml-server = "ml_server.cli:main"
+
+[tool.setuptools.dynamic]
+version = {attr = "ml_server._version.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+ml_server = ["default_config.json", "templates/*.html", "static/**/*"]
 

@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}{{ tool.name }} Scientific Help{% endblock %}
+
+{% block head_extra %}
+<script src="{{ url_for('static', filename='js/mathjax-config.js') }}?v=20260823-mathjax1" nonce="{{ csp_nonce() }}"></script>
+<script defer id="MathJax-script" src="{{ url_for('static', filename='vendor/mathjax/tex-chtml-full.js') }}" nonce="{{ csp_nonce() }}"></script>
+{% endblock %}
+
+{% block content %}
+<main class="scientific-help">
+  <nav class="help-breadcrumb" aria-label="Breadcrumb">
+    <a href="{{ url_for('main.home') }}#tools">Tools</a><span aria-hidden="true">/</span><span>{{ tool.name }}</span>
+  </nav>
+
+  <header class="help-hero">
+    <div class="help-hero-copy">
+      <p class="eyebrow">SCIENTIFIC GUIDE · {{ tool.category|upper }}</p>
+      <h1>{{ tool.name }}</h1>
+      <p class="help-purpose">{{ help_content.purpose }}</p>
+      <div class="help-actions">
+        <a class="btn btn-portal-primary" href="{{ tool.href }}" {% if not tool.internal %}target="_blank" rel="noopener noreferrer"{% endif %}>Open service <span aria-hidden="true">↗</span></a>
+        {% if external_help %}<a class="text-link" href="{{ external_help }}" target="_blank" rel="noopener noreferrer">Open the tool's full manual <span aria-hidden="true">→</span></a>{% endif %}
+      </div>
+    </div>
+    <figure class="help-hero-figure">
+      <img src="{{ url_for('static', filename='images/' ~ help_content.diagram) }}" alt="{{ tool.name }} scientific workflow, from inputs through validation and report output">
+    </figure>
+  </header>
+
+  <section class="help-section" aria-labelledby="workflow-title">
+    <p class="eyebrow">END-TO-END WORKFLOW</p>
+    <h2 id="workflow-title">How the analysis proceeds</h2>
+    <ol class="workflow-steps">
+      {% for step in help_content.workflow %}<li><span>{{ "%02d"|format(loop.index) }}</span><p>{{ step }}</p></li>{% endfor %}
+    </ol>
+  </section>
+
+  <section class="help-section" aria-labelledby="equations-title">
+    <p class="eyebrow">MATHEMATICAL CORE</p>
+    <h2 id="equations-title">Main equations and interpretation</h2>
+    <div class="equation-grid">
+      {% for equation in help_content.equations %}
+      <article class="equation-card">
+        <h3>{{ equation.name }}</h3>
+        <div class="equation mathjax" role="math" aria-label="{{ equation.plain }}">\[{{ equation.tex }}\]</div>
+        <p class="equation-meaning">{{ equation.meaning }}</p>
+        {% if equation.where %}
+        <dl class="symbol-list">
+          <dt class="symbol-list-title">where</dt>
+          {% for symbol, description in equation.where %}
+          <div><dd><span class="symbol mathjax">\({{ symbol }}\)</span><span class="symbol-text">{{ description }}</span></dd></div>
+          {% endfor %}
+        </dl>
+        {% endif %}
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  {% if help_content.privacy %}
+  <section class="help-section privacy-panel" aria-labelledby="privacy-title">
+    <p class="eyebrow">YOUR DOCUMENTS, YOUR NETWORK</p>
+    <h2 id="privacy-title">Privacy and data security</h2>
+    <ul>{% for item in help_content.privacy %}<li>{{ item }}</li>{% endfor %}</ul>
+  </section>
+  {% endif %}
+
+  <section class="help-columns">
+    <div class="help-section">
+      <p class="eyebrow">CRITICAL INPUTS</p>
+      <h2>What each input controls</h2>
+      <dl class="input-list">
+        {% for name, role in help_content.inputs %}<div><dt>{{ name }}</dt><dd>{{ role }}</dd></div>{% endfor %}
+      </dl>
+    </div>
+    <aside class="help-section caution-panel">
+      <p class="eyebrow">INTERPRETATION CHECKS</p>
+      <h2>Limits and failure modes</h2>
+      <ul>{% for limit in help_content.limits %}<li>{{ limit }}</li>{% endfor %}</ul>
+    </aside>
+  </section>
+
+  <footer class="help-footer">
+    <strong>Before reporting a result</strong>
+    <p>Record the software version, selected workflow, critical inputs, units, reference frames or split policy where applicable, and the validation evidence used to accept the output.</p>
+    <a href="{{ url_for('main.help_faq') }}">Platform support and privacy guidance →</a>
+  </footer>
+</main>
+{% endblock %}

@@ -32,7 +32,7 @@ ENV/
 # IDE
 .idea/
 .playwright-cli/
-output/
+/output/
 .vscode/
 *.swp
 *.swo
@@ -53,6 +53,7 @@ static/temp/*
 # Logs
 *.log
 logs/
+data/
 log/
 
 # Model files and large binaries
@@ -102,3 +103,8 @@ wheels/
 .installed.cfg
 *.egg
 tmp/
+
+# Vendored third-party assets must always be tracked. The "/output/" rule above
+# is anchored to the repository root precisely so it cannot swallow MathJax's
+# font directory, which ships the web fonts the offline help pages need.
+!src/ml_server/static/vendor/**

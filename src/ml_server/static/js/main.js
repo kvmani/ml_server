@@ -44,7 +44,9 @@ function initDragAndDrop(dropZone, fileInput) {
 // Form validation
 function validateForm(form) {
     const fileInput = form.querySelector('input[type="file"]');
-    if (!fileInput || !fileInput.files.length) {
+    // Shared pages also contain ordinary forms (feedback, filters, admin forms).
+    if (!fileInput) return true;
+    if (!fileInput.files.length) {
         alert('Please select a file to upload');
         return false;
     }

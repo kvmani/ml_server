@@ -1,0 +1,9 @@
+# Vendored third-party assets are shipped byte-for-byte. Checking them out with
+# platform line endings would rewrite the minified bundles for no benefit and
+# make every cross-platform diff noisy.
+src/ml_server/static/vendor/** -text
+*.woff  binary
+*.woff2 binary
+*.png   binary
+*.gif   binary
+*.jpg   binary

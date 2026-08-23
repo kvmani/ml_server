@@ -19,9 +19,13 @@ def disable_signals(monkeypatch):
 
 
 @pytest.fixture
-def client():
+def client(tmp_path):
     os.environ["APP_LOGGING__LOG_DIR"] = os.path.join("tmp", "test_logs")
     app = ml_server_app.create_app(startup=False)
     app.config["TESTING"] = True
+    app.config["ENGAGEMENT_DATABASE"] = str(tmp_path / "engagement.sqlite3")
+    from ml_server.app.services.engagement import initialize_database
+
+    initialize_database(app.config["ENGAGEMENT_DATABASE"])
     with app.test_client() as client:
         yield client

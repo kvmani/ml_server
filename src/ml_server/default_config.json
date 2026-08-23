@@ -1,0 +1,55 @@
+{
+    "debug": false,
+    "secret_key": "__SET_SECRET_KEY__",
+    "host": "127.0.0.1",
+    "port": 5000,
+    "celery": {
+        "broker_url": "redis://redis:6379/0",
+        "result_backend": "redis://redis:6379/0"
+    },
+    "download": {
+        "processed_data_path": "tmp/enhanced_ebsd_map.png"
+    },
+    "feedback": {
+        "database_path": "data/engagement.sqlite3"
+    },
+    "analytics": {
+        "enabled": true
+    },
+    "email": {
+        "enabled": false,
+        "smtp_host": "",
+        "smtp_port": 25,
+        "use_tls": false,
+        "username": "",
+        "password": "",
+        "from_address": "noreply@intranet.local",
+        "developer_address": "kvmani@barc.gov.in"
+    },
+    "logging": {
+        "debug_level": "DEBUG",
+        "production_level": "INFO",
+        "log_file": "app.log",
+        "format": "%(asctime)s [%(levelname)s] %(message)s",
+        "max_size": 10485760,
+        "backup_count": 5,
+        "log_dir": "logs"
+    },
+    "security": {
+        "allowed_origins": [
+            "http://localhost:5000"
+        ],
+        "csrf_enabled": true,
+        "ssl_enabled": false,
+        "admin_token": "__SET_ADMIN_TOKEN__"
+    },
+    "mainIconSize": [
+        100,
+        100
+    ],
+    "toolsIconsSize": [
+        75,
+        75
+    ]
+}
+

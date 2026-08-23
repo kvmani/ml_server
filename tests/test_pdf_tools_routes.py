@@ -1,6 +1,6 @@
 from io import BytesIO
 
-from PyPDF2 import PdfWriter
+from pypdf import PdfWriter
 
 
 def _make_pdf(pages: int = 1) -> bytes:

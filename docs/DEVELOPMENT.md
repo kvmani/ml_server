@@ -39,7 +39,7 @@ ml_server/
 ├── scripts/
 │   └── fake_ml_model_server.py      # Temporary image utility server
 ├── requirements.txt   # Python dependencies
-├── src/ml_server/feedback.json  # User feedback storage
+├── data/engagement.sqlite3      # Runtime feedback and analytics storage (ignored)
 └── README.md         # Project documentation
 ```
 

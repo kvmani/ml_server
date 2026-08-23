@@ -45,6 +45,13 @@
 <h3>User Feedback (latest 10)</h3>
 {% include "admin_feedback_table.html" %}
 
+<h3>Persistent Usage Analytics</h3>
+<p><strong>{{ engagement.sessions }}</strong> sessions · average recorded session {{ (engagement.average_session_ms / 1000)|round(1) }} seconds</p>
+<div class="table-responsive"><table class="table table-sm table-striped"><thead><tr><th>Tool</th><th>Recorded actions</th><th>Average server/action time (ms)</th></tr></thead><tbody>{% for item in engagement.tools %}<tr><td>{{ item.tool_name }}</td><td>{{ item.uses }}</td><td>{{ item.average_action_ms }}</td></tr>{% else %}<tr><td colspan="3">No analytics recorded yet.</td></tr>{% endfor %}</tbody></table></div>
+<p class="text-muted small">Analytics are anonymous by design: no IP address or full browser string is stored, only a coarse browser family.</p>
+<div class="table-responsive"><table class="table table-sm"><thead><tr><th>Browser family</th><th>Sessions</th></tr></thead><tbody>{% for item in engagement.browsers %}<tr><td>{{ item.browser_family }}</td><td>{{ item.sessions }}</td></tr>{% else %}<tr><td colspan="2">No analytics recorded yet.</td></tr>{% endfor %}</tbody></table></div>
+<details><summary>Recent anonymous sessions</summary><div class="table-responsive"><table class="table table-sm"><thead><tr><th>Started</th><th>Last seen</th><th>Duration (ms)</th><th>Browser</th><th>Last tool</th></tr></thead><tbody>{% for item in engagement.recent_sessions %}<tr><td>{{ item.started_at }}</td><td>{{ item.last_seen_at }}</td><td>{{ item.duration_ms }}</td><td>{{ item.browser_family or 'Unknown' }}</td><td>{{ item.last_tool_name or 'Portal' }}</td></tr>{% endfor %}</tbody></table></div></details>
+
 <h3>Prometheus Metrics</h3>
 <pre style="max-height: 300px; overflow-y: auto;">{{ metrics }}</pre>
 

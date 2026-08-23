@@ -11,6 +11,8 @@ Flask-Compress==1.14
 Flask-Talisman==1.1.0
 prometheus-client==0.20.0
 Flask-Admin==1.6.1
-PyPDF2
+pypdf>=6,<7
 pdf2image
-tabular-ml-service @ https://github.com/kvmani/tabular_ml/archive/refs/tags/v0.1.0.zip
+waitress>=3,<4
+pdf-tools-service @ https://github.com/kvmani/pdf_tools/archive/refs/tags/v0.2.0.zip
+tabular-ml-service @ https://github.com/kvmani/tabular_ml/archive/refs/tags/v0.2.0.zip

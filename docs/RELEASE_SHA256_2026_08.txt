@@ -1,0 +1,17 @@
+# Scientific Tools Platform release artifacts — 2026-08-23
+# SHA-256  filename
+
+8d4455e1ebdf9dc8a15661067ebbf2f9650092a753dafcf6a65b01e8beadc8f5  ml_server-1.0.0-py3-none-any.whl
+719fe24d4a3065d00ab40736609ff5c2293051e28d43cfda442a07c0cfbdc970  ml_server-1.0.0.tar.gz
+dc61d9c82bcd6a428265d4cd4d7d1133dd1664ee12c65682c59d4517a4e67153  hydride_segmentation-1.0.1-py3-none-any.whl
+d7fd82261ce781841746585ad6f631ae3bafbfc942553b9973816c46ea6a8bce  hydride_segmentation-1.0.1.tar.gz
+5211f5a99ac7b60e95cacd8cdb5e789bd638ba8cb0de611ba1a3e1e31b50172c  pdf_tools_service-0.2.0-py3-none-any.whl
+8fdeb9868952e775242df7de20784ebc11f7fbdab276ce6bb9458246089daa36  pdf_tools_service-0.2.0.tar.gz
+9d80b44bb1683f0b6314160465d548cc0f6efd008a4fb564a3e8278151313bc8  pytex-0.2.0-py3-none-any.whl
+213d4d6863b4d563eaf243573b1345e161d1e90c699478ff9eb6c68b860f15ad  pytex-0.2.0.tar.gz
+4d2146ab0806cdc3e5143f152b08502d835d2514b0a573b05f1d053b87542e3f  scientific_calculator-0.3.0-py3-none-any.whl
+6c06a8d8f086de9374c5afe1c3bad415d66cd6c0c1f103233d2fbb2c5740b46d  scientific_calculator-0.3.0.tar.gz
+9146e764e0f56cc7eabf685bd9183681f18841769ec8fad9802368e1a4785017  tabular_ml_service-0.2.0-py3-none-any.whl
+dcccb0f00b5e0e1b9c7debfdd39c6f43c968decdad4bd881a8b6bde255bca88a  tabular_ml_service-0.2.0.tar.gz
+ce26f81a7d5ea5bacbc228e2ee40fd81721435880e173728ec5a7ca9b22f4175  unit_converter-0.2.0-py3-none-any.whl
+088d0de53771dabdee30b5b2696c520350046c9896bb5fb91b96248153bf9c79  unit_converter-0.2.0.tar.gz

@@ -3,7 +3,7 @@ Description=Celery Beat
 After=network.target
 
 [Service]
-WorkingDirectory=/opt/ml_server/src
+WorkingDirectory=/opt/ml_server
 Environment=PYTHONPATH=/opt/ml_server/src
 EnvironmentFile=/opt/ml_server/.env
 ExecStart=/opt/ml_server/env/bin/celery -A ml_server.celery_app beat

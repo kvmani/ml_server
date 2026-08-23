@@ -20,11 +20,29 @@ class Config:
         return cls._instance
 
     def _load_config(self) -> None:
-        repo_root = Path(__file__).resolve().parents[2]
-        load_dotenv(repo_root / ".env", override=False)
-        config_path = repo_root / "config.intranet.json"
-        with open(config_path, "r") as f:
+        package_root = Path(__file__).resolve().parent
+        checkout_root = package_root.parents[1]
+        load_dotenv(Path.cwd() / ".env", override=False)
+        load_dotenv(checkout_root / ".env", override=False)
+        explicit_path = os.getenv("ML_SERVER_CONFIG")
+        candidates = [
+            Path(explicit_path).expanduser() if explicit_path else None,
+            Path.cwd() / "config" / "config.intranet.json",
+            Path.cwd() / "config.intranet.json",
+            checkout_root / "config.intranet.json",
+            package_root / "default_config.json",
+        ]
+        config_path = next(
+            (candidate for candidate in candidates if candidate and candidate.is_file()),
+            None,
+        )
+        if config_path is None:
+            raise FileNotFoundError(
+                "No portal configuration found; set ML_SERVER_CONFIG to a readable JSON file."
+            )
+        with config_path.open("r", encoding="utf-8") as f:
             self.config: Dict[str, Any] = json.load(f)
+        self.config_path = config_path
         self._apply_env_overrides()
         self._setup_logging()
 
@@ -79,7 +97,8 @@ class Config:
 
     @property
     def secret_key(self) -> str:
-        return self.config.get("secret_key", "")
+        value = str(self.config.get("secret_key", ""))
+        return "" if value.startswith("__SET_") else value
 
     @property
     def celery_settings(self) -> Dict[str, Any]:
@@ -98,6 +117,14 @@ class Config:
         return self.config.get("feedback", {})
 
     @property
+    def analytics_settings(self) -> Dict[str, Any]:
+        return self.config.get("analytics", {})
+
+    @property
+    def email_settings(self) -> Dict[str, Any]:
+        return self.config.get("email", {})
+
+    @property
     def logging_settings(self) -> Dict[str, Any]:
         return self.config.get("logging", {})
 
@@ -107,7 +134,8 @@ class Config:
 
     @property
     def admin_token(self) -> str:
-        return self.security_settings.get("admin_token", "")
+        value = str(self.security_settings.get("admin_token", ""))
+        return "" if value.startswith("__SET_") else value
 
     @property
     def main_icon_size(self) -> list[int]:

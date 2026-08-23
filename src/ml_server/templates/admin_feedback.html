@@ -5,21 +5,27 @@
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>Date</th>
+            <th>Reference / Date</th>
+            <th>Type</th>
+            <th>Tool</th>
             <th>Name</th>
             <th>Email</th>
-            <th>Rating</th>
-            <th>Feedback</th>
+            <th>Message</th>
+            <th>Page</th>
+            <th>Email status</th>
         </tr>
     </thead>
     <tbody>
     {% for item in feedback %}
         <tr>
-            <td>{{ item.date }}</td>
+            <td>#{{ item.id }}<br><small>{{ item.created_at }}</small></td>
+            <td>{{ item.kind|replace('_', ' ')|title }}</td>
+            <td>{{ item.tool_name }}</td>
             <td>{{ item.name }}</td>
             <td>{{ item.email }}</td>
-            <td>{{ item.rating }}</td>
-            <td>{{ item.feedback }}</td>
+            <td>{{ item.message }}</td>
+            <td><small>{{ item.page_url or "—" }}</small></td>
+            <td><small>User: {{ item.acknowledgement_email_status }}<br>Developer: {{ item.developer_email_status }}</small></td>
         </tr>
     {% endfor %}
     </tbody>
@@ -27,10 +33,10 @@
 <nav aria-label="Page navigation">
     <ul class="pagination">
         {% if page > 1 %}
-        <li class="page-item"><a class="page-link" href="?page={{ page - 1 }}">Prev</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ page - 1 }}{% if token %}&amp;token={{ token|urlencode }}{% endif %}">Prev</a></li>
         {% endif %}
         {% if feedback|length >= 10 %}
-        <li class="page-item"><a class="page-link" href="?page={{ page + 1 }}">Next</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ page + 1 }}{% if token %}&amp;token={{ token|urlencode }}{% endif %}">Next</a></li>
         {% endif %}
     </ul>
 </nav>

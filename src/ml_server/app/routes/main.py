@@ -1,6 +1,7 @@
-from flask import Blueprint, jsonify, redirect, render_template
+from flask import Blueprint, abort, jsonify, redirect, render_template
 
 from ...catalog import tool_catalog
+from ...tool_help import tool_help
 from ..services.metrics import active_user_count
 
 """Public site routes such as the home page and help page."""
@@ -31,9 +32,29 @@ def active_users():
 
 
 @bp.route("/help_faq")
+@bp.route("/help/faq")
 def help_faq():
     """Render the help and FAQ page."""
-    return render_template("help_faq.html")
+    return render_template("help_faq.html", tools=tool_catalog())
+
+
+@bp.route("/tools/<tool_id>/help")
+def scientific_help(tool_id: str):
+    """Render the curated scientific guide for one released tool."""
+    tools = {tool["id"]: tool for tool in tool_catalog()}
+    tool = tools.get(tool_id)
+    help_content = tool_help(tool_id)
+    if tool is None or help_content is None:
+        abort(404)
+    external_help = None
+    if help_content.get("external_help_suffix"):
+        external_help = tool["href"].rstrip("/") + help_content["external_help_suffix"]
+    return render_template(
+        "tool_help.html",
+        tool=tool,
+        help_content=help_content,
+        external_help=external_help,
+    )
 
 
 @bp.route("/pdf-tools", methods=["GET"])
