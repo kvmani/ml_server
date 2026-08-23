@@ -15,6 +15,7 @@ so existing deployments keep opening; they are always left empty.
 
 import json
 import logging
+import re
 import sqlite3
 from datetime import datetime, timezone
 from pathlib import Path
@@ -29,6 +30,17 @@ _BROWSER_FAMILIES = (
     ("Firefox", ("firefox/", "fxios/")),
     ("Safari", ("safari/",)),
 )
+
+# Only the major version number is ever kept (e.g. "120"), never the full
+# dotted version or any other UA token, so it stays a coarse, non-identifying
+# bucket in the same spirit as the browser family.
+_VERSION_MARKERS = {
+    "Edge": ("edg/", "edge/", "edga/", "edgios/"),
+    "Opera": ("opr/",),
+    "Chrome": ("chrome/", "crios/", "chromium/"),
+    "Firefox": ("firefox/", "fxios/"),
+    "Safari": ("version/",),
+}
 
 
 def utc_now() -> str:
@@ -48,6 +60,27 @@ def browser_family(user_agent: str | None) -> str:
         if any(marker in candidate for marker in markers):
             return family
     return "Other"
+
+
+def browser_major_version(user_agent: str | None, family: str | None = None) -> str | None:
+    """Return only the major version number for ``family`` (e.g. ``"120"``).
+
+    Never returns the full dotted version or any other token from the
+    User-Agent string, so it cannot be used to fingerprint a visitor any more
+    precisely than :func:`browser_family` already does.
+    """
+    candidate = (user_agent or "").lower()
+    if not candidate:
+        return None
+    family = family or browser_family(user_agent)
+    for marker in _VERSION_MARKERS.get(family, ()):
+        index = candidate.find(marker)
+        if index == -1:
+            continue
+        match = re.match(r"(\d+)", candidate[index + len(marker):])
+        if match:
+            return match.group(1)
+    return None
 
 
 def _connect(database_path: str) -> sqlite3.Connection:
@@ -91,6 +124,7 @@ def initialize_database(database_path: str) -> None:
                 ip_address TEXT,
                 user_agent TEXT,
                 browser_family TEXT,
+                browser_major_version TEXT,
                 started_at TEXT NOT NULL,
                 last_seen_at TEXT NOT NULL,
                 duration_ms INTEGER NOT NULL DEFAULT 0,
@@ -135,6 +169,10 @@ def _migrate_to_anonymous_analytics(connection: sqlite3.Connection) -> None:
     }
     if "browser_family" not in columns:
         connection.execute("ALTER TABLE analytics_sessions ADD COLUMN browser_family TEXT")
+    if "browser_major_version" not in columns:
+        connection.execute(
+            "ALTER TABLE analytics_sessions ADD COLUMN browser_major_version TEXT"
+        )
     connection.execute(
         "UPDATE analytics_sessions SET ip_address = NULL, user_agent = NULL "
         "WHERE ip_address IS NOT NULL OR user_agent IS NOT NULL"
@@ -218,16 +256,20 @@ def record_event(
     now = utc_now()
     safe_duration = max(0, min(int(duration_ms or 0), 86_400_000))
     family = browser_family(user_agent)
+    version = browser_major_version(user_agent, family)
     with _connect(database_path) as connection:
         connection.execute(
             """
             INSERT INTO analytics_sessions
-                (session_id, browser_family, started_at, last_seen_at,
-                 duration_ms, last_tool_id, last_tool_name)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+                (session_id, browser_family, browser_major_version, started_at,
+                 last_seen_at, duration_ms, last_tool_id, last_tool_name)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(session_id) DO UPDATE SET
                 browser_family = COALESCE(
                     excluded.browser_family, analytics_sessions.browser_family
+                ),
+                browser_major_version = COALESCE(
+                    excluded.browser_major_version, analytics_sessions.browser_major_version
                 ),
                 last_seen_at = excluded.last_seen_at,
                 duration_ms = MAX(analytics_sessions.duration_ms, excluded.duration_ms),
@@ -236,7 +278,7 @@ def record_event(
                     excluded.last_tool_name, analytics_sessions.last_tool_name
                 )
             """,
-            (session_id, family, now, now, safe_duration, tool_id, tool_name),
+            (session_id, family, version, now, now, safe_duration, tool_id, tool_name),
         )
         connection.execute(
             """
@@ -288,10 +330,37 @@ def analytics_summary(database_path: str) -> dict[str, Any]:
                GROUP BY COALESCE(browser_family, 'Unknown')
                ORDER BY sessions DESC"""
         ).fetchall()
+        browser_versions = connection.execute(
+            """SELECT COALESCE(browser_family, 'Unknown') AS browser_family,
+                      browser_major_version, COUNT(*) AS sessions
+               FROM analytics_sessions
+               WHERE browser_major_version IS NOT NULL
+               GROUP BY browser_family, browser_major_version
+               ORDER BY sessions DESC LIMIT 20"""
+        ).fetchall()
+        duration_buckets = connection.execute(
+            """SELECT CASE
+                        WHEN duration_ms < 10000 THEN '<10s'
+                        WHEN duration_ms < 60000 THEN '10s-1m'
+                        WHEN duration_ms < 300000 THEN '1m-5m'
+                        WHEN duration_ms < 900000 THEN '5m-15m'
+                        ELSE '15m+'
+                      END AS bucket,
+                      COUNT(*) AS sessions
+               FROM analytics_sessions
+               GROUP BY bucket"""
+        ).fetchall()
+        bucket_order = ["<10s", "10s-1m", "1m-5m", "5m-15m", "15m+"]
+        bucket_counts = {row["bucket"]: row["sessions"] for row in duration_buckets}
     return {
         "sessions": int(totals["sessions"]),
         "average_session_ms": round(float(totals["average_session_ms"]), 1),
         "tools": [dict(row) for row in tools],
         "recent_sessions": [dict(row) for row in recent],
         "browsers": [dict(row) for row in browsers],
+        "browser_versions": [dict(row) for row in browser_versions],
+        "session_duration_buckets": [
+            {"bucket": bucket, "sessions": bucket_counts.get(bucket, 0)}
+            for bucket in bucket_order
+        ],
     }

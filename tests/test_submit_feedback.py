@@ -91,6 +91,19 @@ def test_analytics_stores_no_identifying_information(client):
     assert row["ip_address"] is None
     assert row["user_agent"] is None
     assert row["browser_family"] == "Chrome"
+    # Only a coarse major-version bucket is kept, never the full dotted version.
+    assert row["browser_major_version"] == "120"
+
+
+def test_browser_major_version_is_coarse_bucket_only():
+    from ml_server.app.services.engagement import browser_family, browser_major_version
+
+    ua = "Mozilla/5.0 (X11; Linux x86_64) Firefox/121.5.2"
+    family = browser_family(ua)
+    assert family == "Firefox"
+    assert browser_major_version(ua, family) == "121"
+    assert browser_major_version(None) is None
+    assert browser_major_version("no markers here") is None
 
 
 def test_existing_identifiers_are_erased_on_upgrade(tmp_path):

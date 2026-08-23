@@ -47,10 +47,29 @@
 
 <h3>Persistent Usage Analytics</h3>
 <p><strong>{{ engagement.sessions }}</strong> sessions · average recorded session {{ (engagement.average_session_ms / 1000)|round(1) }} seconds</p>
-<div class="table-responsive"><table class="table table-sm table-striped"><thead><tr><th>Tool</th><th>Recorded actions</th><th>Average server/action time (ms)</th></tr></thead><tbody>{% for item in engagement.tools %}<tr><td>{{ item.tool_name }}</td><td>{{ item.uses }}</td><td>{{ item.average_action_ms }}</td></tr>{% else %}<tr><td colspan="3">No analytics recorded yet.</td></tr>{% endfor %}</tbody></table></div>
-<p class="text-muted small">Analytics are anonymous by design: no IP address or full browser string is stored, only a coarse browser family.</p>
-<div class="table-responsive"><table class="table table-sm"><thead><tr><th>Browser family</th><th>Sessions</th></tr></thead><tbody>{% for item in engagement.browsers %}<tr><td>{{ item.browser_family }}</td><td>{{ item.sessions }}</td></tr>{% else %}<tr><td colspan="2">No analytics recorded yet.</td></tr>{% endfor %}</tbody></table></div>
-<details><summary>Recent anonymous sessions</summary><div class="table-responsive"><table class="table table-sm"><thead><tr><th>Started</th><th>Last seen</th><th>Duration (ms)</th><th>Browser</th><th>Last tool</th></tr></thead><tbody>{% for item in engagement.recent_sessions %}<tr><td>{{ item.started_at }}</td><td>{{ item.last_seen_at }}</td><td>{{ item.duration_ms }}</td><td>{{ item.browser_family or 'Unknown' }}</td><td>{{ item.last_tool_name or 'Portal' }}</td></tr>{% endfor %}</tbody></table></div></details>
+<p class="text-muted small">Analytics are anonymous by design: no IP address or full browser string is stored, only a coarse browser family and its major version number.</p>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <h5>Tool usage</h5>
+        <canvas id="toolUsageChart" height="220"></canvas>
+    </div>
+    <div class="col-md-6">
+        <h5>Average server/action time (ms)</h5>
+        <canvas id="toolTimingChart" height="220"></canvas>
+    </div>
+    <div class="col-md-6">
+        <h5>Browser family</h5>
+        <canvas id="browserChart" height="220"></canvas>
+    </div>
+    <div class="col-md-6">
+        <h5>Session length distribution</h5>
+        <canvas id="sessionDurationChart" height="220"></canvas>
+    </div>
+</div>
+
+<div class="table-responsive"><table class="table table-sm"><thead><tr><th>Browser</th><th>Major version</th><th>Sessions</th></tr></thead><tbody>{% for item in engagement.browser_versions %}<tr><td>{{ item.browser_family }}</td><td>{{ item.browser_major_version }}</td><td>{{ item.sessions }}</td></tr>{% else %}<tr><td colspan="3">No version data recorded yet.</td></tr>{% endfor %}</tbody></table></div>
+<details><summary>Recent anonymous sessions</summary><div class="table-responsive"><table class="table table-sm"><thead><tr><th>Started</th><th>Last seen</th><th>Duration (ms)</th><th>Browser</th><th>Last tool</th></tr></thead><tbody>{% for item in engagement.recent_sessions %}<tr><td>{{ item.started_at }}</td><td>{{ item.last_seen_at }}</td><td>{{ item.duration_ms }}</td><td>{{ item.browser_family or 'Unknown' }}{% if item.browser_major_version %} {{ item.browser_major_version }}{% endif %}</td><td>{{ item.last_tool_name or 'Portal' }}</td></tr>{% endfor %}</tbody></table></div></details>
 
 <h3>Prometheus Metrics</h3>
 <pre style="max-height: 300px; overflow-y: auto;">{{ metrics }}</pre>
@@ -58,8 +77,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js" nonce="{{ csp_nonce() }}"></script>
 <script nonce="{{ csp_nonce() }}">
     const visitData = {{ visits | tojson }};
-    const ctx = document.getElementById('visitChart');
-    new Chart(ctx, {
+    new Chart(document.getElementById('visitChart'), {
         type: 'bar',
         data: {
             labels: Object.keys(visitData),
@@ -71,11 +89,65 @@
                 borderWidth: 1
             }]
         },
-        options: {
-            scales: {
-                y: { beginAtZero: true }
-            }
+        options: { scales: { y: { beginAtZero: true } } }
+    });
+
+    const toolData = {{ engagement.tools | tojson }};
+    new Chart(document.getElementById('toolUsageChart'), {
+        type: 'bar',
+        data: {
+            labels: toolData.map(t => t.tool_name),
+            datasets: [{
+                label: 'Recorded actions',
+                data: toolData.map(t => t.uses),
+                backgroundColor: 'rgba(75, 192, 132, 0.5)',
+                borderColor: 'rgba(75, 192, 132, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: { scales: { y: { beginAtZero: true } } }
+    });
+    new Chart(document.getElementById('toolTimingChart'), {
+        type: 'bar',
+        data: {
+            labels: toolData.map(t => t.tool_name),
+            datasets: [{
+                label: 'Average time (ms)',
+                data: toolData.map(t => t.average_action_ms || 0),
+                backgroundColor: 'rgba(255, 159, 64, 0.5)',
+                borderColor: 'rgba(255, 159, 64, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: { scales: { y: { beginAtZero: true } } }
+    });
+
+    const browserData = {{ engagement.browsers | tojson }};
+    new Chart(document.getElementById('browserChart'), {
+        type: 'doughnut',
+        data: {
+            labels: browserData.map(b => b.browser_family),
+            datasets: [{
+                data: browserData.map(b => b.sessions),
+                backgroundColor: ['#4e79a7', '#f28e2b', '#e15759', '#76b7b2', '#59a14f', '#edc948']
+            }]
         }
+    });
+
+    const durationData = {{ engagement.session_duration_buckets | tojson }};
+    new Chart(document.getElementById('sessionDurationChart'), {
+        type: 'bar',
+        data: {
+            labels: durationData.map(d => d.bucket),
+            datasets: [{
+                label: 'Sessions',
+                data: durationData.map(d => d.sessions),
+                backgroundColor: 'rgba(153, 102, 255, 0.5)',
+                borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: { scales: { y: { beginAtZero: true } } }
     });
 </script>
 {% endblock %}
