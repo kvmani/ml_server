@@ -28,8 +28,10 @@ window.MathJax = {
     scale: 1.0,
     matchFontHeight: true,
     displayAlign: 'center',
-    displayIndent: '0',
-    fontURL: '/static/vendor/mathjax/output/chtml/fonts/woff-v2'
+    displayIndent: '0'
+    // fontURL is deliberately not set: MathJax derives it from the directory of
+    // the loaded bundle, so the same file works standalone and when the service
+    // is mounted under a prefix. Hardcoding it breaks one of those two modes.
   },
   options: {
     // Only typeset explicitly marked containers; the rest of the portal (tool

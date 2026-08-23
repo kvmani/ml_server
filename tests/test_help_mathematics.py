@@ -38,7 +38,9 @@ def test_mathjax_configuration_never_points_at_a_cdn() -> None:
     )
     assert "http://" not in code
     assert "https://" not in code
-    assert "/static/vendor/mathjax/output/chtml/fonts/woff-v2" in code
+    # The font path is deliberately left to MathJax so it resolves relative to
+    # the vendored bundle rather than to a hardcoded mount prefix.
+    assert "fontURL" not in code
 
 
 @pytest.mark.parametrize("tool_id", sorted(TOOL_HELP))

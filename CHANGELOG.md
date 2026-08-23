@@ -14,6 +14,8 @@
   PyPI/npm mirrors, CPU-only wheel enforcement, offline MathJax verification, and the privacy
   guarantees.
 - Anonymous browser-family reporting on the admin dashboard.
+- A `.gitattributes` guarding the vendored bundle against line-ending rewrites, and a test
+  asserting the vendored assets are tracked by git rather than merely present on disk.
 
 ### Changed
 

@@ -22,13 +22,13 @@ Resumable ledger for the current goal. Update the checkboxes as work lands.
 
 | Repo | Path | Status |
 | --- | --- | --- |
-| ml_server | `C:\Users\kvman\PycharmProjects\ml_server` | code done, docs + commit pending |
-| HydrideSegmentation | `C:\Users\kvman\HydrideSegmentation` | pending |
-| PyTex | `C:\Users\kvman\PycharmProjects\pytex` | pending |
-| PDF Tools | `C:\Users\kvman\PycharmProjects\pdf_tools` | pending |
-| Scientific Calculator | `C:\Users\kvman\PycharmProjects\scientific_calculator` | pending |
-| Unit Converter | `C:\Users\kvman\PycharmProjects\unit_converter` | pending |
-| Tabular ML | `C:\Users\kvman\PycharmProjects\tabular_ml` | pending |
+| ml_server | `C:\Users\kvman\PycharmProjects\ml_server` | **DONE** — pushed as `d865913` |
+| HydrideSegmentation | `C:\Users\kvman\HydrideSegmentation` | **NO CHANGE NEEDED** — already compliant |
+| PyTex | `C:\Users\kvman\PycharmProjects\pytex` | **DONE** — pushed as `85f34af` |
+| PDF Tools | `C:\Users\kvman\PycharmProjects\pdf_tools` | **DONE** — pushed as `4fbe4d7` |
+| Scientific Calculator | `C:\Users\kvman\PycharmProjects\scientific_calculator` | **DONE** — pushed as `9aa12c1` |
+| Unit Converter | `C:\Users\kvman\PycharmProjects\unit_converter` | **DONE** — pushed as `41d6cc9` |
+| Tabular ML | `C:\Users\kvman\PycharmProjects\tabular_ml` | **DONE** — pushed as `4779a3a` |
 
 ## Findings so far
 
@@ -53,18 +53,36 @@ Resumable ledger for the current goal. Update the checkboxes as work lands.
 - [x] Polish `home.html` hero/grid/trust strip for desktop office use.
 - [x] Rewrite PDF Tools catalog + help copy as general-purpose and privacy-clear.
 - [x] Rewrite feedback privacy copy (modal, help/FAQ, any admin-facing text).
-- [ ] Add `docs/DEPLOYMENT_UBUNTU_INTRANET.md` (local mirrors, CPU-only wheels).
-- [ ] Run the full test suite; add tests for the new help/MathJax assets.
-- [ ] Commit and push.
+- [x] Add `docs/DEPLOYMENT_UBUNTU_INTRANET.md` (local mirrors, CPU-only wheels).
+- [x] Run the full test suite; add tests for the new help/MathJax assets. (48 passed)
+- [x] Commit and push. (`d865913` on `origin/main`)
 
 ### Companion repos
-- [ ] HydrideSegmentation: help/math parity + privacy wording.
-- [ ] PyTex: offline MathJax for its docs/app help.
-- [ ] PDF Tools: general-purpose + privacy wording, help math.
-- [ ] Scientific Calculator: help math.
-- [ ] Unit Converter: help math.
-- [ ] Tabular ML: help math.
-- [ ] Commit and push each.
+- [x] HydrideSegmentation: verified already compliant; no change required (see below).
+- [x] PyTex: offline MathJax for its docs. (clean build, 0 warnings, pushed `85f34af`)
+- [x] PDF Tools: general-purpose + privacy wording, help math. (31 passed, pushed `4fbe4d7`)
+- [x] Scientific Calculator: help math. (14 passed, pushed `9aa12c1`)
+- [x] Unit Converter: help math. (9 passed, pushed `41d6cc9`)
+- [x] Tabular ML: help math. (70 passed, pushed `4779a3a`)
+- [x] Commit and push each. All six touched repositories are pushed to `origin/main`.
+
+## Outcome
+
+All seven repositories in scope are complete. Six were changed and pushed; HydrideSegmentation was
+audited and needed nothing.
+
+Three latent packaging/versioning defects were found and fixed along the way. Each had the same
+shape: the vendored assets were present on the developer's disk, so every filesystem-level check
+passed, while a fresh clone or a built wheel would have shipped **without** the maths web fonts.
+
+| Repo | Defect | Fix |
+| --- | --- | --- |
+| ml_server | `.gitignore` `output/` excluded MathJax's font directory from git | anchored to `/output/` |
+| tabular_ml | same `.gitignore` `output/` rule, plus non-recursive `static/*` package-data | anchored rule; `static/**/*` |
+| scientific_calculator, unit_converter | `package-data` `static/*.js` never reached `static/vendor/**` | `static/**/*` |
+
+Every repository now carries a `test_vendored_assets_are_tracked_by_git`-style guard so this class
+of defect fails a test rather than reaching a deployment.
 
 ## Verification log
 
@@ -77,12 +95,35 @@ Resumable ledger for the current goal. Update the checkboxes as work lands.
 - Home page at 1425x900: 3-column tool grid, 4-column trust strip, no horizontal overflow, no
   clipped card summaries, first card row fully visible above the fold (bottom at 782 px).
 - Search still filters correctly, including on the new PDF tags (`scan`, `any pdf`).
-- Portal suite: `47 passed`.
+- Portal suite: `48 passed`. flake8 clean.
 - `src/ml_server/cli.py` had no `__main__` guard, so `python -m ml_server.cli` silently exited 0.
   Guard added.
+- The repo-wide `output/` ignore rule silently excluded MathJax's whole font directory from git.
+  Anchored to `/output/` and guarded by `test_vendored_assets_are_not_git_ignored`.
+- Built wheel verified: ships the bundle, 23 woff fonts, `mathjax-config.js`, and `tool_help.html`.
 - `static/css/style.css` was left syntactically invalid by a stray `}` and `/` at EOF and a
   malformed `..research-header` selector; both repaired. The competing `!important` "compact
   landing surface" layer was removed in favour of a single token-driven layout.
+
+### Companion-repo findings
+
+- The MathJax config deliberately leaves `fontURL` unset so the bundle resolves its own font
+  directory. Verified in the browser that PDF Tools loads fonts from `/static/vendor/...` when
+  standalone and `/pdf_tools/static/vendor/...` when mounted in the portal.
+- Scientific Calculator and Unit Converter both declared `package-data` as `static/*.js`, which
+  does not reach `static/vendor/**`. Their wheels would have shipped without MathJax while every
+  filesystem-level check passed. Both widened to `static/**/*` and guarded by a test.
+- PyTex's 204-page Sphinx site loads MathJax from `cdn.jsdelivr.net`, so its equations do not
+  render at all on a disconnected intranet. This is the "PyTex standard" the goal refers to, and
+  it needs the same offline treatment.
+
+### HydrideSegmentation: no change required
+
+Its help page already vendors **KaTeX** (`web/static/vendor/katex/`, with woff2 fonts) and renders
+offline. Verified live: 11 equation blocks, 41 KaTeX renders, zero `.katex-error` nodes, no raw TeX
+left visible, no overflow. Its base template already states that uploaded images are processed in
+memory and not stored. It was deliberately left on KaTeX — swapping a working offline renderer for
+MathJax purely for uniformity would be churn with no user-visible gain.
 
 ### Privacy implementation note
 
