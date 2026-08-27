@@ -415,6 +415,7 @@ TOOL_HELP: dict[str, dict[str, Any]] = {
             "This is a floating-point numerical calculator, not a symbolic algebra system.",
             "Inputs carrying physical units should be handled by Unit Converter.",
             "A plotted curve demonstrates the sampled expression; it does not establish model validity between or beyond those samples.",
+            "In the periodic table, a property shown as not measured has genuinely never been measured rather than merely being absent here; no melting point, boiling point or density exists for elements 100 to 118, because none has been produced in a weighable amount.",
         ],
         "diagram": "help/scientific-calculator-workflow.svg",
     },

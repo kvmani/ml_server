@@ -97,13 +97,25 @@ def tool_catalog() -> list[dict[str, Any]]:
         {
             "id": "scientific-calculator",
             "name": "Scientific Calculator",
-            "summary": "Evaluate expressions with variables, functions, and engineering plots.",
+            "summary": (
+                "Evaluate expressions, plot them, convert compositions, and look up any element."
+            ),
             "detail": (
                 "A safe numerical expression engine for reproducible scalar calculations and "
-                "bounded one- or two-variable engineering plots."
+                "bounded one- or two-variable engineering plots, with atom-fraction to "
+                "mass-fraction conversion and a periodic table of all 118 elements."
             ),
             "category": "Productivity",
-            "tags": ["units", "trigonometry", "constants"],
+            "tags": [
+                "units",
+                "trigonometry",
+                "constants",
+                "periodic table",
+                "elements",
+                "atomic mass",
+                "electron configuration",
+                "composition",
+            ],
             "state": "active",
             "owner": "scientific_calculator",
             "href": os.getenv("SCIENTIFIC_CALCULATOR_URL", "http://127.0.0.1:5055"),
