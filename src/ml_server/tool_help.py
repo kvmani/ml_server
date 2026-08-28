@@ -352,7 +352,7 @@ TOOL_HELP: dict[str, dict[str, Any]] = {
         "diagram": "help/tabular-ml-workflow.svg",
     },
     "scientific-calculator": {
-        "purpose": "Safely evaluate bounded mathematical expressions with named variables and create reproducible one- or two-variable numerical plots.",
+        "purpose": "Safely evaluate bounded mathematical expressions with named variables, create reproducible one- or two-variable numerical plots, and look up element properties including characteristic X-ray lines and absorption edges.",
         "workflow": [
             "Parse the expression into an abstract syntax tree",
             "Reject unapproved syntax and unknown functions",
@@ -392,6 +392,38 @@ TOOL_HELP: dict[str, dict[str, Any]] = {
                     (r"\alpha", "angle supplied in degrees"),
                 ],
             },
+            {
+                "name": "Characteristic X-ray line",
+                "tex": r"E_{\text{line}} \;=\; E_{\text{initial}} - E_{\text{final}}",
+                "plain": "the line energy equals the initial level energy minus the final level energy",
+                "meaning": "A characteristic line is one electron falling into an inner-shell vacancy, so its energy depends only on which two levels were involved and not on the sample. The absorption edge for a level always lies above every line that fills it, because the line reaches a bound state and the edge reaches the continuum.",
+                "where": [
+                    (r"E_{\text{initial}}", "binding energy of the level the vacancy is in"),
+                    (r"E_{\text{final}}", "binding energy of the level the electron falls from"),
+                ],
+            },
+            {
+                "name": "Moseley's law",
+                "tex": r"\sqrt{\nu} \;\propto\; (Z - \sigma)",
+                "plain": "the square root of the line frequency is proportional to Z minus sigma",
+                "meaning": "Characteristic line energies rise smoothly and monotonically with atomic number, which is why the periodic table is ordered by atomic number rather than by atomic weight, and why an element can be identified from a single peak.",
+                "where": [
+                    (r"\nu", "frequency of the characteristic line"),
+                    (r"Z", "atomic number"),
+                    (r"\sigma", "screening constant for the series, near 1 for K lines"),
+                ],
+            },
+            {
+                "name": "Photon energy and wavelength",
+                "tex": r"\lambda\,[\text{Å}] \;=\; \frac{hc}{E} \;=\; \frac{12398.42}{E\,[\text{eV}]}",
+                "plain": "lambda in angstroms equals h c over E, which is 12398.42 divided by E in electronvolts",
+                "meaning": "The same line quoted the two ways different fields quote it: spectroscopy in keV, diffraction in angstroms. Copper K-alpha-1 is 8.0463 keV and 1.5409 angstroms.",
+                "where": [
+                    (r"\lambda", "wavelength in angstroms"),
+                    (r"E", "photon energy in electronvolts"),
+                    (r"hc", "Planck constant times the speed of light, 12398.42 eV angstrom"),
+                ],
+            },
         ],
         "inputs": [
             (
@@ -410,12 +442,19 @@ TOOL_HELP: dict[str, dict[str, Any]] = {
                 "Plot ranges",
                 "Start, stop, and positive step determine sampling density and must remain within the point limit.",
             ),
+            (
+                "Peak energy and tolerance",
+                "The X-ray line finder takes the energy of an unlabelled peak in keV or eV and a tolerance in eV, and lists every tabulated line within that window, nearest first.",
+            ),
         ],
         "limits": [
             "This is a floating-point numerical calculator, not a symbolic algebra system.",
             "Inputs carrying physical units should be handled by Unit Converter.",
             "A plotted curve demonstrates the sampled expression; it does not establish model validity between or beyond those samples.",
             "In the periodic table, a property shown as not measured has genuinely never been measured rather than merely being absent here; no melting point, boiling point or density exists for elements 100 to 118, because none has been produced in a weighable amount.",
+            "X-ray lines and absorption edges are tabulated for elements 1 to 98 only. Beyond californium no element has been produced in a quantity that allows a spectrum to be measured, so the table reports no data rather than an extrapolation.",
+            "X-ray energies are tabulated values from a published compilation, not a prediction for your sample: matrix effects, chemical shifts and detector resolution remain yours to account for, and a line-energy match is a candidate rather than an identification.",
+            "Each group of properties links to the database it came from, so any number here can be checked against its source rather than taken on trust.",
         ],
         "diagram": "help/scientific-calculator-workflow.svg",
     },

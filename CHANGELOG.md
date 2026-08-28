@@ -1,9 +1,22 @@
 # Changelog
 
-## [Unreleased]
+## [1.1.0] - 2026-08-28
 
 ### Added
 
+- The Scientific Calculator's periodic table now carries **characteristic X-ray data** for every
+  element up to californium: all twenty-six Siegbahn emission lines (Kα1, Kα2, Kβ1, Lα1, Lβ1,
+  Mα …) and all twenty-four absorption edges (K, L1–L3, M1–M5, N1–N7, O1–O5, P1–P3), each with
+  its energy in eV and keV, its wavelength in ångströms, the transition it comes from, and — for
+  edges — the fluorescence yield and jump ratio. An **X-ray line finder** identifies an
+  unlabelled XRF or EDS peak from its energy. Sixty further properties per element join the
+  table, including successive ionization energies, covalent, van der Waals and metallic radii,
+  thermal and calorimetric properties, lattice structure and natural isotopes. Requires
+  Scientific Calculator 0.6.0; the portal catalog entry, tags and scientific help page describe
+  it (`/tools/scientific-calculator/help`).
+- Three equations on the calculator's scientific help page: the characteristic-line energy as the
+  difference of two binding energies, Moseley's law, and the energy–wavelength relation with the
+  12398.42 eV·Å constant.
 - Vendored MathJax 3.2.2 (`tex-chtml-full` plus the complete CHTML web-font set) under
   `static/vendor/mathjax/`, so the in-app scientific help typesets professional mathematics with
   no CDN and no internet access.

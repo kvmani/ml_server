@@ -10,12 +10,12 @@ common discovery surface and mounts PDF Tools and Tabular ML directly.
 
 | Component | Version | Default URL | Health/readiness | Scientific help |
 | --- | ---: | --- | --- | --- |
-| ML Server portal | 1.0.0 | `http://127.0.0.1:5000/` | `/health/live`, `/health` | `/help/faq` and `/tools/<id>/help` |
+| ML Server portal | 1.1.0 | `http://127.0.0.1:5000/` | `/health/live`, `/health` | `/help/faq` and `/tools/<id>/help` |
 | Hydride Segmentation | 1.0.1 | `http://127.0.0.1:5005/` | `/health` | `/help` |
 | PyTex | 0.2.0 | `http://127.0.0.1:8765/` | `/api/health` | Help workspace and documentation site |
 | PDF Tools | 0.2.0 | `/pdf_tools/` or port 5045 | `/pdf_tools/health` | `/pdf_tools/help` |
 | Tabular ML | 0.2.0 | `/tabular_ml/` or port 5070 | `/tabular_ml/api/v1/health` | `/tabular_ml/help` |
-| Scientific Calculator | 0.3.0 | `http://127.0.0.1:5055/` | `/api/health` | `/help` |
+| Scientific Calculator | 0.6.0 | `http://127.0.0.1:5055/` | `/api/health` | `/help` |
 | Unit Converter | 0.2.0 | `http://127.0.0.1:5065/` | `/api/health` | `/help` |
 
 The versions above are the release unit. Create signed or annotated `v<version>` tags only after
@@ -55,7 +55,7 @@ release artifact even when its version is unchanged.
 
 1. `pdf_tools` 0.2.0 and `tabular_ml` 0.2.0;
 2. PyTex 0.2.0, Scientific Calculator 0.3.0, Unit Converter 0.2.0, and Hydride Segmentation 1.0.1;
-3. `ml_server` 1.0.0 after its tagged companion URLs resolve.
+3. `ml_server` 1.1.0 after its tagged companion URLs resolve.
 
 Install artifacts into new versioned virtual environments; do not upgrade the live environment
 in place. The portal can then be installed with `pip install --require-hashes` from an internally

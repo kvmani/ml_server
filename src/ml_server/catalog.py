@@ -98,12 +98,16 @@ def tool_catalog() -> list[dict[str, Any]]:
             "id": "scientific-calculator",
             "name": "Scientific Calculator",
             "summary": (
-                "Evaluate expressions, plot them, convert compositions, and look up any element."
+                "Evaluate expressions, plot them, convert compositions, and look up any "
+                "element's properties and X-ray lines."
             ),
             "detail": (
                 "A safe numerical expression engine for reproducible scalar calculations and "
                 "bounded one- or two-variable engineering plots, with atom-fraction to "
-                "mass-fraction conversion and a periodic table of all 118 elements."
+                "mass-fraction conversion and a periodic table of all 118 elements carrying "
+                "their characteristic X-ray emission lines and absorption edges, natural "
+                "isotopes and sixty further properties, each linked to the database it came "
+                "from. An energy-to-line finder identifies an unlabelled XRF or EDS peak."
             ),
             "category": "Productivity",
             "tags": [
@@ -115,6 +119,13 @@ def tool_catalog() -> list[dict[str, Any]]:
                 "atomic mass",
                 "electron configuration",
                 "composition",
+                "x-ray",
+                "xrf",
+                "eds",
+                "absorption edge",
+                "k-alpha",
+                "fluorescence",
+                "isotopes",
             ],
             "state": "active",
             "owner": "scientific_calculator",
