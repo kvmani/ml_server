@@ -6,11 +6,11 @@ import logging
 import re
 from email.utils import parseaddr
 
-from flask import Blueprint, current_app, g, jsonify, render_template, request
+from flask import Blueprint, current_app, g, jsonify, request
 
 from ...catalog import tool_catalog
 from ..services.email_notifications import dispatch_feedback_emails
-from ..services.engagement import list_feedback, record_event, save_feedback, utc_now
+from ..services.engagement import client_digest, record_event, save_feedback, utc_now
 
 bp = Blueprint("feedback", __name__)
 logger = logging.getLogger(__name__)
@@ -66,14 +66,10 @@ def submit_feedback():
         "page_url": _clean(payload.get("page_url") or request.referrer, 1000),
         "created_at": utc_now(),
         "acknowledgement_email_status": (
-            "pending"
-            if current_app.config["EMAIL_SETTINGS"].get("enabled")
-            else "not_requested"
+            "pending" if current_app.config["EMAIL_SETTINGS"].get("enabled") else "not_requested"
         ),
         "developer_email_status": (
-            "pending"
-            if current_app.config["EMAIL_SETTINGS"].get("enabled")
-            else "not_requested"
+            "pending" if current_app.config["EMAIL_SETTINGS"].get("enabled") else "not_requested"
         ),
     }
     try:
@@ -83,8 +79,10 @@ def submit_feedback():
         return jsonify({"success": False, "message": "Could not save your message"}), 500
 
     dispatch_feedback_emails(
-        database_path=_database_path(), feedback_id=feedback_id,
-        submission=submission, settings=current_app.config["EMAIL_SETTINGS"]
+        database_path=_database_path(),
+        feedback_id=feedback_id,
+        submission=submission,
+        settings=current_app.config["EMAIL_SETTINGS"],
     )
     return jsonify({"success": True, "reference": feedback_id}), 201
 
@@ -102,29 +100,19 @@ def analytics_event():
     tool_id, tool_name = _resolve_tool(_clean(payload.get("tool_id"), 80))
     try:
         record_event(
-            _database_path(), session_id=session_id,
+            _database_path(),
+            session_id=session_id,
             user_agent=request.user_agent.string,
-            event_name=event_name, tool_id=tool_id,
+            event_name=event_name,
+            tool_id=tool_id,
             tool_name=tool_name if tool_id else None,
             path=_clean(payload.get("path"), 1000),
             duration_ms=int(payload.get("duration_ms") or 0),
             metadata={"visibility": _clean(payload.get("visibility"), 20)},
+            client_hash=client_digest(request.remote_addr, current_app.secret_key),
         )
     except (TypeError, ValueError):
         return jsonify({"success": False, "message": "Invalid duration"}), 400
     except Exception:
         logger.warning("Browser analytics event could not be stored", exc_info=True)
     return jsonify({"success": True})
-
-
-@bp.route("/admin/feedback")
-def admin_feedback():
-    """Render stored feedback entries for admins."""
-    token = request.args.get("token")
-    admin_token = current_app.config.get("ADMIN_TOKEN")
-    if not admin_token or token != admin_token:
-        return "Unauthorized", 401
-
-    page = max(1, request.args.get("page", 1, type=int))
-    entries = list_feedback(_database_path(), limit=10, offset=(page - 1) * 10)
-    return render_template("admin_feedback.html", feedback=entries, page=page, token=token)

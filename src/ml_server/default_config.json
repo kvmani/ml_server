@@ -14,7 +14,8 @@
         "database_path": "data/engagement.sqlite3"
     },
     "analytics": {
-        "enabled": true
+        "enabled": true,
+        "retention_months": 24
     },
     "email": {
         "enabled": false,
@@ -41,7 +42,8 @@
         ],
         "csrf_enabled": true,
         "ssl_enabled": false,
-        "admin_token": "__SET_ADMIN_TOKEN__"
+        "admin_token": "__SET_ADMIN_TOKEN__",
+        "admin_password_hash": ""
     },
     "mainIconSize": [
         100,
@@ -52,4 +54,3 @@
         75
     ]
 }
-

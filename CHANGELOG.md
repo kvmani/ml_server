@@ -1,5 +1,83 @@
 # Changelog
 
+## [1.2.0] - 2026-09-07
+
+### Added
+
+- **A password-protected admin operations console at `/admin/`**, reachable from an
+  **Administrator sign in** link in the footer of every page. Seven panels: Overview,
+  Live activity, Services & timing, Visitors, Logs, Diagnostics and Feedback. The page
+  is a shell; every figure is fetched from a JSON API under `/admin/api/`, so the live
+  panel can refresh every five seconds without redrawing the analytics, and an operator
+  can `curl` exactly what the charts are drawn from.
+- **Password authentication** (`app/admin/auth.py`) with a signed session (12-hour
+  maximum, 60-minute idle timeout), a CSRF-protected login form, and a 15-minute
+  lockout after five failed attempts from one address. A PBKDF2 hash is preferred to a
+  password; `ml-server --hash-admin-password` generates one without echoing the
+  password or leaving it in shell history. A server with no credential configured
+  refuses every login instead of falling open, and placeholders such as `changeme` do
+  not count as configured. Pre-1.2 `?token=` links keep working.
+- **A live-activity registry** (`app/services/live_activity.py`) answering "which IP
+  address is using which service right now": current and past services per client,
+  request and error counts, average response time, last status and path, browser, idle
+  time and session length, plus the same aggregated per service.
+- **An analytics engine** (`app/services/analytics.py`) computing, for a selectable
+  window from one hour to all time: request and error totals, error rate, sessions,
+  unique visitors, average and p50/p90/p95/p99 response times overall and per service,
+  the busiest and slowest paths, status-code breakdown, an hourly or daily traffic
+  series, the busiest UTC hours, and browser and session-length distributions.
+- **Unique-visitor counts over a settable number of months** (1–120), month by month
+  and across every window from 24 hours to all time — the headline capacity figure of
+  how many different machines used the platform.
+- **Host and application diagnostics** (`app/services/diagnostics.py`): platform, CPU
+  count and load, memory, thread and process figures, portal and host uptime, the
+  config file actually loaded, bind address, blueprints and route table, disk usage per
+  relevant volume, analytics database size and row counts, and Redis and Celery
+  reachability. `psutil` enriches the report and every function degrades gracefully
+  without it.
+- **A filterable log viewer** (`app/services/logs.py`). Records are filtered at or above
+  a chosen level, searched by free text, and counted per level; multi-line tracebacks
+  stay attached to the record that raised them; only the newest 2 MB of the file is
+  read, so the panel is instant on a log that has grown for months.
+- **A JSON export** of the current analytics report, and an on-demand retention prune
+  (`analytics.retention_months`, default 24) that bounds the one file on the server
+  that grows purely because people used the portal.
+- Vendored Chart.js 4.4.1 under `static/vendor/chartjs/`, so the console renders fully
+  on an air-gapped office server.
+- `docs/ADMIN_DASHBOARD.md`: how to set and rotate the admin password without the
+  secret ever reaching git, CI or the release archive; what each panel shows; the JSON
+  API; the privacy contract; retention; and a troubleshooting table.
+- Thirty-two tests covering authentication, lockout, the unconfigured and
+  placeholder-secret cases, open-redirect refusal, live activity and its expiry and
+  cap, analytics windows and percentile ordering, log level and text filtering,
+  diagnostics, and the absence of any CDN reference in the console.
+
+### Changed
+
+- The admin dashboard is now a first-party Flask blueprint; **Flask-Admin has been
+  removed** as a dependency. `psutil` is added.
+- Requests are attributed to a service by resolving the path against the catalog
+  (`catalog.resolve_service`) rather than a hard-coded list of two prefixes, so a newly
+  added internal tool is attributed correctly without a second place to update.
+- Console traffic is excluded from the durable analytics; dashboard polling can no
+  longer inflate the usage figures the dashboard reports.
+- The footer shows the real release version instead of a hard-coded `1.0.0`, and admin
+  static assets are cache-busted on that version.
+- The portal now warns at startup when no `secret_key` is configured, because a
+  generated one silently signs every administrator out on each restart.
+- The visitor-facing privacy text on the home page and in the help/FAQ now states
+  precisely what happens to a network address: never stored, kept durably only as a
+  one-way digest for counting, and visible live to a signed-in administrator for a few
+  minutes in server memory.
+
+### Fixed
+
+- The admin dashboard's charts never rendered on the office server: it loaded Chart.js
+  from `cdn.jsdelivr.net`, which the Content-Security-Policy blocks and an air-gapped
+  network cannot reach. The library is now vendored and served from this origin.
+- Analytics indexes over migrated columns are created after the migration adds them, so
+  upgrading a database created by an earlier release no longer fails on startup.
+
 ## [1.1.0] - 2026-08-28
 
 ### Added

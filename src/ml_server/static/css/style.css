@@ -1211,3 +1211,15 @@ pointer-events:auto;
 .sortable-ghost {
     opacity: 0.4;
 }
+
+/* The administrator entry point is deliberately quiet: every visitor sees it,
+   but it must not compete with the tools the portal exists to offer. */
+.footer-admin-link {
+    color: rgba(255, 255, 255, 0.75);
+    text-decoration: underline;
+}
+
+.footer-admin-link:hover,
+.footer-admin-link:focus {
+    color: #fff;
+}

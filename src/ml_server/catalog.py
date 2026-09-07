@@ -150,3 +150,31 @@ def tool_catalog() -> list[dict[str, Any]]:
             "internal": False,
         },
     ]
+
+
+def _internal_prefixes() -> list[tuple[str, str, str]]:
+    """Return ``(path prefix, tool id, tool name)`` for tools this process serves."""
+    prefixes = [
+        (tool["href"].rstrip("/") or "/", tool["id"], tool["name"])
+        for tool in tool_catalog()
+        if tool.get("internal") and str(tool.get("href", "")).startswith("/")
+    ]
+    # Longest prefix first so "/pdf_tools/merge" cannot be claimed by "/pdf".
+    return sorted(prefixes, key=lambda item: len(item[0]), reverse=True)
+
+
+def resolve_service(path: str) -> tuple[str | None, str]:
+    """Map a request path to the service that owns it.
+
+    Analytics and the live-activity view both need to say *which service* a
+    request belonged to. Deriving it from the catalog means a newly added
+    internal tool is attributed correctly without anyone remembering to update
+    a second hard-coded list.
+    """
+    candidate = path or "/"
+    for prefix, tool_id, tool_name in _internal_prefixes():
+        if candidate == prefix or candidate.startswith(prefix + "/"):
+            return tool_id, tool_name
+    if candidate.startswith("/admin"):
+        return None, "Admin"
+    return None, "Portal"

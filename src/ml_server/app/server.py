@@ -12,11 +12,19 @@ from flask_compress import Compress
 from flask_talisman import Talisman
 from werkzeug.middleware.proxy_fix import ProxyFix
 
+from .. import __version__
+from ..catalog import resolve_service
 from ..celery_app import celery_init_app
 from ..config import load_config
 from .admin.dashboard import init_admin
+from .services.engagement import (
+    browser_family,
+    client_digest,
+    initialize_database,
+    record_event,
+)
 from .services.graceful import install_signal_handlers
-from .services.engagement import initialize_database, record_event
+from .services.live_activity import live_activity
 from .services.metrics import (
     active_users_gauge,
     error_count,
@@ -61,14 +69,34 @@ def create_app(startup: bool = True) -> Flask:
     cfg = load_config()
     if cfg.admin_token:
         app.config["ADMIN_TOKEN"] = cfg.admin_token
+    app.config["PORTAL_VERSION"] = __version__
     app.config["MAIN_ICON_SIZE"] = cfg.main_icon_size
     app.config["TOOLS_ICONS_SIZE"] = cfg.tools_icons_size
     app.config["ENGAGEMENT_DATABASE"] = cfg.feedback_settings.get(
         "database_path", "data/engagement.sqlite3"
     )
     app.config["ANALYTICS_ENABLED"] = bool(cfg.analytics_settings.get("enabled", True))
+    app.config["ANALYTICS_RETENTION_MONTHS"] = int(
+        cfg.analytics_settings.get("retention_months", 24)
+    )
     app.config["EMAIL_SETTINGS"] = cfg.email_settings
+    # The dashboard password. A hash is preferred; the legacy admin token still
+    # works as a password so an upgrade does not lock an operator out.
+    app.config["ADMIN_PASSWORD_HASH"] = cfg.admin_password_hash
+    app.config["ADMIN_PASSWORD"] = cfg.admin_password
     app.secret_key = cfg.secret_key or os.urandom(24)
+    # The admin session rides in this cookie. SameSite=Lax is what stops another
+    # page from driving a signed-in administrator's browser into a state-changing
+    # admin request; it is a browser default today, but defaults are not a policy.
+    app.config["SESSION_COOKIE_HTTPONLY"] = True
+    app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+    app.config["SESSION_COOKIE_SECURE"] = bool(cfg.security_settings.get("ssl_enabled", False))
+    # Admin sessions are signed with the secret key, so a generated one would
+    # silently sign every operator out on each restart. Say so once at startup.
+    if not cfg.secret_key:
+        logging.getLogger(__name__).warning(
+            "No secret_key configured; admin logins will not survive a restart"
+        )
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
     celery_init_app(app)
     initialize_database(app.config["ENGAGEMENT_DATABASE"])
@@ -94,15 +122,19 @@ def create_app(startup: bool = True) -> Flask:
         if response.status_code >= 400:
             etype = "5xx" if response.status_code >= 500 else "4xx"
             error_count.labels(endpoint=endpoint, type=etype).inc()
-        # Track active users
-        active = getattr(app, "_active_users", {})
-        now = time.time()
-        active[request.remote_addr] = now
-        for ip, ts in list(active.items()):
-            if now - ts > 300:
-                active.pop(ip, None)
-        active_users_gauge.set(len(active))
-        app._active_users = active
+        # Who is using what, right now. Held in memory only; see live_activity.
+        tool_id, tool_name = resolve_service(request.path)
+        family = browser_family(request.user_agent.string)
+        if not request.path.startswith("/static/"):
+            live_activity.record(
+                ip=request.remote_addr,
+                service_name=tool_name,
+                path=request.path,
+                status_code=response.status_code,
+                duration_ms=latency * 1000,
+                browser=family,
+            )
+        active_users_gauge.set(live_activity.active_client_count())
         update_uptime(app.start_time)
         response.set_cookie(
             "ml_session",
@@ -111,16 +143,15 @@ def create_app(startup: bool = True) -> Flask:
             httponly=True,
             samesite="Lax",
         )
+        # The console polls itself every few seconds; persisting that would
+        # swamp the usage figures it exists to report. Admin traffic still shows
+        # up in the live view, which expires on its own.
         if (
             app.config["ANALYTICS_ENABLED"]
             and endpoint not in {"feedback.analytics_event", "main.active_users"}
             and not request.path.startswith("/static/")
+            and tool_name != "Admin"
         ):
-            tool_id = tool_name = None
-            if request.path.startswith("/pdf_tools"):
-                tool_id, tool_name = "pdf-tools", "PDF Tools"
-            elif request.path.startswith("/tabular_ml"):
-                tool_id, tool_name = "tabular-ml", "Tabular ML Workbench"
             try:
                 record_event(
                     app.config["ENGAGEMENT_DATABASE"],
@@ -132,6 +163,7 @@ def create_app(startup: bool = True) -> Flask:
                     path=request.path[:1000],
                     duration_ms=round(latency * 1000),
                     status_code=response.status_code,
+                    client_hash=client_digest(request.remote_addr, app.secret_key),
                 )
             except Exception:
                 logging.getLogger(__name__).warning(
@@ -157,7 +189,7 @@ def create_app(startup: bool = True) -> Flask:
     app.register_blueprint(api_bp)
     app.register_blueprint(download_bp)
 
-    # Admin dashboard
+    # Admin dashboard. Registered last so its /admin/* rules are unambiguous.
     init_admin(app)
 
     if startup:

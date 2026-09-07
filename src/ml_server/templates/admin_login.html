@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Administrator sign in - Scientific Tools Portal</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/ml_server_icon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}?v={{ version }}">
+</head>
+<body class="admin-login">
+    <main class="admin-login-card">
+        <h1>Administrator sign in</h1>
+        <p class="admin-login-lede">
+            The operations console shows live service activity, analytics, logs and
+            diagnostics for this portal. It is restricted to platform administrators.
+        </p>
+
+        {% if error %}
+        <div class="admin-login-error" role="alert">{{ error }}</div>
+        {% endif %}
+
+        {% if configured %}
+        <form method="post" action="{{ url_for('admin.login') }}{% if next %}?next={{ next }}{% endif %}" autocomplete="off">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <input type="hidden" name="next" value="{{ next }}">
+            <label for="admin-password">Admin password</label>
+            <input id="admin-password" name="password" type="password" autocomplete="current-password"
+                   required autofocus maxlength="200">
+            <button class="admin-button" type="submit">Sign in</button>
+        </form>
+        {% else %}
+        <p class="admin-note">
+            Set <code>ML_SERVER_ADMIN_PASSWORD_HASH</code> in the service environment
+            and restart the portal. See <code>docs/ADMIN_DASHBOARD.md</code>.
+        </p>
+        {% endif %}
+
+        <p class="admin-login-footer">
+            Scientific Tools Portal {{ version }} &middot;
+            <a href="{{ url_for('main.home') }}">Back to the portal</a>
+        </p>
+    </main>
+</body>
+</html>

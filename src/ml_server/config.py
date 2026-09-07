@@ -138,6 +138,25 @@ class Config:
         return "" if value.startswith("__SET_") else value
 
     @property
+    def admin_password(self) -> str:
+        """The admin dashboard password, if one is set in configuration.
+
+        Deployments should prefer the environment (``ML_SERVER_ADMIN_PASSWORD``)
+        or, better, a hash, so no secret is ever committed. ``admin_token`` is
+        accepted as a fallback so an existing installation keeps working.
+        """
+        value = str(self.security_settings.get("admin_password", ""))
+        if value.startswith("__SET_"):
+            return ""
+        return value or self.admin_token
+
+    @property
+    def admin_password_hash(self) -> str:
+        """A PBKDF2 hash of the admin password, preferred over the password."""
+        value = str(self.security_settings.get("admin_password_hash", ""))
+        return "" if value.startswith("__SET_") else value
+
+    @property
     def main_icon_size(self) -> list[int]:
         """Return (width, height) for the main site icon."""
         return self.config.get("mainIconSize", [100, 100])

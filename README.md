@@ -64,19 +64,46 @@ The owning repository remains independently runnable at
 companion package and mounts the same `/tabular_ml/*` blueprint contract; no
 training logic is duplicated here.
 
-## Admin Dashboard and Monitoring
+## Admin Operations Console
 
-Access the admin interface at `/admin?token=<ADMIN_TOKEN>`. The page now
-features a cleaner card layout and a bar chart visualising recent endpoint
-visits. Service health badges quickly indicate the status of background
-processes while logs and Prometheus metrics remain available in scrollable
-sections. These updates make it easier to monitor uptime, active users and
-system health at a glance.
+A password-protected console lives at `/admin/`, reachable from the
+**Administrator sign in** link in the footer of every page. It has seven panels:
 
-Feedback, feature requests, IP/session activity, tool launches, session
-duration, and request timings are persisted in `data/engagement.sqlite3` and
-shown only in the token-protected admin views. The homepage tells users what is
-collected. Set `APP_ANALYTICS__ENABLED=false` to disable new analytics writes.
+- **Overview** — uptime, clients active now, unique visitors, requests, error
+  rate, response-time p95, traffic over time, unique visitors per month, busiest
+  UTC hours, status codes, and the busiest and slowest paths.
+- **Live activity** — which IP address is using which service right now, with
+  request counts, error counts, timing, last status and idle time, refreshed
+  every five seconds.
+- **Services & timing** — per-service requests, sessions, unique visitors,
+  errors, and the average/p50/p90/p95/p99 time each operation takes.
+- **Visitors** — unique visitors and sessions over any window from 24 hours to
+  all time, month by month for a settable 1–120 months, plus browsers and
+  session lengths.
+- **Logs** — the application log parsed into records, filterable by minimum
+  level (warnings and above, errors only, …) and by free text, with tracebacks
+  kept attached to the record that raised them.
+- **Diagnostics** — host CPU/memory/load, application version and loaded config,
+  disk usage, Redis and Celery reachability, the route table and raw Prometheus
+  metrics.
+- **Feedback** — the latest feedback and feature requests.
+
+Every panel is backed by a JSON endpoint under `/admin/api/`, so the same
+figures can be scripted or exported. Chart.js is vendored, so the console works
+on an air-gapped office server.
+
+**Setting the password:** generate a hash with `ml-server --hash-admin-password`
+and put `ML_SERVER_ADMIN_PASSWORD_HASH=...` in the service `EnvironmentFile`.
+The secret never enters git, CI or the release archive, and rotating it needs
+only a restart. Full instructions, including the systemd layout, are in
+[docs/ADMIN_DASHBOARD.md](docs/ADMIN_DASHBOARD.md).
+
+**Privacy:** the durable analytics database stores no address. Unique-visitor
+counts come from an irreversible per-client digest; live IP addresses exist only
+in a five-minute in-memory registry visible to signed-in administrators, and are
+never written to disk. Analytics live in `data/engagement.sqlite3`; set
+`APP_ANALYTICS__ENABLED=false` to stop new writes and
+`APP_ANALYTICS__RETENTION_MONTHS` to change the 24-month retention.
 
 Feedback email is optional and disabled by default. To use an internal relay,
 set `APP_EMAIL__ENABLED=true`, `APP_EMAIL__SMTP_HOST`, and the related values in

@@ -21,7 +21,7 @@ dependencies = [
     "Flask-Compress==1.14",
     "Flask-Talisman==1.1.0",
     "prometheus-client==0.20.0",
-    "Flask-Admin==1.6.1",
+    "psutil>=5.9,<8",
     "pypdf>=6,<7",
     "pdf2image",
     "waitress>=3,<4",
@@ -51,4 +51,3 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 ml_server = ["default_config.json", "templates/*.html", "static/**/*"]
-

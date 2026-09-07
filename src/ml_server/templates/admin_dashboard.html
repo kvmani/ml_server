@@ -1,153 +1,222 @@
-{% extends "base.html" %}
-{% block title %}Admin Dashboard{% endblock %}
-{% block content %}
-<h2 class="mb-4">Admin Dashboard</h2>
-<div class="row g-4 mb-4">
-    <div class="col-md-4">
-        <div class="card text-center">
-            <div class="card-body">
-                <h5 class="card-title">Uptime</h5>
-                <p class="card-text">{{ uptime }}</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Operations console - Scientific Tools Portal</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/ml_server_icon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}?v={{ version }}">
+</head>
+<body class="admin-console">
+<div class="admin-console-wrapper">
+
+    <header class="admin-topbar">
+        <h1>Operations console</h1>
+        <span class="admin-version">Portal {{ version }}</span>
+        <span class="admin-version" id="uptime-chip">uptime &middot;&middot;&middot;</span>
+        <span class="admin-topbar-spacer"></span>
+
+        <span><span class="admin-label" id="window-label-for">Window</span>
+        <select class="admin-control" id="window-select" aria-labelledby="window-label-for">
+            {% for window in windows %}
+            <option value="{{ window }}" {% if window == default_window %}selected{% endif %}>{{ window }}</option>
+            {% endfor %}
+        </select></span>
+
+        <span><span class="admin-label" id="months-label-for">Months of history</span>
+        <select class="admin-control" id="months-select" aria-labelledby="months-label-for">
+            {% for choice in [1, 3, 6, 12, 24, 36, 60] %}
+            <option value="{{ choice }}" {% if choice == 6 %}selected{% endif %}>{{ choice }}</option>
+            {% endfor %}
+        </select></span>
+
+        <label class="admin-version" for="autorefresh-toggle">
+            <input type="checkbox" id="autorefresh-toggle" checked> auto-refresh
+        </label>
+        <button class="admin-button is-quiet" type="button" id="refresh-button">Refresh</button>
+        <a class="admin-button is-quiet" id="export-link" href="{{ url_for('admin.api_export') }}">Export JSON</a>
+        <a class="admin-button is-quiet" href="{{ url_for('admin.logout') }}">Sign out</a>
+    </header>
+
+    <div class="admin-error-banner" id="error-banner" role="alert" hidden></div>
+
+    <nav class="admin-tabs" role="tablist" aria-label="Console sections">
+        <button class="admin-tab" role="tab" data-panel="overview" aria-selected="true" id="tab-overview">Overview</button>
+        <button class="admin-tab" role="tab" data-panel="live" aria-selected="false" id="tab-live">Live activity</button>
+        <button class="admin-tab" role="tab" data-panel="services" aria-selected="false" id="tab-services">Services &amp; timing</button>
+        <button class="admin-tab" role="tab" data-panel="visitors" aria-selected="false" id="tab-visitors">Visitors</button>
+        <button class="admin-tab" role="tab" data-panel="logs" aria-selected="false" id="tab-logs">Logs</button>
+        <button class="admin-tab" role="tab" data-panel="diagnostics" aria-selected="false" id="tab-diagnostics">Diagnostics</button>
+        <button class="admin-tab" role="tab" data-panel="feedback" aria-selected="false" id="tab-feedback">Feedback</button>
+    </nav>
+
+    <!-- Overview ------------------------------------------------------- -->
+    <section class="admin-panel" id="panel-overview" role="tabpanel" aria-labelledby="tab-overview">
+        <div class="admin-grid" id="kpi-grid"></div>
+
+        <div class="admin-grid is-wide">
+            <div class="admin-card admin-chart-card">
+                <h2>Traffic over the selected window</h2>
+                <div class="admin-chart-holder"><canvas id="traffic-chart"></canvas></div>
+            </div>
+            <div class="admin-card admin-chart-card">
+                <h2>Unique visitors per month</h2>
+                <div class="admin-chart-holder"><canvas id="monthly-chart"></canvas></div>
+            </div>
+            <div class="admin-card admin-chart-card">
+                <h2>Requests by service</h2>
+                <div class="admin-chart-holder"><canvas id="service-chart"></canvas></div>
+            </div>
+            <div class="admin-card admin-chart-card">
+                <h2>Busiest hours (UTC)</h2>
+                <div class="admin-chart-holder"><canvas id="hour-chart"></canvas></div>
             </div>
         </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card text-center">
-            <div class="card-body">
-                <h5 class="card-title">Active Users</h5>
-                <p class="card-text">{{ active_users }}</p>
+
+        <div class="admin-grid is-wide">
+            <div class="admin-card">
+                <h2>Response status codes</h2>
+                <div class="admin-table-scroll"><table class="admin-table" id="status-table"></table></div>
+            </div>
+            <div class="admin-card">
+                <h2>Busiest paths</h2>
+                <div class="admin-table-scroll"><table class="admin-table" id="busiest-table"></table></div>
+            </div>
+            <div class="admin-card">
+                <h2>Slowest paths (3+ requests)</h2>
+                <div class="admin-table-scroll"><table class="admin-table" id="slowest-table"></table></div>
             </div>
         </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card text-center">
-            <div class="card-body">
-                <h5 class="card-title">Service Health</h5>
-                <ul class="list-unstyled mb-0">
-                {% for name, status in health.items() %}
-                    <li>
-                        <span class="badge {{ 'bg-success' if status else 'bg-danger' }}">{{ name }}</span>
-                    </li>
-                {% endfor %}
-                </ul>
+    </section>
+
+    <!-- Live activity -------------------------------------------------- -->
+    <section class="admin-panel" id="panel-live" role="tabpanel" aria-labelledby="tab-live" hidden>
+        <div class="admin-grid" id="live-kpis"></div>
+        <div class="admin-grid is-wide">
+            <div class="admin-card">
+                <h2>Active clients by service</h2>
+                <div class="admin-table-scroll"><table class="admin-table" id="live-services-table"></table></div>
+            </div>
+            <div class="admin-card">
+                <h2>Active client addresses</h2>
+                <div class="admin-table-scroll"><table class="admin-table" id="live-clients-table"></table></div>
+                <p class="admin-note">
+                    Addresses are held in server memory for the last
+                    <strong id="live-window">5</strong> minutes of activity only. They are
+                    shown to signed-in administrators, are never written to the database or
+                    the logs, and disappear when a client goes idle or the service restarts.
+                </p>
             </div>
         </div>
-    </div>
+    </section>
+
+    <!-- Services ------------------------------------------------------- -->
+    <section class="admin-panel" id="panel-services" role="tabpanel" aria-labelledby="tab-services" hidden>
+        <div class="admin-grid is-wide">
+            <div class="admin-card admin-chart-card">
+                <h2>Time per operation - average and 95th percentile (ms)</h2>
+                <div class="admin-chart-holder is-tall"><canvas id="timing-chart"></canvas></div>
+            </div>
+            <div class="admin-card admin-chart-card">
+                <h2>Total server time spent per service (seconds)</h2>
+                <div class="admin-chart-holder is-tall"><canvas id="time-spent-chart"></canvas></div>
+            </div>
+        </div>
+        <div class="admin-card">
+            <h2>Per-service statistics for the selected window</h2>
+            <div class="admin-table-scroll"><table class="admin-table" id="services-table"></table></div>
+            <p class="admin-note">
+                Percentiles are nearest-rank over the most recent samples in the window.
+                p95 is the number to watch: it is what the slowest one visitor in twenty waits.
+            </p>
+        </div>
+    </section>
+
+    <!-- Visitors ------------------------------------------------------- -->
+    <section class="admin-panel" id="panel-visitors" role="tabpanel" aria-labelledby="tab-visitors" hidden>
+        <div class="admin-grid" id="visitor-kpis"></div>
+        <div class="admin-grid is-wide">
+            <div class="admin-card">
+                <h2>Unique visitors and sessions per month</h2>
+                <div class="admin-table-scroll"><table class="admin-table" id="monthly-table"></table></div>
+            </div>
+            <div class="admin-card admin-chart-card">
+                <h2>Browser families</h2>
+                <div class="admin-chart-holder"><canvas id="browser-chart"></canvas></div>
+            </div>
+            <div class="admin-card admin-chart-card">
+                <h2>Session length distribution</h2>
+                <div class="admin-chart-holder"><canvas id="session-chart"></canvas></div>
+            </div>
+            <div class="admin-card">
+                <h2>Browser versions</h2>
+                <div class="admin-table-scroll"><table class="admin-table" id="browser-version-table"></table></div>
+            </div>
+        </div>
+        <div class="admin-card">
+            <h2>Recent sessions</h2>
+            <div class="admin-table-scroll"><table class="admin-table" id="sessions-table"></table></div>
+            <p class="admin-note">
+                Stored analytics hold no address. Unique-visitor counts come from an
+                irreversible per-client digest, which can be counted but not read back.
+            </p>
+        </div>
+    </section>
+
+    <!-- Logs ----------------------------------------------------------- -->
+    <section class="admin-panel" id="panel-logs" role="tabpanel" aria-labelledby="tab-logs" hidden>
+        <div class="admin-card">
+            <div class="admin-log-toolbar">
+                <span class="admin-label" id="level-label-for">Minimum level</span>
+                <select class="admin-control" id="log-level" aria-labelledby="level-label-for">
+                    <option value="ALL" selected>All</option>
+                    {% for level in levels %}
+                    <option value="{{ level }}">{{ level }} and above</option>
+                    {% endfor %}
+                </select>
+                <input class="admin-control" id="log-search" type="search" placeholder="Search messages"
+                       maxlength="200" aria-label="Search log messages">
+                <span class="admin-label" id="limit-label-for">Lines</span>
+                <select class="admin-control" id="log-limit" aria-labelledby="limit-label-for">
+                    <option value="100">100</option>
+                    <option value="300" selected>300</option>
+                    <option value="1000">1000</option>
+                    <option value="2000">2000</option>
+                </select>
+                <button class="admin-button is-quiet" type="button" id="log-refresh">Reload</button>
+                <span id="log-counts"></span>
+            </div>
+            <p class="admin-note" id="log-source"></p>
+            <div class="admin-table-scroll"><table class="admin-table" id="log-table"></table></div>
+        </div>
+    </section>
+
+    <!-- Diagnostics ---------------------------------------------------- -->
+    <section class="admin-panel" id="panel-diagnostics" role="tabpanel" aria-labelledby="tab-diagnostics" hidden>
+        <div class="admin-grid is-wide" id="diagnostics-grid"></div>
+        <div class="admin-card">
+            <h2>Registered routes</h2>
+            <div class="admin-table-scroll"><table class="admin-table" id="routes-table"></table></div>
+        </div>
+        <div class="admin-card">
+            <h2>Prometheus metrics</h2>
+            <button class="admin-button is-quiet" type="button" id="metrics-button">Load metrics text</button>
+            <pre class="admin-pre" id="metrics-pre" hidden></pre>
+        </div>
+    </section>
+
+    <!-- Feedback ------------------------------------------------------- -->
+    <section class="admin-panel" id="panel-feedback" role="tabpanel" aria-labelledby="tab-feedback" hidden>
+        <div class="admin-card">
+            <h2>Latest feedback and feature requests</h2>
+            <div class="admin-table-scroll"><table class="admin-table" id="feedback-table"></table></div>
+            <p class="admin-note"><a href="{{ url_for('admin.feedback') }}">Open the full paginated feedback view</a></p>
+        </div>
+    </section>
+
 </div>
-
-<div class="mb-4">
-    <canvas id="visitChart" width="400" height="200"></canvas>
-</div>
-
-<h3>Recent Logs</h3>
-<pre style="max-height: 300px; overflow-y: auto;">{{ logs }}</pre>
-
-<h3>User Feedback (latest 10)</h3>
-{% include "admin_feedback_table.html" %}
-
-<h3>Persistent Usage Analytics</h3>
-<p><strong>{{ engagement.sessions }}</strong> sessions · average recorded session {{ (engagement.average_session_ms / 1000)|round(1) }} seconds</p>
-<p class="text-muted small">Analytics are anonymous by design: no IP address or full browser string is stored, only a coarse browser family and its major version number.</p>
-
-<div class="row g-4 mb-4">
-    <div class="col-md-6">
-        <h5>Tool usage</h5>
-        <canvas id="toolUsageChart" height="220"></canvas>
-    </div>
-    <div class="col-md-6">
-        <h5>Average server/action time (ms)</h5>
-        <canvas id="toolTimingChart" height="220"></canvas>
-    </div>
-    <div class="col-md-6">
-        <h5>Browser family</h5>
-        <canvas id="browserChart" height="220"></canvas>
-    </div>
-    <div class="col-md-6">
-        <h5>Session length distribution</h5>
-        <canvas id="sessionDurationChart" height="220"></canvas>
-    </div>
-</div>
-
-<div class="table-responsive"><table class="table table-sm"><thead><tr><th>Browser</th><th>Major version</th><th>Sessions</th></tr></thead><tbody>{% for item in engagement.browser_versions %}<tr><td>{{ item.browser_family }}</td><td>{{ item.browser_major_version }}</td><td>{{ item.sessions }}</td></tr>{% else %}<tr><td colspan="3">No version data recorded yet.</td></tr>{% endfor %}</tbody></table></div>
-<details><summary>Recent anonymous sessions</summary><div class="table-responsive"><table class="table table-sm"><thead><tr><th>Started</th><th>Last seen</th><th>Duration (ms)</th><th>Browser</th><th>Last tool</th></tr></thead><tbody>{% for item in engagement.recent_sessions %}<tr><td>{{ item.started_at }}</td><td>{{ item.last_seen_at }}</td><td>{{ item.duration_ms }}</td><td>{{ item.browser_family or 'Unknown' }}{% if item.browser_major_version %} {{ item.browser_major_version }}{% endif %}</td><td>{{ item.last_tool_name or 'Portal' }}</td></tr>{% endfor %}</tbody></table></div></details>
-
-<h3>Prometheus Metrics</h3>
-<pre style="max-height: 300px; overflow-y: auto;">{{ metrics }}</pre>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js" nonce="{{ csp_nonce() }}"></script>
-<script nonce="{{ csp_nonce() }}">
-    const visitData = {{ visits | tojson }};
-    new Chart(document.getElementById('visitChart'), {
-        type: 'bar',
-        data: {
-            labels: Object.keys(visitData),
-            datasets: [{
-                label: 'Visits',
-                data: Object.values(visitData),
-                backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: { scales: { y: { beginAtZero: true } } }
-    });
-
-    const toolData = {{ engagement.tools | tojson }};
-    new Chart(document.getElementById('toolUsageChart'), {
-        type: 'bar',
-        data: {
-            labels: toolData.map(t => t.tool_name),
-            datasets: [{
-                label: 'Recorded actions',
-                data: toolData.map(t => t.uses),
-                backgroundColor: 'rgba(75, 192, 132, 0.5)',
-                borderColor: 'rgba(75, 192, 132, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: { scales: { y: { beginAtZero: true } } }
-    });
-    new Chart(document.getElementById('toolTimingChart'), {
-        type: 'bar',
-        data: {
-            labels: toolData.map(t => t.tool_name),
-            datasets: [{
-                label: 'Average time (ms)',
-                data: toolData.map(t => t.average_action_ms || 0),
-                backgroundColor: 'rgba(255, 159, 64, 0.5)',
-                borderColor: 'rgba(255, 159, 64, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: { scales: { y: { beginAtZero: true } } }
-    });
-
-    const browserData = {{ engagement.browsers | tojson }};
-    new Chart(document.getElementById('browserChart'), {
-        type: 'doughnut',
-        data: {
-            labels: browserData.map(b => b.browser_family),
-            datasets: [{
-                data: browserData.map(b => b.sessions),
-                backgroundColor: ['#4e79a7', '#f28e2b', '#e15759', '#76b7b2', '#59a14f', '#edc948']
-            }]
-        }
-    });
-
-    const durationData = {{ engagement.session_duration_buckets | tojson }};
-    new Chart(document.getElementById('sessionDurationChart'), {
-        type: 'bar',
-        data: {
-            labels: durationData.map(d => d.bucket),
-            datasets: [{
-                label: 'Sessions',
-                data: durationData.map(d => d.sessions),
-                backgroundColor: 'rgba(153, 102, 255, 0.5)',
-                borderColor: 'rgba(153, 102, 255, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: { scales: { y: { beginAtZero: true } } }
-    });
-</script>
-{% endblock %}
+<script src="{{ url_for('static', filename='vendor/chartjs/chart.umd.min.js') }}" nonce="{{ csp_nonce() }}"></script>
+<script src="{{ url_for('static', filename='js/admin_dashboard.js') }}?v={{ version }}" nonce="{{ csp_nonce() }}"></script>
+</body>
+</html>

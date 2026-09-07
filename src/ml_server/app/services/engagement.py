@@ -11,8 +11,17 @@ written to the database. Support still needs to know which browsers are in use,
 so the user agent is reduced to a coarse, non-identifying browser family before
 it is stored. The legacy ``ip_address``/``user_agent`` columns are retained only
 so existing deployments keep opening; they are always left empty.
+
+Counting *distinct* visitors over a period still requires telling one client
+from another, so each row carries ``client_hash``: an HMAC-SHA256 digest of the
+address keyed with the server secret. It is irreversible without that key, is
+never displayed, and is only ever used with ``COUNT(DISTINCT ...)``. Live IP
+addresses, when an administrator needs them during an incident, are held in
+process memory only -- see :mod:`ml_server.app.services.live_activity`.
 """
 
+import hashlib
+import hmac
 import json
 import logging
 import re
@@ -77,10 +86,25 @@ def browser_major_version(user_agent: str | None, family: str | None = None) -> 
         index = candidate.find(marker)
         if index == -1:
             continue
-        match = re.match(r"(\d+)", candidate[index + len(marker):])
+        match = re.match(r"(\d+)", candidate[index + len(marker) :])
         if match:
             return match.group(1)
     return None
+
+
+def client_digest(ip_address: str | None, secret: str | bytes | None) -> str | None:
+    """Return an irreversible per-client digest, or ``None`` without an address.
+
+    Distinct-visitor counts need a stable token per client; they do not need the
+    address itself. Keying the digest with the server secret means the stored
+    value cannot be matched back to an address by anyone who only has the
+    database file, and rotating the secret simply starts a new counting epoch.
+    """
+    address = (ip_address or "").strip()
+    if not address:
+        return None
+    key = secret if isinstance(secret, bytes) else str(secret or "ml_server").encode("utf-8")
+    return hmac.new(key, address.encode("utf-8"), hashlib.sha256).hexdigest()[:32]
 
 
 def _connect(database_path: str) -> sqlite3.Connection:
@@ -125,6 +149,7 @@ def initialize_database(database_path: str) -> None:
                 user_agent TEXT,
                 browser_family TEXT,
                 browser_major_version TEXT,
+                client_hash TEXT,
                 started_at TEXT NOT NULL,
                 last_seen_at TEXT NOT NULL,
                 duration_ms INTEGER NOT NULL DEFAULT 0,
@@ -144,6 +169,7 @@ def initialize_database(database_path: str) -> None:
                 duration_ms INTEGER,
                 status_code INTEGER,
                 metadata_json TEXT,
+                client_hash TEXT,
                 occurred_at TEXT NOT NULL,
                 FOREIGN KEY(session_id) REFERENCES analytics_sessions(session_id)
             );
@@ -154,6 +180,19 @@ def initialize_database(database_path: str) -> None:
             """
         )
         _migrate_to_anonymous_analytics(connection)
+        # Indexes over migrated columns come last: an older database reaches the
+        # statements above without a client_hash column, and creating an index
+        # on a column that does not exist yet fails the whole upgrade.
+        connection.executescript(
+            """
+            CREATE INDEX IF NOT EXISTS analytics_events_client_idx
+                ON analytics_events(client_hash, occurred_at);
+            CREATE INDEX IF NOT EXISTS analytics_events_tool_idx
+                ON analytics_events(tool_name, occurred_at);
+            CREATE INDEX IF NOT EXISTS analytics_sessions_client_idx
+                ON analytics_sessions(client_hash);
+            """
+        )
 
 
 def _migrate_to_anonymous_analytics(connection: sqlite3.Connection) -> None:
@@ -164,15 +203,18 @@ def _migrate_to_anonymous_analytics(connection: sqlite3.Connection) -> None:
     the portal is what makes the stated privacy guarantee true, rather than an
     extra manual step an operator could forget.
     """
-    columns = {
-        row["name"] for row in connection.execute("PRAGMA table_info(analytics_sessions)")
-    }
+    columns = {row["name"] for row in connection.execute("PRAGMA table_info(analytics_sessions)")}
     if "browser_family" not in columns:
         connection.execute("ALTER TABLE analytics_sessions ADD COLUMN browser_family TEXT")
     if "browser_major_version" not in columns:
-        connection.execute(
-            "ALTER TABLE analytics_sessions ADD COLUMN browser_major_version TEXT"
-        )
+        connection.execute("ALTER TABLE analytics_sessions ADD COLUMN browser_major_version TEXT")
+    if "client_hash" not in columns:
+        connection.execute("ALTER TABLE analytics_sessions ADD COLUMN client_hash TEXT")
+    event_columns = {
+        row["name"] for row in connection.execute("PRAGMA table_info(analytics_events)")
+    }
+    if "client_hash" not in event_columns:
+        connection.execute("ALTER TABLE analytics_events ADD COLUMN client_hash TEXT")
     connection.execute(
         "UPDATE analytics_sessions SET ip_address = NULL, user_agent = NULL "
         "WHERE ip_address IS NOT NULL OR user_agent IS NOT NULL"
@@ -229,9 +271,7 @@ def update_feedback_email_status(
         logger.warning("Could not update feedback email status", exc_info=True)
 
 
-def list_feedback(
-    database_path: str, *, limit: int = 100, offset: int = 0
-) -> list[dict[str, Any]]:
+def list_feedback(database_path: str, *, limit: int = 100, offset: int = 0) -> list[dict[str, Any]]:
     with _connect(database_path) as connection:
         rows = connection.execute(
             "SELECT * FROM feedback_submissions ORDER BY created_at DESC LIMIT ? OFFSET ?",
@@ -252,6 +292,7 @@ def record_event(
     duration_ms: int | None = None,
     status_code: int | None = None,
     metadata: dict[str, Any] | None = None,
+    client_hash: str | None = None,
 ) -> None:
     now = utc_now()
     safe_duration = max(0, min(int(duration_ms or 0), 86_400_000))
@@ -261,15 +302,18 @@ def record_event(
         connection.execute(
             """
             INSERT INTO analytics_sessions
-                (session_id, browser_family, browser_major_version, started_at,
-                 last_seen_at, duration_ms, last_tool_id, last_tool_name)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                (session_id, browser_family, browser_major_version, client_hash,
+                 started_at, last_seen_at, duration_ms, last_tool_id, last_tool_name)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(session_id) DO UPDATE SET
                 browser_family = COALESCE(
                     excluded.browser_family, analytics_sessions.browser_family
                 ),
                 browser_major_version = COALESCE(
                     excluded.browser_major_version, analytics_sessions.browser_major_version
+                ),
+                client_hash = COALESCE(
+                    excluded.client_hash, analytics_sessions.client_hash
                 ),
                 last_seen_at = excluded.last_seen_at,
                 duration_ms = MAX(analytics_sessions.duration_ms, excluded.duration_ms),
@@ -278,14 +322,24 @@ def record_event(
                     excluded.last_tool_name, analytics_sessions.last_tool_name
                 )
             """,
-            (session_id, family, version, now, now, safe_duration, tool_id, tool_name),
+            (
+                session_id,
+                family,
+                version,
+                client_hash,
+                now,
+                now,
+                safe_duration,
+                tool_id,
+                tool_name,
+            ),
         )
         connection.execute(
             """
             INSERT INTO analytics_events
                 (session_id, event_name, tool_id, tool_name, path, duration_ms,
-                 status_code, metadata_json, occurred_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                 status_code, metadata_json, client_hash, occurred_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 session_id,
@@ -296,6 +350,7 @@ def record_event(
                 safe_duration if duration_ms is not None else None,
                 status_code,
                 json.dumps(metadata or {}, separators=(",", ":")),
+                client_hash,
                 now,
             ),
         )
@@ -360,7 +415,72 @@ def analytics_summary(database_path: str) -> dict[str, Any]:
         "browsers": [dict(row) for row in browsers],
         "browser_versions": [dict(row) for row in browser_versions],
         "session_duration_buckets": [
-            {"bucket": bucket, "sessions": bucket_counts.get(bucket, 0)}
-            for bucket in bucket_order
+            {"bucket": bucket, "sessions": bucket_counts.get(bucket, 0)} for bucket in bucket_order
         ],
     }
+
+
+def prune_analytics(database_path: str, *, retention_months: int = 24) -> dict[str, int]:
+    """Drop analytics older than ``retention_months`` and report what went.
+
+    The database is the only thing on the server that grows purely because
+    people used the portal, so it needs a ceiling. Two years is long enough for
+    the year-on-year comparisons the dashboard offers and short enough that the
+    file stays small on a modest office server.
+    """
+    months = max(1, int(retention_months))
+    cutoff = _months_ago(months)
+    with _connect(database_path) as connection:
+        events = connection.execute(
+            "DELETE FROM analytics_events WHERE occurred_at < ?", (cutoff,)
+        ).rowcount
+        sessions = connection.execute(
+            "DELETE FROM analytics_sessions WHERE last_seen_at < ?", (cutoff,)
+        ).rowcount
+    return {
+        "cutoff": cutoff,
+        "events_removed": max(0, events),
+        "sessions_removed": max(0, sessions),
+    }
+
+
+def _months_ago(months: int) -> str:
+    """Return the ISO timestamp ``months`` whole months before now (UTC)."""
+    now = datetime.now(timezone.utc)
+    year, month = now.year, now.month - months
+    while month <= 0:
+        month += 12
+        year -= 1
+    # Clamp the day so stepping back from, say, the 31st never lands on an
+    # impossible date such as 31 February.
+    day = min(now.day, _days_in_month(year, month))
+    return now.replace(year=year, month=month, day=day).isoformat().replace("+00:00", "Z")
+
+
+def _days_in_month(year: int, month: int) -> int:
+    if month == 2:
+        leap = year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
+        return 29 if leap else 28
+    return 30 if month in {4, 6, 9, 11} else 31
+
+
+def database_stats(database_path: str) -> dict[str, Any]:
+    """Return size and row counts so the dashboard can show storage health."""
+    path = Path(database_path)
+    stats: dict[str, Any] = {
+        "path": str(path),
+        "exists": path.exists(),
+        "size_bytes": path.stat().st_size if path.exists() else 0,
+    }
+    if not path.exists():
+        return stats
+    with _connect(database_path) as connection:
+        for table in ("analytics_events", "analytics_sessions", "feedback_submissions"):
+            row = connection.execute(f"SELECT COUNT(*) AS total FROM {table}").fetchone()
+            stats[table] = int(row["total"])
+        oldest = connection.execute(
+            "SELECT MIN(occurred_at) AS first, MAX(occurred_at) AS last FROM analytics_events"
+        ).fetchone()
+        stats["first_event_at"] = oldest["first"]
+        stats["last_event_at"] = oldest["last"]
+    return stats
