@@ -134,9 +134,7 @@ TOOL_HELP: dict[str, dict[str, Any]] = {
             },
             {
                 "name": "Magic-wand region",
-                "tex": (
-                    r"R \;=\; \mathcal{C}_{4}\bigl(s,\;\{\,p : g(p) \le g(s)+\tau\,\}\bigr)"
-                ),
+                "tex": (r"R \;=\; \mathcal{C}_{4}\bigl(s,\;\{\,p : g(p) \le g(s)+\tau\,\}\bigr)"),
                 "plain": (
                     "R equals the 4-connected component containing s of the set of pixels p "
                     "with g of p at most g of s plus tau"
@@ -295,9 +293,7 @@ TOOL_HELP: dict[str, dict[str, Any]] = {
             {
                 "name": "Output page count",
                 "tex": r"N_{\text{out}} \;=\; \sum_{j=1}^{m}\,\bigl(b_{j}-a_{j}+1\bigr)",
-                "plain": (
-                    "N out equals the sum from j equals 1 to m of b_j minus a_j plus one"
-                ),
+                "plain": ("N out equals the sum from j equals 1 to m of b_j minus a_j plus one"),
                 "meaning": "Every selected range is inclusive, so a 1-3 selection contributes three pages.",
                 "where": [
                     (r"m", "number of selected ranges across all documents"),
@@ -358,7 +354,10 @@ TOOL_HELP: dict[str, dict[str, Any]] = {
                 "meaning": "Training-fold mean and standard deviation scale numeric feature j; validation data must not influence them.",
                 "where": [
                     (r"x_{j}", "raw value of numeric feature j"),
-                    (r"\mu_{j},\,\sigma_{j}", "mean and standard deviation from the training folds only"),
+                    (
+                        r"\mu_{j},\,\sigma_{j}",
+                        "mean and standard deviation from the training folds only",
+                    ),
                 ],
             },
             {
@@ -386,8 +385,7 @@ TOOL_HELP: dict[str, dict[str, Any]] = {
                     r"\end{gathered}"
                 ),
                 "plain": (
-                    "F1 equals two P R divided by P plus R, where P is precision "
-                    "and R is recall"
+                    "F1 equals two P R divided by P plus R, where P is precision " "and R is recall"
                 ),
                 "meaning": "Balances false-positive and false-negative performance in a single classification number.",
                 "where": [
@@ -459,9 +457,7 @@ TOOL_HELP: dict[str, dict[str, Any]] = {
             {
                 "name": "Sample count",
                 "tex": r"N \;=\; \left\lfloor \frac{x_{\text{stop}} - x_{0}}{\Delta x} \right\rfloor + 1",
-                "plain": (
-                    "N equals the floor of x stop minus x zero over delta x, plus one"
-                ),
+                "plain": ("N equals the floor of x stop minus x zero over delta x, plus one"),
                 "meaning": "Determines plot resolution and is checked against the maximum allowed number of points.",
                 "where": [
                     (r"x_{\text{stop}}", "end of the plotted range"),
@@ -584,7 +580,10 @@ TOOL_HELP: dict[str, dict[str, Any]] = {
                 ),
                 "meaning": "Conversion is valid only when source and target dimensionalities match exactly.",
                 "where": [
-                    (r"\mathsf{L},\mathsf{M},\mathsf{T}", "base dimensions of length, mass, and time"),
+                    (
+                        r"\mathsf{L},\mathsf{M},\mathsf{T}",
+                        "base dimensions of length, mass, and time",
+                    ),
                     (r"\alpha,\beta,\gamma", "integer exponents of each base dimension"),
                 ],
             },
