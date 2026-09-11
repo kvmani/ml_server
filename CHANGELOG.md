@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.3.0] - 2026-09-11
+
+### Added
+
+- **Online Annotator** joins the catalog (`online-annotator`, Microstructure): a multi-user
+  workbench for creating, reviewing and exporting pixel-exact segmentation ground truth,
+  owned by the standalone `kvmani/OnlineAnnotator` repository and linked by
+  `ONLINE_ANNOTATOR_URL` (default `http://127.0.0.1:5070`). Its scientific help page covers
+  the class area fraction, Otsu's criterion used by the box-threshold tool and the
+  magic-wand membership rule, with a workflow diagram and a link to the tool's own `/help`.
+- New catalog mark `annotator-mark.svg` and diagram `help/online-annotator-workflow.svg`.
+- `scripts/setup_local.ps1` and `start_platform.ps1` install and start the annotator on
+  port 5070 alongside the other local services.
+
+### Changed
+
+- Privacy copy on the home page and the FAQ now states the one deliberate exception to
+  "nothing is stored": Online Annotator keeps a team's images and annotations on its
+  intranet server and stores only an office e-mail and name per account.
+
 ## [1.2.0] - 2026-09-07
 
 ### Added

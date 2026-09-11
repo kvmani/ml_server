@@ -4,7 +4,7 @@ def test_home_route(client):
     assert response.status_code == 200
     assert b"<html" in response.data
     assert b"Search by name, category, or capability" in response.data
-    assert response.data.count(b"data-tool-card") == 6
+    assert response.data.count(b"data-tool-card") == 7
     assert b"Tabular ML Workbench" in response.data
     assert b"active-user-count" in response.data
     assert b"hero-visual" not in response.data
@@ -12,7 +12,7 @@ def test_home_route(client):
     assert b'data-feedback-kind="feedback"' in response.data
     assert b'data-feedback-kind="feature_request"' in response.data
     assert b'id="feedback-form"' in response.data
-    assert response.data.count(b"Scientific help") == 6
+    assert response.data.count(b"Scientific help") == 7
     assert b"An AI-assisted advanced segmentation tool" in response.data
 
 
@@ -36,3 +36,17 @@ def test_active_user_count_is_anonymized_and_at_least_one(client):
     assert response.status_code == 200
     assert payload["status"] == "ok"
     assert payload["active_users"] >= 1
+
+
+def test_online_annotator_card_and_help(client):
+    catalog = {tool["id"]: tool for tool in client.get("/api/catalog").get_json()["tools"]}
+    annotator = catalog["online-annotator"]
+    assert annotator["category"] == "Microstructure"
+    assert annotator["icon"] == "annotator-mark.svg"
+    help_page = client.get("/tools/online-annotator/help")
+    assert help_page.status_code == 200
+    assert b"help/online-annotator-workflow.svg" in help_page.data
+    assert b"Otsu threshold" in help_page.data
+    assert b"Classes and guidelines" in help_page.data  # critical-inputs section is populated
+    manual = annotator["href"].rstrip("/").encode() + b"/help"
+    assert manual in help_page.data  # links the tool's own manual

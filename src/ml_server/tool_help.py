@@ -96,6 +96,90 @@ TOOL_HELP: dict[str, dict[str, Any]] = {
         "external_help_suffix": "/help",
         "diagram": "help/hydride-segmentation-workflow.svg",
     },
+    "online-annotator": {
+        "purpose": "Create pixel-exact semantic-segmentation ground truth for microstructure images, have every annotation checked by a second person, and export approved datasets with complete provenance for training segmentation models.",
+        "workflow": [
+            "Create a project: the image set, the classes to label and written guidelines",
+            "Upload micrographs, or import model predictions as a starting point",
+            "Annotate: the image is reserved for one editor; label every pixel of each class",
+            "Submit for review; a second person approves, corrects or returns it with a comment",
+            "Export approved versions as HydrideSegmentation pairs, split folders, COCO or YOLO",
+        ],
+        "equations": [
+            {
+                "name": "Class area fraction",
+                "tex": r"f_{c} \;=\; \frac{N_{c}}{W\,H}",
+                "plain": "f_c equals N_c divided by W times H",
+                "meaning": "Fraction of the image labelled as class c; reported per image and per dataset in every export manifest.",
+                "where": [
+                    (r"N_{c}", "number of pixels whose label is class c"),
+                    (r"W,\,H", "image width and height in pixels"),
+                ],
+            },
+            {
+                "name": "Otsu threshold (box threshold tool)",
+                "tex": (
+                    r"t^{*} \;=\; \arg\max_{t}\;"
+                    r"\omega_{0}(t)\,\omega_{1}(t)\,\bigl[\mu_{0}(t)-\mu_{1}(t)\bigr]^{2}"
+                ),
+                "plain": (
+                    "t star equals the arg max over t of omega_0 of t times omega_1 of t times "
+                    "the square of mu_0 of t minus mu_1 of t"
+                ),
+                "meaning": "The grey level that best separates dark features from the matrix inside the selected box; the annotator can adjust it before applying.",
+                "where": [
+                    (r"\omega_{0},\,\omega_{1}", "fractions of box pixels below and above t"),
+                    (r"\mu_{0},\,\mu_{1}", "mean grey levels of those two groups"),
+                ],
+            },
+            {
+                "name": "Magic-wand region",
+                "tex": (
+                    r"R \;=\; \mathcal{C}_{4}\bigl(s,\;\{\,p : g(p) \le g(s)+\tau\,\}\bigr)"
+                ),
+                "plain": (
+                    "R equals the 4-connected component containing s of the set of pixels p "
+                    "with g of p at most g of s plus tau"
+                ),
+                "meaning": "One click labels the whole connected dark feature; for a bright feature the inequality reverses.",
+                "where": [
+                    (r"s", "the clicked seed pixel"),
+                    (r"g(p)", "8-bit grey level of pixel p"),
+                    (r"\tau", "tolerance chosen by the annotator"),
+                ],
+            },
+        ],
+        "inputs": [
+            (
+                "Classes and guidelines",
+                "Define what each pixel value means; class numbers become mask values and never change once used.",
+            ),
+            (
+                "Tool settings",
+                "Brush diameter, wand tolerance and box threshold decide which pixels a stroke or click labels.",
+            ),
+            (
+                "Review decision",
+                "Only approved versions are exported by default; self-approval is disabled unless configured.",
+            ),
+            (
+                "Export options",
+                "Selection, folder layout, mask encoding and a seeded split define the training dataset exactly.",
+            ),
+        ],
+        "limits": [
+            "Labels are only as good as image contrast, focus and the annotator's domain judgement; write clear guidelines.",
+            "Display conversion of 16-bit images affects only what is seen, never the stored original.",
+            "YOLO polygons are an approximation; masks and COCO run-length encoding are exact.",
+            "Keep images of the same specimen area in one split to avoid over-optimistic validation.",
+        ],
+        "privacy": [
+            "Images, labels and exports stay on the intranet server; nothing is sent elsewhere.",
+            "Accounts store only an office e-mail address and name; every change is recorded in an audit trail.",
+        ],
+        "external_help_suffix": "/help",
+        "diagram": "help/online-annotator-workflow.svg",
+    },
     "pytex": {
         "purpose": "Analyze crystallographic orientation, texture, EBSD maps, diffraction geometry, TEM patterns, and phase transformations while keeping frames, symmetry, conventions, and provenance explicit.",
         "workflow": [

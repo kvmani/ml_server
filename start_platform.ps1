@@ -9,5 +9,7 @@ Start-Process powershell -ArgumentList "-NoExit", "-Command", "Set-Location 'C:\
 $unitPython = 'C:\Users\kvman\PycharmProjects\unit_converter\.venv\Scripts\python.exe'
 Start-Process powershell -ArgumentList "-NoExit", "-Command", "Set-Location 'C:\Users\kvman\PycharmProjects\unit_converter'; & '$unitPython' app.py"
 Start-Process powershell -ArgumentList "-NoExit", "-Command", "Set-Location 'C:\Users\kvman\HydrideSegmentation'; .\.venv\Scripts\python.exe scripts\run_web_server.py --host 127.0.0.1 --port 5005 --no-preload"
+$annotatorRoot = 'C:\Users\kvman\PycharmProjects\OnlineAnnotator'
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "Set-Location '$annotatorRoot'; `$env:PYTHONPATH = 'src'; & '.\.venv\Scripts\python.exe' -m online_annotator serve --host 127.0.0.1 --port 5070 --data-dir data"
 Start-Sleep -Seconds 2
 Start-Process "http://127.0.0.1:5000"

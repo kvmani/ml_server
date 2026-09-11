@@ -21,4 +21,10 @@ if (-not (Test-Path $unitPython)) {
     python -m venv (Join-Path $unitRoot ".venv")
 }
 & $unitPython -m pip install -r (Join-Path $unitRoot "requirements.txt")
+$annotatorRoot = (Resolve-Path (Join-Path $root "..\OnlineAnnotator")).Path
+$annotatorPython = Join-Path $annotatorRoot ".venv\Scripts\python.exe"
+if (-not (Test-Path $annotatorPython)) {
+    python -m venv (Join-Path $annotatorRoot ".venv")
+}
+& $annotatorPython -m pip install -r (Join-Path $annotatorRoot "requirements.txt")
 Write-Host "Local portal environment is ready. Run .\start_platform.ps1 to launch the stack."

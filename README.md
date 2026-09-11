@@ -41,6 +41,11 @@ Hydride Segmentation is provided by the well-tested standalone repository at
 service URL. The portal does not contain a duplicate segmentation
 implementation.
 
+Online Annotator (create, review and export segmentation ground truth) is owned by the
+standalone repository `kvmani/OnlineAnnotator`, runs on its own port (5070 by default) and
+is linked from the catalog through `ONLINE_ANNOTATOR_URL`. Unlike the other tools it keeps
+data by design: a team's images, annotations and exports stay on its intranet server.
+
 Every catalog card has a separate **Scientific help** action. The central `/help/faq` index and
 `/tools/<tool-id>/help` guides document workflows, mathematical core, critical inputs, result
 interpretation, and limitations with accessible SVG diagrams.

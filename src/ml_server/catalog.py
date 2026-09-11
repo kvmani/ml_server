@@ -26,6 +26,34 @@ def tool_catalog() -> list[dict[str, Any]]:
             "internal": False,
         },
         {
+            "id": "online-annotator",
+            "name": "Online Annotator",
+            "summary": (
+                "Create, review and export pixel-exact segmentation ground truth for micrographs."
+            ),
+            "detail": (
+                "A multi-user annotation workbench: label microstructures with assisted tools, "
+                "have every mask reviewed by a second person, and export approved datasets "
+                "ready for HydrideSegmentation, COCO or YOLO with full provenance."
+            ),
+            "category": "Microstructure",
+            "tags": [
+                "annotation",
+                "labelling",
+                "ground truth",
+                "segmentation",
+                "masks",
+                "training data",
+                "review",
+                "hydride",
+            ],
+            "state": "active",
+            "owner": "OnlineAnnotator",
+            "href": os.getenv("ONLINE_ANNOTATOR_URL", "http://127.0.0.1:5070"),
+            "icon": "annotator-mark.svg",
+            "internal": False,
+        },
+        {
             "id": "pytex",
             "name": "PyTex Workbench",
             "summary": "Texture, diffraction, EBSD, TEM, and crystallographic analysis.",
