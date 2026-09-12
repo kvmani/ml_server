@@ -4,6 +4,51 @@ A Flask and Celery based application for microstructural analysis.  The code is
 packaged under `src/ml_server` so it can be imported as `ml_server` by other
 Python applications.
 
+## Project Philosophy
+
+ML Server aims to provide a lightweight, production ready home for a growing
+collection of materials science tools.  Each feature is isolated into its own
+module so that the project can evolve without becoming tightly coupled to a
+single workflow.  The server focuses on:
+
+* keeping the core small and reliable;
+* encouraging extension through optional plugins; and
+* favouring clear, well documented APIs over complex magic.
+
+## Design Principles
+
+The project follows a few simple guidelines:
+
+1. **Modularity** – every tool is shipped as an independent Flask blueprint and
+   can be enabled or removed without affecting the rest of the system.
+2. **Asynchronous processing** – long running jobs are delegated to Celery
+   workers so that the web layer remains responsive.
+3. **Security first** – sensible defaults such as Content Security Policy and
+   request size limits are enabled out of the box.
+4. **Configuration via code** – behaviour is controlled through a JSON
+   configuration file and environment variables, keeping deployments
+   reproducible.
+5. **Testability** – features should include unit tests and be runnable with
+   `pytest` to encourage continuous integration.
+
+## Adding Plugins
+
+Plugins are small packages that expose new tools or routes.  To create one:
+
+1. **Create a blueprint** inside `src/ml_server/app/routes` or as an external
+   package.  The blueprint should define its routes and any HTML templates.
+2. **Register the blueprint** in `src/ml_server/app/server.py` so Flask knows
+   about the new endpoints.
+3. **Add background tasks** by creating Celery tasks under
+   `src/ml_server/tasks.py` or in a separate module.  Import the tasks where
+   appropriate.
+4. **Expose static assets** and templates by placing them under `static/` and
+   `templates/` within your plugin package.
+5. **Write tests and documentation** demonstrating how the plugin is used.
+
+Once these steps are complete, the plugin can be enabled simply by installing
+the package and restarting the server.
+
 ## Quick start
 
 ```bash
