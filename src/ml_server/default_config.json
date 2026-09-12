@@ -43,7 +43,8 @@
         "csrf_enabled": true,
         "ssl_enabled": false,
         "admin_token": "__SET_ADMIN_TOKEN__",
-        "admin_password_hash": ""
+        "admin_password_hash": "",
+        "trusted_proxy_count": 0
     },
     "mainIconSize": [
         100,
@@ -52,5 +53,6 @@
     "toolsIconsSize": [
         75,
         75
-    ]
+    ],
+    "config_version": 2
 }

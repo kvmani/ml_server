@@ -73,6 +73,56 @@ def _requested_months() -> int:
 # --------------------------------------------------------------------------
 # Authentication
 # --------------------------------------------------------------------------
+def _log_csrf_failure() -> None:
+    """Record why a login POST was rejected, in enough detail to fix it.
+
+    A rejected token has exactly two interesting causes, and they need
+    different remedies: the browser sent no session cookie back (a cookie the
+    browser refused to store or return -- the Secure-over-HTTP failure), or it
+    sent a session that holds no token (a session signed with a different key,
+    i.e. another worker or a restart). Saying which one happened is the whole
+    point; without it an operator is left reading "expired" and guessing.
+
+    Nothing secret is logged: not the token, not the session contents, not the
+    admin credential. Only the shape of the failure.
+    """
+    from flask import session
+
+    cookie_name = current_app.config.get("SESSION_COOKIE_NAME") or "session"
+    had_session_cookie = cookie_name in request.cookies
+    if not had_session_cookie:
+        reason = "no session cookie was returned by the browser"
+    elif not session.get("ml_admin_csrf"):
+        reason = (
+            "the session cookie carried no CSRF token, so it was not the session that "
+            "rendered the form (a different worker's signing key, or a restart)"
+        )
+    elif not request.form.get("csrf_token"):
+        reason = "the form was posted without a csrf_token field"
+    else:
+        reason = "the submitted token did not match the one held in the session"
+
+    logger.warning(
+        "Admin CSRF check failed on %s: %s [scheme=%s secure_cookie=%s samesite=%s "
+        "ssl_enabled=%s session_cookie_present=%s]",
+        request.path,
+        reason,
+        request.scheme,
+        current_app.config.get("SESSION_COOKIE_SECURE"),
+        current_app.config.get("SESSION_COOKIE_SAMESITE"),
+        current_app.config.get("SSL_ENABLED"),
+        had_session_cookie,
+    )
+    if current_app.config.get("SESSION_COOKIE_SECURE") and request.scheme != "https":
+        logger.error(
+            "The session cookie is marked Secure but this request arrived over %s, so no "
+            "browser will ever return it. Set security.ssl_enabled=false in %s for a "
+            "plain-HTTP intranet deployment, then restart the portal.",
+            request.scheme,
+            current_app.config.get("CONFIG_PATH", "the portal configuration"),
+        )
+
+
 @bp.route("/login", methods=["GET", "POST"])
 def login():
     """Render and process the admin password form."""
@@ -92,7 +142,12 @@ def login():
         if locked_for:
             error = f"Too many failed attempts. Try again in {locked_for // 60 + 1} minute(s)."
         elif not csrf_token_valid(request.form.get("csrf_token")):
-            error = "This form expired. Please try again."
+            _log_csrf_failure()
+            error = (
+                "This form expired. Reload the sign-in page and try again. If it keeps "
+                "happening, the server log records why -- see the runbook's "
+                '"Page expired" section.'
+            )
         elif verify_password(request.form.get("password", "")):
             attempt_limiter.clear(address)
             start_session()

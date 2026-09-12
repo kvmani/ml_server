@@ -84,16 +84,88 @@ APP_SECRET_KEY=local-dev-secret-key-not-for-production
 ML_SERVER_ADMIN_PASSWORD=local-dev-admin-password
 ```
 
-### Also set a stable `secret_key`
+### The signing key, and why it must be stable
 
-Admin sessions are signed with the Flask secret key. If none is configured the
-portal generates a random one at startup, and every restart silently signs all
-administrators out. Set `APP_SECRET_KEY` in the same environment file. The
-portal logs a warning at startup when it is missing.
+Admin sessions -- and the login form's CSRF token, which lives inside the
+session -- are signed with the Flask secret key. Two properties are required,
+and the second is the one that broke a production deployment:
+
+* it must **survive a restart**, or every administrator is silently signed out;
+* it must be **the same in every worker process**. Production runs
+  `gunicorn --workers 2`. With a per-process key, the worker that handles the
+  login POST cannot read the session the worker that rendered the form wrote,
+  so the CSRF token appears to have vanished and the login reports that the
+  form expired -- on roughly every other attempt, which is exactly as confusing
+  as it sounds.
+
+The key is resolved in this order:
+
+1. `secret_key` in the config JSON (or `APP_SECRET_KEY` in the environment);
+2. failing that, a key generated **once** and kept in
+   `<config directory>/.session_secret_key` -- in the office deployment that is
+   `~/ml_platform/shared/config/.session_secret_key`, which sits outside every
+   release directory, is read by both workers, and survives restarts, upgrades
+   and rollbacks. It is created with mode 0600 and is a secret: it must never
+   reach git, CI or a release archive.
+
+`deploy/update.sh` fills in a strong `secret_key` for you when the shared config
+has none, so a migrated deployment has nothing to do here. Set
+`ML_SERVER_STATE_DIR` if the generated key should live somewhere other than
+beside the configuration.
+
+---
+
+## 1b. HTTP and HTTPS, and the session cookie
+
+One setting decides this, and it drives three behaviours together:
+
+```json
+"security": { "ssl_enabled": false }
+```
+
+| `ssl_enabled` | `SESSION_COOKIE_SECURE` | HTTPS redirect | HSTS |
+| --- | --- | --- | --- |
+| `false` -- plain-HTTP intranet | off | no | no |
+| `true` -- HTTPS | on | yes | yes |
+
+They must move together. **A browser never returns a `Secure` cookie over
+HTTP.** An HTTP deployment whose session cookie is marked `Secure` therefore
+serves every page perfectly and makes signing in impossible: the CSRF token has
+nowhere to live, and the POST comes back "This form expired".
+
+That is not hypothetical -- it is what happened between suite v1.4.0 and
+v1.6.0. Flask-Talisman defaults `session_cookie_secure` to `True` and re-applies
+it from a `before_request` hook on *every* request, so setting
+`SESSION_COOKIE_SECURE` in the application factory afterwards had no effect at
+all: the value looked correct in a startup dump and was `True` by the time any
+response was built. `create_app()` now passes `force_https`,
+`strict_transport_security` and `session_cookie_secure` to Talisman explicitly,
+all three from `ssl_enabled`, and a regression test asserts on the `Set-Cookie`
+header rather than on the config.
+
+`SESSION_COOKIE_HTTPONLY` is always on and `SESSION_COOKIE_SAMESITE` is always
+`Lax`, in both modes.
+
+**CSRF protection is enabled in both modes and is not a thing to turn off.** The
+config validator refuses `security.csrf_enabled: false` outright.
+
+### Reverse proxies
+
+`security.trusted_proxy_count` is `0` by default, which means `X-Forwarded-For`
+and `X-Forwarded-Proto` are **not** believed. In the office deployment gunicorn
+is reached directly, so trusting them would let any client on the intranet claim
+somebody else's address and walk past the login lockout. Set it to the number of
+proxies actually in front of the portal if you put one there.
 
 ---
 
 ## 2. Signing in
+
+The canonical URL is **`http://<host>:5000/admin/`**, and every portal page links
+to it from **Administrator sign in** in the footer. The URL is deliberately not
+a secret: authentication is enforced on every console page and every JSON
+endpoint behind it, so a visible link costs nothing and a hidden one only costs
+the operator who has forgotten where it is.
 
 * Browse to `http://<host>:5000/` and use **Administrator sign in** in the footer,
   or go straight to `/admin/login`.
@@ -250,7 +322,10 @@ office server.
 | Symptom | Cause and fix |
 | --- | --- |
 | "Admin access is not configured" | No credential set, or a placeholder value. See §1. |
-| Signed out on every restart | No `secret_key`. Set `APP_SECRET_KEY`. |
+| Signed out on every restart | No stable signing key. See the signing-key section in §1; on a deployed server `shared/config/.session_secret_key` should exist. |
+| **"This form expired" / "Page expired" on every sign-in attempt** | The CSRF token could not be matched to the session that issued it. The portal logs the reason (`grep -i csrf` in the log). Most often: the session cookie is marked `Secure` on a plain-HTTP site -- set `security.ssl_enabled: false` and restart. See §1b. |
+| Sign-in works about half the time | The signing key differs between gunicorn workers. Set `secret_key` in the shared config, or confirm `shared/config/.session_secret_key` is readable by the service user, then restart. |
+| `KeyError: 'adminToken'` when reading the config | The canonical key is `security.admin_token`. `adminToken` and `admin-token` are accepted and rewritten by the updater's migration; nothing reads the camelCase spelling directly. |
 | "Too many failed attempts" | Five failures from your address. Wait 15 minutes, or restart the service to clear the in-memory counter. |
 | Charts are blank | Check that `static/vendor/chartjs/chart.umd.min.js` is present in the release; the browser console will show a blocked or 404 script. |
 | Unique visitors read 0 for older months | Expected. The per-client digest only exists for traffic recorded from 1.2.0 onward; earlier rows keep their session counts. |

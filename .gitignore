@@ -108,3 +108,9 @@ tmp/
 # is anchored to the repository root precisely so it cannot swallow MathJax's
 # font directory, which ships the web fonts the offline help pages need.
 !src/ml_server/static/vendor/**
+
+# The portal's generated session-signing key. It is written next to the
+# configuration when `secret_key` is not set there (see config.py), is shared by
+# every gunicorn worker so admin logins survive a restart, and is a secret: it
+# must never reach git, CI or a release archive.
+.session_secret_key

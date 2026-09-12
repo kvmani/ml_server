@@ -40,8 +40,31 @@ def create_app(startup: bool = True) -> Flask:
         static_folder=os.path.join(package_root, "static"),
     )
     Compress(app)
+    install_signal_handlers()
+    logging.getLogger(__name__).info("Server starting")
+    app.start_time = time.time()
+    cfg = load_config()
+
+    # Whether this portal is an HTTPS site decides three things at once, so it is
+    # read once and handed to all three rather than re-derived in each place.
+    #
+    # Getting this wrong is what broke admin logins in production. Talisman
+    # defaults `session_cookie_secure` to True and -- this is the part that made
+    # it so hard to see -- re-applies it from a before_request hook on EVERY
+    # request, so assigning app.config["SESSION_COOKIE_SECURE"] afterwards had no
+    # effect whatsoever: the value was correct at startup and flipped back to
+    # True before the first response was built. On the plain-HTTP intranet the
+    # browser then discarded the Secure session cookie, the login form's CSRF
+    # token had nowhere to live, and the POST came back "This form expired"
+    # every single time. Every Talisman option below is therefore explicit.
+    ssl_enabled = cfg.ssl_enabled
     Talisman(
         app,
+        force_https=ssl_enabled,
+        strict_transport_security=ssl_enabled,
+        session_cookie_secure=ssl_enabled,
+        session_cookie_http_only=True,
+        session_cookie_samesite="Lax",
         content_security_policy={
             "default-src": ["'self'"],
             "script-src": ["'self'"],
@@ -55,13 +78,7 @@ def create_app(startup: bool = True) -> Flask:
             "object-src": ["'self'", "blob:"],
         },
         content_security_policy_nonce_in=["script-src"],
-        force_https=False,
-        strict_transport_security=False,
     )
-    install_signal_handlers()
-    logging.getLogger(__name__).info("Server starting")
-    app.start_time = time.time()
-    cfg = load_config()
     if cfg.admin_token:
         app.config["ADMIN_TOKEN"] = cfg.admin_token
     app.config["PORTAL_VERSION"] = __version__
@@ -79,20 +96,45 @@ def create_app(startup: bool = True) -> Flask:
     # works as a password so an upgrade does not lock an operator out.
     app.config["ADMIN_PASSWORD_HASH"] = cfg.admin_password_hash
     app.config["ADMIN_PASSWORD"] = cfg.admin_password
-    app.secret_key = cfg.secret_key or os.urandom(24)
+    # Never os.urandom() here. Production runs `gunicorn --workers 2`, so a
+    # per-process key means the worker that verifies the login POST cannot read
+    # the session the worker that rendered the form wrote. resolved_secret_key()
+    # returns the configured key, or one generated once and kept beside the
+    # configuration in shared/, which every worker and every restart then share.
+    app.secret_key = cfg.resolved_secret_key()
+    app.config["SSL_ENABLED"] = ssl_enabled
+    app.config["CSRF_ENABLED"] = cfg.csrf_enabled
+    app.config["CONFIG_PATH"] = str(cfg.config_path)
+    app.config["CONFIG_SCHEMA_VERSION"] = cfg.schema_version
     # The admin session rides in this cookie. SameSite=Lax is what stops another
     # page from driving a signed-in administrator's browser into a state-changing
     # admin request; it is a browser default today, but defaults are not a policy.
+    #
+    # These three restate what Talisman was told above. They are not redundant:
+    # they are what a developer reads when asking "what is the cookie policy?",
+    # and a test asserts that the header on the wire agrees with them.
     app.config["SESSION_COOKIE_HTTPONLY"] = True
     app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
-    app.config["SESSION_COOKIE_SECURE"] = bool(cfg.security_settings.get("ssl_enabled", False))
-    # Admin sessions are signed with the secret key, so a generated one would
-    # silently sign every operator out on each restart. Say so once at startup.
-    if not cfg.secret_key:
-        logging.getLogger(__name__).warning(
-            "No secret_key configured; admin logins will not survive a restart"
+    app.config["SESSION_COOKIE_SECURE"] = ssl_enabled
+    logging.getLogger(__name__).info(
+        "Session policy: scheme=%s secure_cookie=%s samesite=Lax csrf=%s "
+        "secret_key=%s trusted_proxies=%d",
+        "https" if ssl_enabled else "http",
+        ssl_enabled,
+        cfg.csrf_enabled,
+        "configured" if cfg.secret_key else "generated-and-persisted",
+        cfg.trusted_proxy_count,
+    )
+    # X-Forwarded-* is believed only when a proxy is actually in front of the
+    # portal. In the office deployment gunicorn is reached directly, so trusting
+    # those headers would let any client on the intranet claim someone else's
+    # address and walk past the admin login lockout.
+    if cfg.trusted_proxy_count:
+        app.wsgi_app = ProxyFix(
+            app.wsgi_app,
+            x_for=cfg.trusted_proxy_count,
+            x_proto=cfg.trusted_proxy_count,
         )
-    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
     celery_init_app(app)
     initialize_database(app.config["ENGAGEMENT_DATABASE"])
 
@@ -109,6 +151,13 @@ def create_app(startup: bool = True) -> Flask:
 
     @app.after_request
     def _after_request(response):  # type: ignore[override]
+        # An earlier before_request can short-circuit the request before ours
+        # runs -- Talisman's HTTPS redirect does exactly that -- and then none
+        # of the analytics state exists. Reading it defensively is the
+        # difference between a redirect and a 500 on every plain-HTTP request
+        # to an HTTPS deployment.
+        if "analytics_session_id" not in g:
+            return response
         latency = time.time() - g.get("start_time", time.time())
         endpoint = request.endpoint or "unknown"
         visit_counter.labels(endpoint=endpoint).inc()

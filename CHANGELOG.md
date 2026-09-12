@@ -1,5 +1,67 @@
 # Changelog
 
+## [1.3.1] - 2026-09-12
+
+Fixes the administrator sign-in failure seen on the office server from suite
+v1.4.0 through v1.6.0, and makes the shared configuration something a release
+can be upgraded over safely.
+
+### Fixed
+
+- **Admin sign-in failed with "This form expired" on the plain-HTTP intranet.**
+  Flask-Talisman defaults `session_cookie_secure` to `True` and re-applies it
+  from a `before_request` hook on *every* request, which silently overrode the
+  `SESSION_COOKIE_SECURE` the application factory set from
+  `security.ssl_enabled`. Browsers never return a `Secure` cookie over HTTP, so
+  the login form's CSRF token had nowhere to live and the POST was refused every
+  time. `create_app()` now passes `force_https`, `strict_transport_security` and
+  `session_cookie_secure` explicitly, all three derived from `ssl_enabled`. CSRF
+  protection is unchanged and still enforced.
+- **The signing key was regenerated per process.** `app.secret_key` fell back to
+  `os.urandom(24)` whenever `secret_key` was unset or still the shipped
+  `__SET_SECRET_KEY__` placeholder. Under `gunicorn --workers 2` the worker
+  handling the login POST could not read the session the other worker had
+  signed. The key is now read from the configuration, or generated once and kept
+  in `<config directory>/.session_secret_key` (mode 0600), which every worker
+  shares and which survives restarts, upgrades and rollbacks.
+- A request short-circuited by an earlier `before_request` -- Talisman's HTTPS
+  redirect -- raised `AttributeError: analytics_session_id` in the after-request
+  hook, turning a redirect into a 500 on every plain-HTTP request to an HTTPS
+  deployment.
+
+### Added
+
+- `ml_server.config_schema`: the canonical shape of `config.intranet.json`, with
+  a `config_version`, defaults, type validation, and migration that renames
+  legacy key spellings (`adminToken`, `admin-token`, `sslEnabled`, ...) onto the
+  one name the portal reads. A file that sets two spellings of a setting to two
+  different values is refused rather than guessed at. The module imports only
+  the standard library, so the deployment scripts can run it against a shared
+  config before activating a release.
+- `python -m ml_server.config_cli check|plan|migrate|summary <path>`, with
+  distinct exit codes for "invalid", "ambiguous" and "unreadable", and a
+  `--json` summary that contains no secret value of any kind.
+- `security.trusted_proxy_count` (default `0`). `ProxyFix` is installed only
+  when a proxy is actually in front of the portal, so a client on the intranet
+  cannot forge `X-Forwarded-For` past the admin login lockout.
+- Diagnostics for a rejected login: the portal logs the request path, which of
+  the four possible reasons applied, the scheme, and the secure-cookie mode --
+  and never the token, the session, the password or the signing key. A `Secure`
+  cookie on an HTTP request is called out by name with the setting to change.
+- Regression tests covering the whole browser lifecycle: `tests/
+  test_admin_session_csrf.py` (HTTP and HTTPS cookie flags, GET->POST CSRF,
+  cross-worker sessions, login, logout, token change, diagnostics) and
+  `tests/test_config_schema.py` (migration, aliases, validation, backups).
+
+### Changed
+
+- `security.admin_token` is the one canonical spelling of the console password.
+  Other spellings are migrated to it; none is read directly.
+- `config/config.intranet.json` and `default_config.json` carry
+  `config_version`, `security.admin_password_hash` and
+  `security.trusted_proxy_count`.
+- `.session_secret_key` is git-ignored and docker-ignored.
+
 ## [1.3.0] - 2026-09-11
 
 ### Added

@@ -38,3 +38,4 @@ src/ml_server/static/temp
 docs/_build
 test-results
 playwright-report
+.session_secret_key
