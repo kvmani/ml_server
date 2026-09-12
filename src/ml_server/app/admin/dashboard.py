@@ -11,15 +11,7 @@ same figures directly.
 import logging
 from typing import Any
 
-from flask import (
-    Blueprint,
-    current_app,
-    jsonify,
-    redirect,
-    render_template,
-    request,
-    url_for,
-)
+from flask import Blueprint, current_app, jsonify, redirect, render_template, request, url_for
 
 from ... import __version__
 from ...catalog import tool_catalog

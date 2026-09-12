@@ -17,12 +17,7 @@ from ..catalog import resolve_service
 from ..celery_app import celery_init_app
 from ..config import load_config
 from .admin.dashboard import init_admin
-from .services.engagement import (
-    browser_family,
-    client_digest,
-    initialize_database,
-    record_event,
-)
+from .services.engagement import browser_family, client_digest, initialize_database, record_event
 from .services.graceful import install_signal_handlers
 from .services.live_activity import live_activity
 from .services.metrics import (

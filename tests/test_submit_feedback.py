@@ -49,9 +49,10 @@ def test_feedback_is_saved_when_optional_email_fails(client, monkeypatch):
             self.target()
 
     monkeypatch.setattr(email_notifications.threading, "Thread", ImmediateThread)
-    response = client.post("/submit_feedback", data={
-        "name": "Test User", "email": "test@example.com", "message": "Still save this"
-    })
+    response = client.post(
+        "/submit_feedback",
+        data={"name": "Test User", "email": "test@example.com", "message": "Still save this"},
+    )
     assert response.status_code == 201
     rows = list_feedback(client.application.config["ENGAGEMENT_DATABASE"])
     assert len(rows) == 1
@@ -60,9 +61,10 @@ def test_feedback_is_saved_when_optional_email_fails(client, monkeypatch):
 
 
 def test_browser_analytics_is_persisted(client):
-    response = client.post("/api/analytics/event", json={
-        "event_name": "tool_open", "tool_id": "tabular-ml", "duration_ms": 1250
-    })
+    response = client.post(
+        "/api/analytics/event",
+        json={"event_name": "tool_open", "tool_id": "tabular-ml", "duration_ms": 1250},
+    )
     assert response.status_code == 200
     from ml_server.app.services.engagement import analytics_summary
 

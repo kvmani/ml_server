@@ -23,9 +23,7 @@ def _send(settings: dict[str, Any], recipient: str, subject: str, body: str) -> 
         message["To"] = recipient
         message["Subject"] = subject
         message.set_content(body)
-        with smtplib.SMTP(
-            host, int(settings.get("smtp_port", 25)), timeout=10
-        ) as server:
+        with smtplib.SMTP(host, int(settings.get("smtp_port", 25)), timeout=10) as server:
             if settings.get("use_tls", False):
                 server.starttls()
             username = settings.get("username")

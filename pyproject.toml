@@ -51,3 +51,12 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 ml_server = ["default_config.json", "templates/*.html", "static/**/*"]
+
+[tool.black]
+line-length = 100
+
+[tool.isort]
+# Without this, isort defaults to 79 columns and grid wrapping, which black then
+# rewrites at 100 columns -- the two hooks fight forever and pre-commit never passes.
+profile = "black"
+line_length = 100

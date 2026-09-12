@@ -147,9 +147,7 @@ class LiveActivityRegistry:
         }
 
     def _client_view(self, client: _Client, now: float) -> dict[str, Any]:
-        services = sorted(
-            client.services.items(), key=lambda item: item[1].last_seen, reverse=True
-        )
+        services = sorted(client.services.items(), key=lambda item: item[1].last_seen, reverse=True)
         return {
             "ip": client.ip,
             "browser": client.browser,

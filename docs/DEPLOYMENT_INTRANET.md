@@ -96,4 +96,3 @@ curl http://localhost:5000/health
 ```
 
 You should receive a JSON response indicating the service status.
-

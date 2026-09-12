@@ -3,10 +3,10 @@ import shutil
 import redis
 from flask import Blueprint, jsonify
 
+from ... import __version__
 from ...celery_app import celery_app
 from ...config import Config
 from ..services.metrics import disk_usage_percent, metrics_response
-from ... import __version__
 
 """API endpoints for checking service status and metrics."""
 

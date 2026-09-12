@@ -1,5 +1,5 @@
-from ml_server.app.routes import api
 from ml_server import __version__
+from ml_server.app.routes import api
 
 
 def test_liveness_is_dependency_independent(client):

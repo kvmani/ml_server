@@ -216,8 +216,7 @@ def status_breakdown(connection: sqlite3.Connection, since: str | None) -> list[
         params,
     ).fetchall()
     return [
-        {"status_code": int(row["status_code"]), "responses": int(row["responses"])}
-        for row in rows
+        {"status_code": int(row["status_code"]), "responses": int(row["responses"])} for row in rows
     ]
 
 

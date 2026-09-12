@@ -1,3 +1,11 @@
+# Vendored third-party assets and scientific test fixtures are byte-exact inputs:
+# reformatting them (whitespace, final newline) would corrupt them, so no hook may touch them.
+exclude: |
+  (?x)^(
+    src/ml_server/static/vendor/.*|
+    tests/test_data/.*
+  )$
+
 repos:
   - repo: https://github.com/psf/black
     rev: 23.7.0

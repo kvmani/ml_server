@@ -2,7 +2,7 @@ import logging
 import os
 import subprocess
 import time
-from pathlib import Path
+
 import requests
 
 from ml_server.config import Config

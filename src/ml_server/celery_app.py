@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from flask import Flask
 from celery import Celery
 from celery.signals import worker_process_init
+from flask import Flask
 
 from .app.services.graceful import install_signal_handlers
 from .config import Config
@@ -22,9 +22,7 @@ def celery_init_app(app: Flask) -> Celery:
     cfg = Config()
     celery_app.conf.update(
         broker_url=cfg.celery_settings.get("broker_url", "redis://redis:6379/0"),
-        result_backend=cfg.celery_settings.get(
-            "result_backend", "redis://redis:6379/0"
-        ),
+        result_backend=cfg.celery_settings.get("result_backend", "redis://redis:6379/0"),
         task_default_queue="default",
     )
     celery_app.set_default()

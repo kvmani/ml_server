@@ -101,8 +101,7 @@ def _configured(value: Any) -> str:
 def admin_password_hash() -> str:
     """Return the configured PBKDF2 hash of the admin password, if any."""
     return _configured(
-        os.getenv("ML_SERVER_ADMIN_PASSWORD_HASH")
-        or current_app.config.get("ADMIN_PASSWORD_HASH")
+        os.getenv("ML_SERVER_ADMIN_PASSWORD_HASH") or current_app.config.get("ADMIN_PASSWORD_HASH")
     )
 
 

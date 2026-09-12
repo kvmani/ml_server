@@ -100,9 +100,7 @@ def parse_records(text: str) -> list[dict[str, Any]]:
         else:
             # Output that precedes the first parsable record (a startup banner,
             # or a traceback whose header scrolled out of the tail window).
-            records.append(
-                {"timestamp": "", "level": "INFO", "message": line, "detail": ""}
-            )
+            records.append({"timestamp": "", "level": "INFO", "message": line, "detail": ""})
     return records
 
 
@@ -157,9 +155,7 @@ def read_log(
         for record in records
         if (minimum is None or _LEVEL_RANK.get(record["level"], 0) >= minimum)
         and (
-            not needle
-            or needle in record["message"].lower()
-            or needle in record["detail"].lower()
+            not needle or needle in record["message"].lower() or needle in record["detail"].lower()
         )
     ]
     result["matched_records"] = len(matched)

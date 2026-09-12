@@ -6,7 +6,6 @@ import pytest
 
 from ml_server.tool_help import TOOL_HELP
 
-
 ROOT = Path(__file__).resolve().parents[1]
 VENDOR = ROOT / "src" / "ml_server" / "static" / "vendor" / "mathjax"
 
@@ -76,9 +75,7 @@ def test_vendored_bundle_is_actually_served(client) -> None:
     response = client.get("/static/vendor/mathjax/tex-chtml-full.js")
     assert response.status_code == 200
 
-    font = client.get(
-        "/static/vendor/mathjax/output/chtml/fonts/woff-v2/MathJax_Math-Italic.woff"
-    )
+    font = client.get("/static/vendor/mathjax/output/chtml/fonts/woff-v2/MathJax_Math-Italic.woff")
     assert font.status_code == 200
 
 

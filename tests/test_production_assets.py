@@ -1,6 +1,5 @@
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -11,7 +10,7 @@ def test_compose_defaults_are_safe_and_current() -> None:
     assert not compose.startswith("version:")
     assert not override.startswith("version:")
     assert '"127.0.0.1:5000:5000"' in compose
-    assert '.:/app' not in compose
+    assert ".:/app" not in compose
     assert '"ml_server.app.server:create_app()"' in compose
     assert 'APP_DEBUG: "false"' in override
 
