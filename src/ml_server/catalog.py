@@ -59,10 +59,22 @@ def tool_catalog() -> list[dict[str, Any]]:
             "summary": "Texture, diffraction, EBSD, TEM, and crystallographic analysis.",
             "detail": (
                 "A convention-explicit crystallography workbench for orientation, texture, "
-                "diffraction, microscopy, and phase-transformation workflows."
+                "diffraction, microscopy, and phase-transformation workflows, including "
+                "identifying which variant of an orientation relationship a measured child "
+                "grain is, with the derivation shown step by step."
             ),
             "category": "Crystallography",
-            "tags": ["texture", "diffraction", "EBSD", "TEM"],
+            "tags": [
+                "texture",
+                "diffraction",
+                "EBSD",
+                "TEM",
+                "orientation relationship",
+                "variant",
+                "variant identification",
+                "Burgers",
+                "Kurdjumov-Sachs",
+            ],
             "state": "active",
             "owner": "pytex",
             "href": os.getenv("PYTEX_URL", "http://127.0.0.1:8765"),

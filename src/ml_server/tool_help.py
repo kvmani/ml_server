@@ -222,6 +222,33 @@ TOOL_HELP: dict[str, dict[str, Any]] = {
                 ],
             },
             {
+                "name": "Variant identification",
+                "tex": (
+                    r"\theta_{k} \;=\; \min_{\mathbf{S}_{c} \in G_{c}}\, \arccos"
+                    r"\frac{\operatorname{tr}\!\left(\mathbf{V}_{k}\,\mathbf{V}_{\mathrm{m}}^{\mathsf{T}}"
+                    r"\,\mathbf{S}_{c}\right) - 1}{2},"
+                    r"\qquad \mathbf{V}_{\mathrm{m}} \;=\; \mathbf{C}^{\mathsf{T}}\mathbf{P}"
+                ),
+                "plain": (
+                    "theta_k equals the minimum over the child symmetry operators S_c of the "
+                    "arccosine of half of the trace of V_k times V_m transpose times S_c minus one, "
+                    "where V_m equals C transpose times P"
+                ),
+                "meaning": (
+                    "The misfit of each variant of an orientation relationship to a measured "
+                    "parent/child pair; the smallest misfit identifies the variant. PyTex's "
+                    "Variants workspace shows every step with the measured values substituted."
+                ),
+                "where": [
+                    (r"\mathbf{P},\,\mathbf{C}", "measured parent and child orientation matrices"),
+                    (
+                        r"\mathbf{V}_{k} = \mathbf{R}\,\mathbf{S}_{p,k}^{\mathsf{T}}",
+                        "rotation of variant k",
+                    ),
+                    (r"\mathbf{S}_{c} \in G_{c}", "rotations of the child point group"),
+                ],
+            },
+            {
                 "name": "Interplanar spacing (hexagonal)",
                 "tex": (
                     r"\frac{1}{d_{hkl}^{2}} \;=\; \frac{4}{3}\,"

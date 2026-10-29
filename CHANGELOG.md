@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.4.0] - 2026-10-29
+
+Makes PyTex's new variant identification discoverable from the portal. No
+behaviour, configuration or dependency change.
+
+### Added
+
+- The PyTex tile is found by searching for "orientation relationship",
+  "variant", "variant identification", "Burgers" or "Kurdjumov-Sachs", and its
+  description names variant identification from a measured parent/child pair.
+- The PyTex help page gains the variant-identification misfit equation
+  (rendered by the vendored MathJax), with its spoken form and symbols.
+
 ## [1.3.1] - 2026-09-12
 
 Fixes the administrator sign-in failure seen on the office server from suite
