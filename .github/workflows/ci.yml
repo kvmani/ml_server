@@ -1,6 +1,9 @@
 name: CI
 
-on: [push, pull_request]
+# Manual only, by the maintainer's decision (2026-10-29): no push or pull
+# request starts this workflow. Run it from the Actions tab ("Run workflow").
+on:
+  workflow_dispatch:
 
 jobs:
   build:

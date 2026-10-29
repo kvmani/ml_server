@@ -13,6 +13,11 @@ behaviour, configuration or dependency change.
 - The PyTex help page gains the variant-identification misfit equation
   (rendered by the vendored MathJax), with its spoken form and symbols.
 
+### Changed
+
+- CI is started by hand only (Actions tab, "Run workflow"); no push or pull
+  request starts it.
+
 ## [1.3.1] - 2026-09-12
 
 Fixes the administrator sign-in failure seen on the office server from suite
