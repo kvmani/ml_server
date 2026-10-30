@@ -44,3 +44,12 @@ When updating the dashboard UI, prefer lightweight libraries such as Chart.js
 via CDN links. Do not include binary assets or screenshots in the repository.
 
 Happy coding!
+
+## Releasing
+
+Set `__version__` in `src/ml_server/_version.py`, add a `## [X.Y.Z] - YYYY-MM-DD`
+section to `CHANGELOG.md`, push `main`, then start the "Publish release"
+workflow (`.github/workflows/release.yml`) on `main` with `version = X.Y.Z`.
+It checks both, creates tag `vX.Y.Z` and publishes the Release, so an agent in
+a cloud session can release on request. Pushing a `vX.Y.Z` tag works too. The
+whole suite procedure is `ml_server_deploy/RELEASING.md`.
