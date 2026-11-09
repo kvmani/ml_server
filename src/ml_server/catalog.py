@@ -84,10 +84,12 @@ def tool_catalog() -> list[dict[str, Any]]:
         {
             "id": "pdf-tools",
             "name": "PDF Tools",
-            "summary": "Preview, reorder, merge, split, and extract pages from any PDF.",
+            "summary": "Edit, sign, merge, split, number, watermark, and extract pages from any PDF.",
             "detail": (
                 "A general-purpose PDF workbench for every kind of document — reports, scans, "
-                "forms, presentations, or manuscripts. Files are processed in memory on this "
+                "forms, presentations, or manuscripts. The PDF Editor adds text, comments, "
+                "highlights, drawings, images and signatures; separate tools merge, split, "
+                "extract, number and watermark pages. Files are processed in memory on this "
                 "intranet server, are never stored, and never leave the office network."
             ),
             "category": "Productivity",
@@ -97,6 +99,17 @@ def tool_catalog() -> list[dict[str, Any]]:
                 "split",
                 "extract",
                 "reorder",
+                "edit",
+                "editor",
+                "annotate",
+                "comment",
+                "highlight",
+                "sign",
+                "signature",
+                "page numbers",
+                "watermark",
+                "remove pages",
+                "rotate",
                 "documents",
                 "scans",
                 "forms",

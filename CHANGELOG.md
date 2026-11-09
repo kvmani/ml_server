@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.5.0] - 2026-11-09
+
+Makes PDF Tools 0.3.0's new tools discoverable from the portal. No behaviour,
+configuration or dependency change in the portal itself.
+
+### Added
+
+- The PDF Tools tile is found by searching for "edit", "sign", "signature",
+  "annotate", "highlight", "page numbers", "watermark", "remove pages" or
+  "rotate", and its description names the PDF Editor and the new Split and
+  Page numbers & watermark tools.
+- The PDF Tools help page describes the editor's inputs and the numbering and
+  watermark options, and states that an editor signature is an image, not a
+  cryptographic digital signature.
+
+### Changed
+
+- A release can be published by starting the "Publish release" workflow on
+  `main` with the version; it creates the tag itself (see CONTRIBUTING.md).
+
 ## [1.4.0] - 2026-10-29
 
 Makes PyTex's new variant identification discoverable from the portal. No

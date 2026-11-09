@@ -291,12 +291,13 @@ TOOL_HELP: dict[str, dict[str, Any]] = {
         "diagram": "help/pytex-workflow.svg",
     },
     "pdf-tools": {
-        "purpose": "Preview, reorder, merge, split, and extract pages from any PDF — reports, scans, forms, presentations, invoices, manuscripts, or drawings — entirely inside the office intranet. Documents are processed in memory for the duration of your request and are never stored on the server or sent outside the office network.",
+        "purpose": "Edit, sign, merge, split, number, watermark, and extract pages from any PDF — reports, scans, forms, presentations, invoices, manuscripts, or drawings — entirely inside the office intranet. Documents are processed in memory for the duration of your request and are never stored on the server or sent outside the office network.",
         "workflow": [
             "Upload one or more PDFs of any kind and validate type and size",
             "Read the page tree and preview the pages in the browser",
-            "Select page ranges and arrange the document order",
-            "Copy the selected page objects into a new document",
+            "Choose a tool: Editor, Merge, Split, Extract, or Page numbers & watermark",
+            "Select page ranges, document order, or the edits, numbers and watermark to apply",
+            "Build the new document from the selected pages and changes",
             "Stream the result back and discard every temporary byte",
         ],
         "equations": [
@@ -347,12 +348,22 @@ TOOL_HELP: dict[str, dict[str, Any]] = {
             ),
             ("Document order", "Controls the exact concatenation sequence in a merge."),
             (
+                "Edits",
+                "In the PDF Editor: text, comments, highlights, drawings, images and signature images, with undo and redo; work can be saved as an editable .pdfproject file.",
+            ),
+            (
+                "Numbers and watermark",
+                "Number format, position, start number, size and page range; watermark text and strength.",
+            ),
+            (
                 "Export mode",
                 "Selects a PDF result or raster page images where supported.",
             ),
         ],
         "limits": [
-            "Reordering pages does not edit page content or repair a damaged PDF.",
+            "Merge, split and extract copy pages as they are; only the PDF Editor and the page-number and watermark tool change page content.",
+            "No tool repairs a damaged PDF.",
+            "A signature added in the editor is an image on the page, not a cryptographic digital signature.",
             "Password-protected or malformed documents may be rejected.",
             "Raster export converts vector text and graphics into pixels and should only be used when required.",
         ],
