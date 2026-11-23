@@ -192,7 +192,8 @@ interact.
 
 ## Contributing
 
-Pull requests are welcome! Please follow these guidelines:
+Contributions follow [AGENTS.md](AGENTS.md) (fetch first, work on `main`, keep the progress
+ledger current, run targeted tests) and these guidelines:
 
 1. Run `pre-commit install` after cloning to enable linting hooks.
 2. Ensure `flake8`, `black` and `isort` pass before committing.

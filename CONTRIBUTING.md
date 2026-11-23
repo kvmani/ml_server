@@ -1,7 +1,8 @@
 # Contributing Guidelines
 
 Thank you for considering a contribution! To keep the codebase consistent and
-maintainable, please follow these rules:
+maintainable, please follow these rules. The root [AGENTS.md](AGENTS.md) is authoritative for the
+workflow (sync, work on `main`, progress ledger, test scope, manual CI) for humans and agents.
 
 1. **Coding style**
    - All new functions and public methods must include type hints and a concise
@@ -15,8 +16,9 @@ maintainable, please follow these rules:
 
 2. **Testing**
    - Add unit tests in the `tests/` directory following the existing pattern.
-   - Run `pytest --cov=src` and ensure new code is covered.
-   - Include the test results in your pull request description.
+   - Run the tests that cover your change (see AGENTS.md); run `pytest --cov=src` for the full
+     suite before a release and ensure new code is covered.
+   - Record the test results in the progress ledger and the commit message.
 
 3. **Tooling**
    - Install development dependencies with `pip install -r requirements.txt -r
@@ -29,10 +31,9 @@ maintainable, please follow these rules:
 
 ### PDF Tools
 
-The PDF merging and extraction utilities originate from a separate internal
-repository. When modifying these tools, keep the code in
-`ml_server/app/services/pdf_tools` in sync with the upstream project. Tests for
-PDF functionality should accompany any changes.
+PDF Tools is owned by the separate `kvmani/pdf_tools` repository; the portal only
+mounts its blueprint. Change PDF behaviour there, not here. Portal-side tests for
+the mounted routes (`tests/test_pdf_tools_routes.py`) accompany any integration change.
 
 ### Monitoring
 
@@ -40,8 +41,10 @@ New routes should record request metrics using the helpers in
 `ml_server.app.services.metrics`. If you add admin pages, register them with the
 Flask-Admin dashboard in `init_admin()`.
 
-When updating the dashboard UI, prefer lightweight libraries such as Chart.js
-via CDN links. Do not include binary assets or screenshots in the repository.
+When updating the dashboard UI, prefer lightweight libraries such as Chart.js,
+vendored under `src/ml_server/static/vendor/` — never CDN links, because the portal
+runs on an air-gapped intranet. Do not include binary assets or screenshots in the
+repository.
 
 Happy coding!
 

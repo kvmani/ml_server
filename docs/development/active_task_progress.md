@@ -2,6 +2,16 @@
 
 Resumable ledger for the current goal. Update the checkboxes as work lands.
 
+## 2026-11-23 — Agent instructions refactor (done)
+
+- Added AGENTS.md as the single instruction file for Codex, Claude and Gemini: the owner's
+  cardinal rules, portal rules drawn from governance §5.1/§6/§11, CONTRIBUTING.md and the README,
+  a test-selection table and a map. The previous goal below is complete.
+- CONTRIBUTING.md and README aligned with current reality: work on `main` instead of pull
+  requests; Chart.js and other libraries are vendored, never CDN; PDF Tools is owned by
+  `kvmani/pdf_tools` (the stale "keep services/pdf_tools in sync" note was replaced).
+- Added `.gemini/settings.json`. Tests run: none needed (documentation only).
+
 ## Goal (verbatim intent)
 
 1. Polish the ml_server home page: modern, office-appropriate, desktop-optimised, no
